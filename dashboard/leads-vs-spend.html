@@ -1,0 +1,789 @@
+<title>לידים מול הוצאת פרסום</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700;800&family=Heebo:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --surface-1:#fcfcfb;
+  --surface-2:#f3f2ee;
+  --page-plane:#f9f9f7;
+  --text-primary:#0b0b0b;
+  --text-secondary:#52514e;
+  --muted:#898781;
+  --grid:#e1e0d9;
+  --baseline:#c3c2b7;
+  --border:rgba(11,11,11,0.10);
+  --border-strong:rgba(11,11,11,0.16);
+  --series-1:#2a78d6; /* facebook */
+  --series-2:#eb6834; /* google */
+  --series-3:#1baf7a; /* website organic */
+  --series-4:#eda100; /* unknown/direct */
+  --neutral-fill:#d8d6cd;
+  --good:#0ca30c;
+  --warning:#fab219;
+  --critical:#d03b3b;
+  --success-text:#006300;
+  --tooltip-bg:#0b0b0b;
+  --tooltip-text:#fcfcfb;
+  --font-display:'Rubik',system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-body:'Heebo',system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --surface-1:#1a1a19;
+    --surface-2:#222220;
+    --page-plane:#0d0d0d;
+    --text-primary:#ffffff;
+    --text-secondary:#c3c2b7;
+    --muted:#898781;
+    --grid:#2c2c2a;
+    --baseline:#383835;
+    --border:rgba(255,255,255,0.10);
+    --border-strong:rgba(255,255,255,0.18);
+    --series-1:#3987e5;
+    --series-2:#d95926;
+    --series-3:#199e70;
+    --series-4:#c98500;
+    --neutral-fill:#3a3a37;
+    --good:#0ca30c;
+    --warning:#fab219;
+    --critical:#e66767;
+    --success-text:#0ca30c;
+    --tooltip-bg:#fcfcfb;
+    --tooltip-text:#0b0b0b;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --surface-1:#1a1a19;
+  --surface-2:#222220;
+  --page-plane:#0d0d0d;
+  --text-primary:#ffffff;
+  --text-secondary:#c3c2b7;
+  --muted:#898781;
+  --grid:#2c2c2a;
+  --baseline:#383835;
+  --border:rgba(255,255,255,0.10);
+  --border-strong:rgba(255,255,255,0.18);
+  --series-1:#3987e5;
+  --series-2:#d95926;
+  --series-3:#199e70;
+  --series-4:#c98500;
+  --neutral-fill:#3a3a37;
+  --good:#0ca30c;
+  --warning:#fab219;
+  --critical:#e66767;
+  --success-text:#0ca30c;
+  --tooltip-bg:#fcfcfb;
+  --tooltip-text:#0b0b0b;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--page-plane);
+  color:var(--text-primary);
+  font-family:var(--font-body);
+  direction:rtl;
+  text-align:right;
+}
+::selection{ background: var(--series-1); color:#fff; }
+
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px;}
+
+/* ---------- header ---------- */
+header.top{
+  display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:flex-end;
+  padding-bottom:22px;margin-bottom:26px;border-bottom:1px solid var(--border);
+}
+.eyebrow{
+  font-family:var(--font-body);font-weight:600;font-size:12.5px;letter-spacing:.06em;
+  color:var(--series-1);text-transform:uppercase;margin:0 0 8px;
+}
+h1{
+  font-family:var(--font-display);font-weight:700;font-size:clamp(24px,3.4vw,34px);
+  margin:0 0 8px;line-height:1.18;text-wrap:balance;
+}
+.subtitle{color:var(--text-secondary);font-size:15px;margin:0;max-width:62ch;}
+.meta-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;}
+.pill{
+  font-size:12.5px;font-weight:600;color:var(--text-secondary);background:var(--surface-2);
+  border:1px solid var(--border);border-radius:100px;padding:6px 13px;white-space:nowrap;
+}
+.pill b{color:var(--text-primary);font-weight:700;}
+
+nav.jump{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:30px;}
+nav.jump a{
+  font-family:var(--font-body);font-weight:600;font-size:13.5px;color:var(--text-secondary);
+  text-decoration:none;padding:8px 14px;border-radius:8px;border:1px solid transparent;
+  transition:background .15s, color .15s;
+}
+nav.jump a:hover{background:var(--surface-2);color:var(--text-primary);}
+nav.jump a:focus-visible{outline:2px solid var(--series-1);outline-offset:2px;}
+
+/* ---------- KPI strip ---------- */
+.kpi-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin-bottom:44px;
+}
+.kpi{
+  background:var(--surface-1);border:1px solid var(--border);border-radius:12px;
+  padding:18px 18px 16px;display:flex;flex-direction:column;gap:6px;position:relative;
+}
+.kpi .label{font-size:12.5px;color:var(--text-secondary);font-weight:600;}
+.kpi .value{font-family:var(--font-display);font-weight:700;font-size:26px;letter-spacing:-.01em;}
+.kpi .sub{font-size:12px;color:var(--muted);}
+.kpi.flag{border-color:color-mix(in srgb, var(--critical) 45%, var(--border));}
+.kpi.flag .value{color:var(--critical);}
+.kpi.flag .tag{
+  position:absolute;top:14px;left:14px;font-size:10.5px;font-weight:700;color:var(--critical);
+  background:color-mix(in srgb, var(--critical) 14%, transparent);border-radius:5px;padding:2px 6px;
+}
+
+/* ---------- sections ---------- */
+section{margin-bottom:56px;scroll-margin-top:20px;}
+.section-head{margin-bottom:20px;}
+.section-kicker{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0 0 4px;}
+h2{font-family:var(--font-display);font-weight:700;font-size:22px;margin:0 0 6px;text-wrap:balance;}
+.section-desc{color:var(--text-secondary);font-size:14.5px;margin:0;max-width:75ch;}
+
+.card{
+  background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:22px 24px;
+}
+.grid-2{display:grid;grid-template-columns:1.05fr 1fr;gap:16px;}
+.grid-2.reverse{grid-template-columns:1fr 1.05fr;}
+@media (max-width:860px){ .grid-2, .grid-2.reverse{grid-template-columns:1fr;} }
+.row-gap{display:flex;flex-direction:column;gap:16px;}
+
+.card h3{font-family:var(--font-display);font-weight:700;font-size:15.5px;margin:0 0 3px;}
+.card .card-sub{font-size:12.5px;color:var(--muted);margin:0 0 16px;}
+
+/* ---------- legend ---------- */
+.legend{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+.legend li{display:flex;align-items:center;gap:10px;font-size:13.5px;}
+.legend .dot{width:10px;height:10px;border-radius:3px;flex:none;}
+.legend .lname{color:var(--text-primary);font-weight:600;flex:1;}
+.legend .lval{font-variant-numeric:tabular-nums;color:var(--text-secondary);font-weight:600;font-size:13px;}
+.legend .lsub{color:var(--muted);font-size:11.5px;}
+
+/* ---------- bar list (horizontal) ---------- */
+.barlist{display:flex;flex-direction:column;gap:14px;}
+.barlist-row{display:flex;flex-direction:column;gap:5px;}
+.barlist-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;}
+.barlist-name{color:var(--text-primary);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.barlist-val{font-variant-numeric:tabular-nums;color:var(--text-secondary);font-weight:600;flex:none;}
+.barlist-track{height:20px;background:var(--surface-2);border-radius:5px;overflow:hidden;position:relative;}
+.barlist-fill{height:100%;border-radius:5px;transition:filter .12s;}
+.barlist-row:hover .barlist-fill{filter:brightness(1.08);}
+.barlist-badge{
+  display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--good);
+  background:color-mix(in srgb, var(--good) 14%, transparent);border-radius:5px;padding:1px 6px;margin-inline-start:6px;
+}
+
+/* ---------- svg charts ---------- */
+.chart-svg{width:100%;height:auto;overflow:visible;font-family:var(--font-body);}
+.chart-svg text{fill:var(--muted);font-size:11px;}
+.chart-svg .axis-line{stroke:var(--baseline);stroke-width:1;}
+.chart-svg .grid-line{stroke:var(--grid);stroke-width:1;}
+.bar-mark{cursor:pointer;transition:filter .12s;}
+.bar-mark:hover{filter:brightness(1.1);}
+.val-label{fill:var(--text-secondary);font-weight:600;font-size:11px;font-variant-numeric:tabular-nums;}
+.chart-legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:14px;font-size:12.5px;}
+.chart-legend .item{display:flex;align-items:center;gap:6px;color:var(--text-secondary);font-weight:600;}
+.chart-legend .sw{width:11px;height:11px;border-radius:3px;}
+
+/* tooltip */
+.viz-tooltip{
+  position:fixed;pointer-events:none;background:var(--tooltip-bg);color:var(--tooltip-text);
+  font-family:var(--font-body);font-size:12.5px;line-height:1.5;border-radius:8px;padding:9px 12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.22);z-index:50;opacity:0;transform:translateY(4px);
+  transition:opacity .1s, transform .1s;max-width:240px;
+}
+.viz-tooltip.show{opacity:1;transform:translateY(0);}
+.viz-tooltip .tt-title{font-weight:700;margin-bottom:3px;}
+.viz-tooltip .tt-row{display:flex;justify-content:space-between;gap:14px;}
+
+/* ---------- tables ---------- */
+.table-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px;}
+th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;}
+th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.03em;}
+td{color:var(--text-primary);}
+td.num, th.num{font-variant-numeric:tabular-nums;}
+tbody tr:hover{background:var(--surface-2);}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;border-radius:6px;padding:3px 8px;}
+.chip.match{color:var(--good);background:color-mix(in srgb, var(--good) 14%, transparent);}
+.chip.unmatch{color:var(--muted);background:var(--surface-2);}
+
+/* ---------- channel cards ---------- */
+.channel-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:640px){.channel-cards{grid-template-columns:1fr;}}
+.channel-card{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:20px 22px;}
+.channel-card .ch-name{font-family:var(--font-display);font-weight:700;font-size:16px;margin-bottom:2px;}
+.channel-card .ch-window{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.ch-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.ch-stat .n{font-family:var(--font-display);font-weight:700;font-size:19px;}
+.ch-stat .l{font-size:11.5px;color:var(--text-secondary);}
+
+/* ---------- alert / insight ---------- */
+.alert{
+  border-radius:14px;padding:22px 24px;border:1px solid color-mix(in srgb, var(--critical) 35%, var(--border));
+  background:color-mix(in srgb, var(--critical) 7%, var(--surface-1));display:flex;gap:16px;align-items:flex-start;
+}
+.alert .icon{
+  flex:none;width:38px;height:38px;border-radius:10px;background:color-mix(in srgb, var(--critical) 16%, transparent);
+  display:flex;align-items:center;justify-content:center;color:var(--critical);font-weight:800;font-size:18px;
+  font-family:var(--font-display);
+}
+.alert h3{font-family:var(--font-display);font-size:16.5px;margin:0 0 6px;color:var(--text-primary);}
+.alert p{margin:0 0 8px;font-size:14px;color:var(--text-secondary);line-height:1.6;}
+.alert p:last-child{margin-bottom:0;}
+.alert strong{color:var(--text-primary);}
+
+.info-card{
+  border-radius:14px;padding:20px 22px;border:1px solid var(--border);background:var(--surface-2);
+  display:flex;gap:14px;align-items:flex-start;
+}
+.info-card .icon{
+  flex:none;width:34px;height:34px;border-radius:9px;background:color-mix(in srgb, var(--series-1) 16%, transparent);
+  display:flex;align-items:center;justify-content:center;color:var(--series-1);font-weight:800;font-size:15px;
+  font-family:var(--font-display);
+}
+.info-card h4{margin:0 0 5px;font-size:14.5px;font-family:var(--font-display);}
+.info-card p{margin:0;font-size:13.5px;color:var(--text-secondary);line-height:1.6;}
+.info-card ul{margin:8px 0 0;padding-inline-start:18px;font-size:13.5px;color:var(--text-secondary);line-height:1.7;}
+
+/* ---------- gap-compare bars ---------- */
+.gapbar-row{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.gapbar-row:last-child{margin-bottom:0;}
+.gapbar-label{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;}
+.gapbar-label .n{font-family:var(--font-display);font-variant-numeric:tabular-nums;}
+.gapbar-track{height:26px;background:var(--surface-2);border-radius:6px;overflow:hidden;}
+.gapbar-fill{height:100%;border-radius:6px;min-width:3px;}
+
+footer{border-top:1px solid var(--border);padding-top:24px;margin-top:20px;}
+footer h5{font-family:var(--font-display);font-size:13px;margin:0 0 10px;color:var(--text-secondary);}
+footer p, footer li{font-size:12.5px;color:var(--muted);line-height:1.7;margin:0 0 6px;}
+footer ul{margin:0 0 14px;padding-inline-start:18px;}
+.gen-stamp{font-size:11.5px;color:var(--muted);margin-top:18px;}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;animation:none !important;}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <p class="eyebrow">לוח בקרה שיווקי · דיגיטל</p>
+      <h1>לידים מול הוצאת פרסום — צוות 3 מערכות מיגון</h1>
+      <p class="subtitle">הצלבה בין הוצאות הפרסום הממומן ב-Facebook Ads Manager לבין לידים שהתקבלו וסגירות בפועל, משני ערוצי הפנייה: טפסי יצירת קשר באתר ושיחות טלפון למספר המעקב (מאסקיו).</p>
+    </div>
+    <div class="meta-pills">
+      <span class="pill">חשבון פרסום: <b>צוות 3 מערכות מיגון</b></span>
+      <span class="pill">תקופה: <b>01.01.2026–30.08.2026</b></span>
+      <span class="pill">מטבע: <b>₪ ILS</b></span>
+    </div>
+  </header>
+
+  <nav class="jump">
+    <a href="#overview">סקירה כללית</a>
+    <a href="#ads">הוצאת פרסום</a>
+    <a href="#leads">לידים מה-CRM</a>
+    <a href="#crossref">הצלבה ופער מדידה</a>
+    <a href="#notes">הערות מתודולוגיה</a>
+  </nav>
+
+  <section id="overview">
+    <div class="kpi-grid">
+      <div class="kpi">
+        <span class="label">סה״כ הוצאת פרסום (Facebook)</span>
+        <span class="value" id="kpi-spend">—</span>
+        <span class="sub">ינואר–אוגוסט 2026</span>
+      </div>
+      <div class="kpi">
+        <span class="label">מתוכה על קמפייני מכירות</span>
+        <span class="value" id="kpi-sales-spend">—</span>
+        <span class="sub" id="kpi-sales-spend-sub">—</span>
+      </div>
+      <div class="kpi">
+        <span class="label">סה״כ לידים (CRM)</span>
+        <span class="value" id="kpi-leads">—</span>
+        <span class="sub">טפסי אתר + שיחות טלפון</span>
+      </div>
+      <div class="kpi">
+        <span class="label">עסקאות שנסגרו</span>
+        <span class="value" id="kpi-closed">—</span>
+        <span class="sub" id="kpi-closerate-sub">—</span>
+      </div>
+      <div class="kpi">
+        <span class="label">הכנסה מעסקאות סגורות</span>
+        <span class="value" id="kpi-revenue">—</span>
+        <span class="sub">מיגון + מוקד</span>
+      </div>
+      <div class="kpi flag">
+        <span class="tag">פער מדידה</span>
+        <span class="label">לידים מיוחסים לפייסבוק ב-CRM</span>
+        <span class="value" id="kpi-fb-crm">—</span>
+        <span class="sub" id="kpi-fb-crm-sub">—</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="ads">
+    <div class="section-head">
+      <p class="section-kicker">חלק 1</p>
+      <h2>הוצאת פרסום ממומן — Facebook Ads Manager</h2>
+      <p class="section-desc">כל ההוצאה בחשבון הפרסום, כולל פילוח לפי מטרת הקמפיין (מכירות לעומת גיוס עובדים), מגמה חודשית, והקמפיינים המובילים בהוצאה בערוץ המכירות.</p>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:16px;">
+      <div class="card">
+        <h3>הוצאה לפי סוג קמפיין</h3>
+        <p class="card-sub">סה״כ 256 קמפיינים, ינו׳–אוג׳ 2026</p>
+        <div id="donut-category"></div>
+      </div>
+      <div class="card">
+        <h3>הוצאה חודשית</h3>
+        <p class="card-sub">סה״כ חשבון לעומת קמפייני מכירות בלבד · אוגוסט חלקי (עד 30.08)</p>
+        <div id="chart-monthly-spend"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>קמפייני המכירות המובילים בהוצאה</h3>
+      <p class="card-sub">14 מתוך 31 קמפייני מכירות · לידים = לפי מדידת הפיקסל של מטא (custom conversion) · מסומנים קמפיינים שזוהו גם ב-CRM דרך UTM</p>
+      <div id="barlist-campaigns" class="barlist"></div>
+    </div>
+  </section>
+
+  <section id="leads">
+    <div class="section-head">
+      <p class="section-kicker">חלק 2</p>
+      <h2>לידים שהתקבלו — נתוני CRM</h2>
+      <p class="section-desc">לידים דיגיטליים משני ערוצי קליטה: טפסי יצירת קשר באתר, ושיחות טלפון שנקלטו במספר המעקב (מאסקיו). שיחות טלפון רוכזו לפי מספר ליד ייחודי במערכת (מספר שיחות שונה ממספר לידים).</p>
+    </div>
+
+    <div class="channel-cards" style="margin-bottom:16px;">
+      <div class="channel-card">
+        <div class="ch-name">טפסי יצירת קשר באתר</div>
+        <div class="ch-window">חלון נתונים: יוני–יולי 2026 בלבד</div>
+        <div class="ch-stats">
+          <div class="ch-stat"><div class="n">171</div><div class="l">לידים</div></div>
+          <div class="ch-stat"><div class="n">18</div><div class="l">נסגרו</div></div>
+          <div class="ch-stat"><div class="n">₪74,299</div><div class="l">הכנסה</div></div>
+        </div>
+      </div>
+      <div class="channel-card">
+        <div class="ch-name">שיחות טלפון (מאסקיו)</div>
+        <div class="ch-window">חלון נתונים: ינואר–אוגוסט 2026</div>
+        <div class="ch-stats">
+          <div class="ch-stat"><div class="n">168</div><div class="l">לידים</div></div>
+          <div class="ch-stat"><div class="n">47</div><div class="l">נסגרו</div></div>
+          <div class="ch-stat"><div class="n">₪248,097</div><div class="l">הכנסה</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2 reverse" style="margin-bottom:16px;">
+      <div class="card">
+        <h3>מגמה חודשית — ערוץ הטלפון</h3>
+        <p class="card-sub">לידים מול עסקאות שנסגרו · ינואר–אוגוסט 2026 · אוגוסט חלקי</p>
+        <div id="chart-monthly-leads"></div>
+      </div>
+      <div class="card">
+        <h3>לידים לפי מקור (UTM Source)</h3>
+        <p class="card-sub">משני הערוצים יחד · לידים מול עסקאות שנסגרו</p>
+        <div id="chart-source"></div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <span class="icon">i</span>
+      <div>
+        <h4>לתשומת לב: חלון נתונים חלקי לטפסי האתר</h4>
+        <p>קובץ טפסי האתר שסופק כולל רק את חודשים יוני–יולי 2026, בעוד נתוני שיחות הטלפון פרוסים על פני ינואר–אוגוסט. לכן מגמת הזמן המוצגת למעלה מבוססת על ערוץ הטלפון בלבד, שהוא הערוץ עם כיסוי הנתונים המלא.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="crossref">
+    <div class="section-head">
+      <p class="section-kicker">חלק 3</p>
+      <h2>הצלבה: הוצאת פייסבוק מול תוצאות ה-CRM</h2>
+      <p class="section-desc">התאמה בין ערכי ה-UTM Campaign שנרשמו בלידים לבין שמות הקמפיינים בפועל ב-Ads Manager.</p>
+    </div>
+
+    <div class="alert" style="margin-bottom:20px;">
+      <span class="icon">!</span>
+      <div>
+        <h3>פער מדידה משמעותי בין מטא ל-CRM</h3>
+        <p>קמפייני המכירות בפייסבוק הוציאו <strong>₪38,802.64</strong> ויצרו <strong>8,336 לידים</strong> לפי מדידת הפיקסל של מטא (עלות ממוצעת לליד: <strong>₪4.65</strong>). אולם ב-CRM, רק <strong>11 לידים בסה״כ</strong> (משני הערוצים יחד) נושאים UTM Source = facebook שניתן לשייך לקמפיין ספציפי — כ-<strong>0.13%</strong> בלבד ממה שמטא מדווחת.</p>
+        <p>הפער מרמז שרוב הלידים שמגיעים מפייסבוק (למשל טפסי ליד מובנים / Instant Forms, וואטסאפ או מסנג׳ר) אינם עוברים דרך עמוד עם פרמטרי UTM, ולכן אינם נרשמים במערכת ה-CRM עם מקור מזוהה — לא בהכרח שהקמפיינים אינם מייצרים תוצאות.</p>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:16px;">
+      <div class="card">
+        <h3>לידים: דיווח מטא לעומת שיוך ב-CRM</h3>
+        <p class="card-sub">קמפייני מכירות בלבד · ציר לינארי — אורך העמודה משקף את הפער בפועל</p>
+        <div id="gapbars"></div>
+      </div>
+      <div class="card">
+        <h3>2 הקמפיינים שכן זוהו ב-CRM</h3>
+        <p class="card-sub">מתוך 31 קמפייני מכירות · שיוך לפי התאמת UTM Campaign לשם הקמפיין</p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>קמפיין</th><th class="num">הוצאה</th><th class="num">לידים ב-CRM</th><th class="num">נסגרו</th><th class="num">הכנסה</th><th class="num">ROAS</th>
+            </tr></thead>
+            <tbody id="matched-table-body"></tbody>
+            <tfoot>
+              <tr style="font-weight:700;">
+                <td>סה״כ</td><td class="num">₪3,181.39</td><td class="num">11</td><td class="num">2</td><td class="num">₪3,037.00</td><td class="num">0.95×</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <span class="icon">✓</span>
+      <div>
+        <h4>המלצה לסגירת הפער</h4>
+        <ul>
+          <li>לוודא שכל דפי הנחיתה של קמפייני הפייסבוק מעבירים פרמטרי UTM (source/campaign) הן לטופס יצירת הקשר והן למערכת המעקב הטלפוני (מאסקיו).</li>
+          <li>להתאים את מוסכמת השם בין <code>utm_campaign</code> לשם הקמפיין בפועל ב-Ads Manager, כדי לאפשר הצלבה אוטומטית עתידית.</li>
+          <li>לבדוק האם חלק ניכר מהלידים מגיע דרך טפסי ליד מובנים (Instant Forms) של מטא — אלה דורשים חיבור ישיר (CRM Integration / CAPI) ולא UTM, כדי להופיע בדוח זה.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer id="notes">
+    <h5>הערות מתודולוגיה ומקורות נתונים</h5>
+    <ul>
+      <li><strong>מקור הוצאת הפרסום:</strong> Facebook Ads Manager (חיבור MCP חי), חשבון "צוות 3 מערכות מיגון" (מזהה 1884113361832057), רמת קמפיין, 01.01.2026–30.08.2026.</li>
+      <li><strong>סיווג קמפיינים:</strong> "מכירות" = קמפיינים עם אירוע המרה מותאם Leads sales בפיקסל; "גיוס עובדים" = קמפיינים עם אירוע Leads Jobs או שם שמזהה גיוס; "אחר" = קמפייני מודעות/בדיקה ישנים בהוצאה זניחה (0.25% מסך ההוצאה).</li>
+      <li><strong>מקור נתוני הלידים:</strong> שני קבצי אקסל שסופקו — טפסי יצירת קשר באתר (171 שורות, סטטוס ליד + UTM) ושיחות טלפון למספר מאסקיו (1,103 שורות שיחה).</li>
+      <li><strong>עיבוד ערוץ הטלפון:</strong> סוננו רק שיחות עם "מקור הליד" = הפנייה מהדיגיטל (236 שורות), ואוחדו לפי מספר ליד ייחודי במערכת (168 לידים ייחודיים) — כדי לא לספור שיחה חוזרת לאותו ליד פעמיים. שיחות ממקורות אחרים (מספר 6650*, לקוח קיים, בין חברתי) לא נכללו בדוח זה.</li>
+      <li><strong>שיוך לפייסבוק:</strong> ליד נחשב "מיוחס לפייסבוק" כאשר UTM Source = facebook. שיוך לקמפיין ספציפי נעשה בהתאמת טקסט בין UTM Campaign לשם הקמפיין בפועל; רק 2 מתוך 31 קמפייני מכירות נמצאו בעלי התאמה כזו בנתונים.</li>
+      <li><strong>מחוץ לתחום הדוח:</strong> הוצאת פרסום ב-Google Ads אינה כלולה — חובר רק מקור הנתונים Facebook Ads Manager, כפי שהתבקש.</li>
+      <li>כל הסכומים בשקלים חדשים (₪). "נסגר" = סטטוס ליד "נסגר" בקובצי המקור. הכנסה = סכום סגירה מיגון + סכום סגירה מוקד.</li>
+    </ul>
+    <p class="gen-stamp">נוצר על ידי Claude · תמונת מצב סטטית של הנתונים נכון ל-30.08.2026</p>
+  </footer>
+
+</div>
+
+<div class="viz-tooltip" id="tooltip"></div>
+
+<script>
+/* ============================= DATA ============================= */
+const FMT = new Intl.NumberFormat('he-IL');
+const money = n => '₪' + FMT.format(Math.round(n));
+const moneyDec = n => '₪' + n.toLocaleString('he-IL', {minimumFractionDigits:2, maximumFractionDigits:2});
+const num = n => FMT.format(n);
+
+const DATA = {
+  kpi: {
+    spend: 47432.70,
+    salesSpend: 38802.64,
+    salesSpendPct: 81.8,
+    leads: 339,
+    closed: 65,
+    closeRate: 19.2,
+    revenue: 322395.48,
+    fbCrmLeads: 11,
+    fbMetaLeads: 8336
+  },
+  spendByCategory: [
+    { name:'מכירות', value:38802.64, campaigns:31, results:8336, color:'var(--series-1)' },
+    { name:'גיוס עובדים', value:8510.86, campaigns:44, results:2242, color:'var(--series-2)' },
+    { name:'אחר / מודעות ישנות', value:119.20, campaigns:181, results:null, color:'var(--neutral-fill)' }
+  ],
+  monthlySpend: [
+    {m:'ינו', total:1950.66, sales:0},
+    {m:'פבר', total:2799.51, sales:1276.85},
+    {m:'מרץ', total:10320.79, sales:9024.35},
+    {m:'אפר', total:5638.00, sales:5529.23},
+    {m:'מאי', total:2645.05, sales:2286.24},
+    {m:'יונ', total:3622.52, sales:2494.68},
+    {m:'יול', total:6560.53, sales:5459.85},
+    {m:'אוג*', total:13895.64, sales:12742.69}
+  ],
+  topCampaigns: [
+    {name:'סרטון אריזת מתנה — 9/3', spend:6926.29, leads:444, cpl:15.60, matched:false},
+    {name:'שאגת הארי — כללי — 4/3', spend:4893.41, leads:207, cpl:23.64, matched:false},
+    {name:'מצלמת אבטחה או פרצת אבטחה — 11/6', spend:2176.58, leads:239, cpl:9.11, matched:false},
+    {name:'סרטון מאחורי כל מצלמה — 25/7', spend:2098.61, leads:551, cpl:3.81, matched:false},
+    {name:'מערכת אזעקה + מצלמה במתנה — 9/7', spend:2056.65, leads:297, cpl:6.92, matched:true},
+    {name:'סרטון מאחורי כל מצלמה — 15/4', spend:1973.00, leads:157, cpl:12.57, matched:false},
+    {name:'דקה של ביטחון — 28/7', spend:1734.79, leads:2173, cpl:0.80, matched:false},
+    {name:'גל הפריצות מתרחב (כללי) — 18/8', spend:1699.43, leads:18, cpl:94.41, matched:false},
+    {name:'גל הפריצות מתרחב — ראשון לציון — 26/7', spend:1591.37, leads:869, cpl:1.83, matched:false},
+    {name:'גל הפריצות מתרחב — ירושלים — 26/7', spend:1460.03, leads:803, cpl:1.82, matched:false},
+    {name:'גל הפריצות מתרחב — רמת גן — 26/7', spend:1456.23, leads:751, cpl:1.94, matched:false},
+    {name:'גל הפריצות מתרחב — אשדוד — 26/7', spend:1342.34, leads:495, cpl:2.71, matched:false},
+    {name:'גל הפריצות מתרחב — רחובות — 26/7', spend:1124.74, leads:569, cpl:1.98, matched:true},
+    {name:'גל הפריצות מתרחב — חיפה — 26/7', spend:1121.25, leads:580, cpl:1.93, matched:false}
+  ],
+  leadsBySource: [
+    {name:'גוגל', leads:132, closed:16, revenue:60100.68, color:'var(--series-2)'},
+    {name:'אתר אורגני', leads:73, closed:13, revenue:55210.95, color:'var(--series-3)'},
+    {name:'לא ידוע / ישיר', leads:123, closed:34, revenue:204046.85, color:'var(--series-4)'},
+    {name:'פייסבוק', leads:11, closed:2, revenue:3037.00, color:'var(--series-1)'}
+  ],
+  monthlyPhoneLeads: [
+    {m:'ינו', leads:24, closed:7},
+    {m:'פבר', leads:24, closed:10},
+    {m:'מרץ', leads:18, closed:3},
+    {m:'אפר', leads:25, closed:7},
+    {m:'מאי', leads:28, closed:7},
+    {m:'יונ', leads:25, closed:6},
+    {m:'יול', leads:18, closed:7},
+    {m:'אוג*', leads:6, closed:0}
+  ],
+  matchedCampaigns: [
+    {name:'מערכת אזעקה + מצלמה במתנה — 9/7', spend:2056.65, leads:10, closed:1, revenue:1920.00, roas:0.93},
+    {name:'גל הפריצות מתרחב — רחובות — 26/7', spend:1124.74, leads:1, closed:1, revenue:1117.00, roas:0.99}
+  ]
+};
+
+/* ============================= KPI fill ============================= */
+document.getElementById('kpi-spend').textContent = money(DATA.kpi.spend);
+document.getElementById('kpi-sales-spend').textContent = money(DATA.kpi.salesSpend);
+document.getElementById('kpi-sales-spend-sub').textContent = DATA.kpi.salesSpendPct + '% מסך ההוצאה';
+document.getElementById('kpi-leads').textContent = num(DATA.kpi.leads);
+document.getElementById('kpi-closed').textContent = num(DATA.kpi.closed);
+document.getElementById('kpi-closerate-sub').textContent = 'שיעור סגירה ' + DATA.kpi.closeRate + '%';
+document.getElementById('kpi-revenue').textContent = money(DATA.kpi.revenue);
+document.getElementById('kpi-fb-crm').textContent = num(DATA.kpi.fbCrmLeads);
+document.getElementById('kpi-fb-crm-sub').textContent = 'מתוך ' + num(DATA.kpi.fbMetaLeads) + ' שמטא מדווחת';
+
+/* ============================= tooltip helper ============================= */
+const tt = document.getElementById('tooltip');
+function showTip(evt, html){
+  tt.innerHTML = html;
+  tt.classList.add('show');
+  moveTip(evt);
+}
+function moveTip(evt){
+  const pad = 14;
+  let x = evt.clientX + pad, y = evt.clientY + pad;
+  const rect = tt.getBoundingClientRect();
+  if (x + rect.width > window.innerWidth - 10) x = evt.clientX - rect.width - pad;
+  if (y + rect.height > window.innerHeight - 10) y = evt.clientY - rect.height - pad;
+  tt.style.left = x + 'px';
+  tt.style.top = y + 'px';
+}
+function hideTip(){ tt.classList.remove('show'); }
+
+/* ============================= Donut chart ============================= */
+function renderDonut(containerId, data, opts){
+  opts = opts || {};
+  const size = opts.size || 200, stroke = opts.stroke || 26;
+  const r = (size - stroke) / 2, cx = size/2, cy = size/2, circ = 2*Math.PI*r;
+  const total = data.reduce((a,d)=>a+d.value,0);
+  let offset = 0;
+  const el = document.getElementById(containerId);
+  let svg = `<svg class="chart-svg" viewBox="0 0 ${size + 190} ${size}" style="max-width:100%;">`;
+  svg += `<g transform="translate(${size/2},${size/2})">`;
+  svg += `<circle r="${r}" fill="none" stroke="var(--grid)" stroke-width="${stroke}"></circle>`;
+  data.forEach((d,i)=>{
+    const frac = d.value/total;
+    const dash = frac*circ;
+    const gapPx = 2;
+    svg += `<circle class="bar-mark" data-idx="${i}" r="${r}" fill="none" stroke="${d.color}" stroke-width="${stroke}"
+      stroke-dasharray="${Math.max(dash-gapPx,0)} ${circ-Math.max(dash-gapPx,0)}"
+      stroke-dashoffset="${-offset}" transform="rotate(-90)"></circle>`;
+    offset += dash;
+  });
+  svg += `<text x="0" y="-4" text-anchor="middle" font-family="var(--font-display)" font-weight="700" font-size="22" fill="var(--text-primary)">${money(total)}</text>`;
+  svg += `<text x="0" y="16" text-anchor="middle" font-size="11" fill="var(--muted)">סה״כ הוצאה</text>`;
+  svg += `</g></svg>`;
+  el.innerHTML = svg;
+
+  const legend = document.createElement('ul');
+  legend.className = 'legend';
+  legend.style.marginTop = '16px';
+  data.forEach(d=>{
+    const pct = (d.value/total*100).toFixed(1);
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="dot" style="background:${d.color}"></span>
+      <span class="lname">${d.name}</span>
+      <span class="lval">${money(d.value)} · ${pct}%</span>`;
+    legend.appendChild(li);
+  });
+  el.appendChild(legend);
+
+  el.querySelectorAll('.bar-mark').forEach(node=>{
+    const d = data[+node.dataset.idx];
+    node.addEventListener('mousemove', e=>{
+      const pct = (d.value/total*100).toFixed(1);
+      let extra = d.results!=null ? `<div class="tt-row"><span>לידים (פיקסל)</span><span>${num(d.results)}</span></div>` : '';
+      showTip(e, `<div class="tt-title">${d.name}</div>
+        <div class="tt-row"><span>הוצאה</span><span>${money(d.value)}</span></div>
+        <div class="tt-row"><span>אחוז</span><span>${pct}%</span></div>
+        <div class="tt-row"><span>קמפיינים</span><span>${d.campaigns}</span></div>${extra}`);
+    });
+    node.addEventListener('mouseleave', hideTip);
+  });
+}
+renderDonut('donut-category', DATA.spendByCategory, {size:190});
+
+/* ============================= Grouped bar chart (monthly spend) ============================= */
+function renderGroupedBars(containerId, categories, series, opts){
+  opts = opts || {};
+  const W = opts.width || 560, H = opts.height || 260;
+  const padL = 54, padB = 30, padT = 14, padR = 8;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const allVals = series.flatMap(s=>s.values);
+  const maxV = Math.max(...allVals) * 1.15 || 1;
+  const groupW = plotW / categories.length;
+  const barW = Math.min(22, (groupW*0.62)/series.length);
+  const gap = 3;
+
+  function y(v){ return padT + plotH - (v/maxV)*plotH; }
+  function niceTicks(){
+    const step = maxV/4;
+    return [0,1,2,3,4].map(i=>Math.round(step*i));
+  }
+
+  let svg = `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" style="max-width:100%;">`;
+  niceTicks().forEach(t=>{
+    const yy = y(t);
+    svg += `<line class="grid-line" x1="${padL}" x2="${W-padR}" y1="${yy}" y2="${yy}"></line>`;
+    svg += `<text x="${padL-8}" y="${yy+3}" text-anchor="end">${t>=1000? (t/1000)+'K' : t}</text>`;
+  });
+  svg += `<line class="axis-line" x1="${padL}" x2="${W-padR}" y1="${padT+plotH}" y2="${padT+plotH}"></line>`;
+
+  categories.forEach((cat,ci)=>{
+    const groupX = padL + ci*groupW + (groupW - (barW*series.length + gap*(series.length-1)))/2;
+    series.forEach((s,si)=>{
+      const v = s.values[ci];
+      const bx = groupX + si*(barW+gap);
+      const bh = plotH - (y(v)-padT);
+      const by = y(v);
+      svg += `<rect class="bar-mark" data-cat="${ci}" data-ser="${si}" x="${bx.toFixed(1)}" y="${by.toFixed(1)}"
+        width="${barW.toFixed(1)}" height="${Math.max(bh,0).toFixed(1)}" rx="4" fill="${s.color}"></rect>`;
+    });
+    svg += `<text x="${padL + ci*groupW + groupW/2}" y="${H-10}" text-anchor="middle">${cat}</text>`;
+  });
+  svg += `</svg>`;
+
+  const el = document.getElementById(containerId);
+  let legendHtml = `<div class="chart-legend">`;
+  series.forEach(s=>{ legendHtml += `<span class="item"><span class="sw" style="background:${s.color}"></span>${s.name}</span>`; });
+  legendHtml += `</div>`;
+  el.innerHTML = legendHtml + svg;
+
+  el.querySelectorAll('.bar-mark').forEach(node=>{
+    const ci = +node.dataset.cat, si = +node.dataset.ser;
+    node.addEventListener('mousemove', e=>{
+      showTip(e, `<div class="tt-title">${categories[ci]} · ${series[si].name}</div>
+        <div class="tt-row"><span>${opts.valueLabel||'ערך'}</span><span>${opts.fmt ? opts.fmt(series[si].values[ci]) : series[si].values[ci]}</span></div>`);
+    });
+    node.addEventListener('mouseleave', hideTip);
+  });
+}
+
+renderGroupedBars('chart-monthly-spend',
+  DATA.monthlySpend.map(d=>d.m),
+  [
+    {name:'סה״כ חשבון', color:'var(--series-2)', values: DATA.monthlySpend.map(d=>d.total)},
+    {name:'קמפייני מכירות בלבד', color:'var(--series-1)', values: DATA.monthlySpend.map(d=>d.sales)}
+  ],
+  {fmt: money, valueLabel:'הוצאה'}
+);
+
+renderGroupedBars('chart-monthly-leads',
+  DATA.monthlyPhoneLeads.map(d=>d.m),
+  [
+    {name:'לידים', color:'var(--series-1)', values: DATA.monthlyPhoneLeads.map(d=>d.leads)},
+    {name:'נסגרו', color:'var(--good)', values: DATA.monthlyPhoneLeads.map(d=>d.closed)}
+  ],
+  {fmt: num, valueLabel:'לידים'}
+);
+
+renderGroupedBars('chart-source',
+  DATA.leadsBySource.map(d=>d.name),
+  [
+    {name:'לידים', color:'var(--series-4)', values: DATA.leadsBySource.map(d=>d.leads)},
+    {name:'נסגרו', color:'var(--good)', values: DATA.leadsBySource.map(d=>d.closed)}
+  ],
+  {fmt: num, valueLabel:'לידים'}
+);
+
+/* ============================= Bar list (top campaigns) ============================= */
+(function renderCampaignBarlist(){
+  const el = document.getElementById('barlist-campaigns');
+  const maxSpend = Math.max(...DATA.topCampaigns.map(c=>c.spend));
+  DATA.topCampaigns.forEach(c=>{
+    const row = document.createElement('div');
+    row.className = 'barlist-row';
+    const pct = (c.spend/maxSpend*100).toFixed(1);
+    row.innerHTML = `
+      <div class="barlist-top">
+        <span class="barlist-name">${c.name}${c.matched ? '<span class="barlist-badge">✓ מזוהה ב-CRM</span>' : ''}</span>
+        <span class="barlist-val">${money(c.spend)}</span>
+      </div>
+      <div class="barlist-track"><div class="barlist-fill" style="width:${pct}%;background:${c.matched ? 'var(--good)' : 'var(--series-1)'}"></div></div>
+    `;
+    row.addEventListener('mousemove', e=>{
+      showTip(e, `<div class="tt-title">${c.name}</div>
+        <div class="tt-row"><span>הוצאה</span><span>${money(c.spend)}</span></div>
+        <div class="tt-row"><span>לידים (פיקסל מטא)</span><span>${num(c.leads)}</span></div>
+        <div class="tt-row"><span>עלות לליד</span><span>${c.cpl ? moneyDec(c.cpl) : '—'}</span></div>
+        ${c.matched ? '<div class="tt-row"><span>סטטוס</span><span>מזוהה ב-CRM</span></div>' : ''}`);
+    });
+    row.addEventListener('mouseleave', hideTip);
+    el.appendChild(row);
+  });
+})();
+
+/* ============================= Gap comparison bars ============================= */
+(function renderGapBars(){
+  const el = document.getElementById('gapbars');
+  const items = [
+    {label:'לידים לפי מדידת מטא (פיקסל)', value: DATA.kpi.fbMetaLeads, color:'var(--series-1)'},
+    {label:'לידים מיוחסים ב-CRM (UTM)', value: DATA.kpi.fbCrmLeads, color:'var(--critical)'}
+  ];
+  const max = Math.max(...items.map(i=>i.value));
+  items.forEach(it=>{
+    const row = document.createElement('div');
+    row.className = 'gapbar-row';
+    const pct = Math.max((it.value/max*100), 0.6);
+    row.innerHTML = `
+      <div class="gapbar-label"><span>${it.label}</span><span class="n">${num(it.value)}</span></div>
+      <div class="gapbar-track"><div class="gapbar-fill" style="width:${pct}%;background:${it.color}"></div></div>
+    `;
+    el.appendChild(row);
+  });
+  const note = document.createElement('p');
+  note.style.cssText = 'font-size:12px;color:var(--muted);margin-top:4px;';
+  note.textContent = 'שיעור שיוך: 0.13% מהלידים שמטא מדווחת עליהם מזוהים ב-CRM עם UTM תואם.';
+  el.appendChild(note);
+})();
+
+/* ============================= Matched campaigns table ============================= */
+(function renderMatchedTable(){
+  const body = document.getElementById('matched-table-body');
+  DATA.matchedCampaigns.forEach(c=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${c.name}</td>
+      <td class="num">${money(c.spend)}</td>
+      <td class="num">${num(c.leads)}</td>
+      <td class="num">${num(c.closed)}</td>
+      <td class="num">${money(c.revenue)}</td>
+      <td class="num">${c.roas.toFixed(2)}×</td>`;
+    body.appendChild(tr);
+  });
+})();
+
+/* keep tooltip following the cursor while hovering any tracked element */
+document.addEventListener('mousemove', e=>{
+  if (tt.classList.contains('show')) moveTip(e);
+});
+</script>
