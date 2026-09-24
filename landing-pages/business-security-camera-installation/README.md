@@ -13,11 +13,11 @@
 | `form` repeater | העתק 1:1 מ-#13046 (6 שדות, אותם placeholders / required / integration names) |
 | Yoast | Title, Meta Description, OG, focus keyword |
 
-## ⚠️ שלב ידני נדרש: `bottom_text`
+## גוף הדף (`bottom_text`)
 
-ממשק ה-API מסנן `<style>` ו-`<svg>` משדות meta, ולכן הערך השמור כרגע ב-`bottom_text` **שבור**
-(ה-CSS מוצג כטקסט). יש להדביק את התוכן של `bottom_text.html` בשדה ACF **"bottom_text"**
-בעורך הפוסט ב-wp-admin (לשונית **Text / טקסט**, לא Visual), כמשתמש אדמין — בדיוק כמו שנשמר דף המקור.
+נכתב דרך `acf_update_field` של Royal MCP (שדה ACF מסוג wysiwyg), שמשמר `<style>` ו-`<svg>` כמו שמירה מ-wp-admin.
+`bottom_text.html` כאן הוא העותק המקומי של אותו תוכן.
+(הערה: `wp_update_post_meta` מסנן `<style>`/`<svg>` — לא להשתמש בו לשדה הזה.)
 
 ## הבדלים מכוונים מול דף המקור
 
