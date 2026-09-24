@@ -1,0 +1,229 @@
+<style>
+header #menu-header,header .tglmenu,header .cbtn,header .wsapp,header a[href*="wa.me"],header a[href*="api.whatsapp.com"]{display:none !important;}
+header .phonenum ul li:nth-child(2),header .phonenum ul li:nth-child(3){display:none !important;}
+header .phonenumdesk{display:none !important;}
+#wrapper > footer{display:none !important;}
+.sideform{display:none !important;}
+header{background:#192c77 !important;}
+.bannerlp{background:#f2f8fa;}
+.bannerlp img{width:100%;height:560px;object-fit:cover;object-position:50% 20%;display:block;}
+.t3-sticky-cta{display:none;}
+.t3-header-phone{position:fixed;top:85px;left:70px;z-index:10000;pointer-events:none;}
+.t3-header-phone a{pointer-events:auto;color:#5ae1ff;font-weight:bold;font-size:22px;text-decoration:none;display:inline-flex;align-items:center;}
+.t3-header-phone a:hover{text-decoration:underline;}
+.t3-header-phone .t3-hp-icon{color:#5ae1ff;margin-inline-end:6px;}
+#wrapper{position:relative;}
+#wrapper:before{content:"";position:absolute;top:0;left:0;right:0;height:290px;background:#f2f8fa;z-index:0;pointer-events:none;}
+.lpformwrap{background:#f2f8fa;}
+.lpformwrap .wrap.wrap1240{position:static !important;}
+.lpformwrap h1.fs32{position:absolute;top:210px;right:0;left:0;z-index:20;margin:0;padding:18px 20px;background:#f2f8fa;color:#192c77;font-size:26px;line-height:1.3;text-align:center;text-wrap:pretty;}
+.bannerlp{margin-top:130px;}
+.lpformwrap .fromwrap:before{content:"תיאום הצגת מערכת Lumana לרשות";display:block;direction:rtl;font-size:19px;color:#192c77;font-weight:bold;text-align:center;max-width:520px;margin:0 auto 16px;line-height:1.5;}
+.lpformwrap .fromwrap:after{content:"נציג צוות 3 יחזור אליכם לתיאום פגישה מקצועית קצרה.";display:block;direction:rtl;font-size:14px;color:#4a5768;font-weight:normal;text-align:center;max-width:420px;margin:12px auto 0;line-height:1.5;}
+@media (max-width:767px){
+.bannerlp img{height:auto;max-height:220px;object-fit:cover;object-position:center;}
+.t3-header-phone{display:none;}
+#wrapper:before{height:160px;}
+.lpformwrap h1.fs32{top:82px;font-size:19px;padding:14px 16px;}
+.bannerlp{margin-top:80px;}
+.lpformwrap .fromwrap:before{font-size:16px;padding:0 12px;}
+.t3-sticky-cta{display:flex !important;position:fixed;inset-inline:0;bottom:0;z-index:9999;box-shadow:0 -2px 10px rgba(0,0,0,.15);}
+.t3-sticky-cta a{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:14px 8px;font-weight:bold;font-size:15px;text-decoration:none;color:#fff;}
+.t3-sticky-cta .t3-sticky-btn--primary{background:#02a2cc;}
+.t3-sticky-cta .t3-sticky-btn--call{background:#192c77;}
+body{padding-bottom:60px;}
+.scrolltop,.scrollbottom{bottom:70px !important;}
+}
+.t3-halb{--navy:#192c77;--accent:#02a2cc;--ink:#3a3a3a;--muted:#4a5768;--line:#e3e8ee;--bg-soft:#f2f8fa;--radius:14px;--shadow:0 2px 10px rgba(25,44,119,.07);direction:rtl;text-align:right;font-family:'Assistant',Arial,Helvetica,sans-serif;color:var(--ink);max-width:1100px;margin:0 auto;}
+.t3-halb *{box-sizing:border-box;}
+.t3-halb h2{font-size:26px;color:var(--navy);margin:0 0 18px;line-height:1.3;text-wrap:pretty;}
+.t3-halb p{font-size:17px;line-height:1.7;margin:0 0 14px;}
+.t3-halb section{margin:64px 0;}
+.t3-halb section>p{max-width:700px;margin-left:auto;margin-right:auto;}
+.t3-halb .t3-hero-band{background:var(--bg-soft);border-radius:var(--radius);padding:28px 24px;margin:0 0 40px;text-align:center;}
+.t3-halb .t3-hero-sub{font-size:19px;color:var(--ink);max-width:760px;margin:0 auto 16px;}
+.t3-halb .t3-trust{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;list-style:none;padding:0;margin:0;}
+.t3-halb .t3-trust li{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 12px;font-size:15px;font-weight:bold;color:var(--navy);text-align:center;}
+.t3-halb .t3-cta-btn{display:inline-block;background:var(--accent);color:#fff !important;font-size:17px;font-weight:bold;text-decoration:none;padding:14px 32px;border-radius:999px;margin-top:8px;transition:background .15s ease,transform .15s ease;}
+.t3-halb .t3-cta-btn:hover{background:#028fb3;}
+.t3-halb .t3-cta-btn:focus-visible,.t3-halb a:focus-visible,.t3-halb summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+.t3-halb .t3-cta-wrap{text-align:center;margin-top:28px;}
+.t3-halb .t3-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.t3-halb .t3-cards.t3-cards-6{grid-template-columns:repeat(3,1fr);}
+.t3-halb .t3-cards.t3-cards-4{grid-template-columns:repeat(4,1fr);}
+.t3-halb .t3-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px 20px;text-align:center;box-shadow:var(--shadow);transition:transform .15s ease,box-shadow .15s ease;}
+.t3-halb .t3-card .t3-icon{width:56px;height:56px;border-radius:50%;background:#e8f7fb;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--navy);margin:0 auto 14px;}
+.t3-halb .t3-card h3{font-size:18px;color:var(--navy);margin:0 0 10px;}
+.t3-halb .t3-card p{font-size:15px;margin:0;color:var(--muted);}
+@media (hover:hover){
+.t3-halb .t3-card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(25,44,119,.13);}
+.t3-halb .t3-faq-item summary:hover{background:#f5fafc;}
+}
+.t3-halb .t3-price-box{background:var(--bg-soft);border-radius:var(--radius);padding:32px 24px;text-align:center;}
+.t3-halb .t3-price-box p{max-width:700px;margin:0 auto 18px;}
+.t3-halb .t3-emph{background:#e8f7fb;border-right:4px solid var(--accent);padding:14px 18px;font-weight:bold;color:var(--navy);border-radius:6px;max-width:700px;margin-left:auto;margin-right:auto;}
+.t3-halb .t3-trust2{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.t3-halb .t3-trust2.t3-trust2-3{grid-template-columns:repeat(3,1fr);}
+.t3-halb .t3-trust2 li{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 18px;font-size:16px;color:var(--navy);font-weight:bold;}
+.t3-halb .t3-faq-item{border-bottom:1px solid var(--line);padding:6px 0;}
+.t3-halb .t3-faq-item summary{cursor:pointer;list-style:none;font-size:17px;font-weight:bold;color:var(--navy);padding:16px 6px;position:relative;padding-inline-start:28px;border-radius:8px;}
+.t3-halb .t3-faq-item summary::-webkit-details-marker{display:none;}
+.t3-halb .t3-faq-item summary:after{content:"+";position:absolute;inset-inline-start:0;top:14px;font-size:22px;color:var(--accent);}
+.t3-halb .t3-faq-item[open] summary:after{content:"–";}
+.t3-halb .t3-faq-item .t3-faq-a{padding:0 6px 16px 28px;}
+.t3-halb .t3-faq-a p{font-size:15px;color:var(--muted);margin:0;}
+.t3-halb .t3-final{background:var(--navy);color:#fff;border-radius:var(--radius);padding:44px 24px;text-align:center;}
+.t3-halb .t3-final h2{color:#fff;}
+.t3-halb .t3-final p{color:#dbe4f0;}
+.t3-halb .t3-final .t3-cta-btn{background:var(--accent);color:#fff !important;}
+.t3-halb .t3-final .t3-cta-btn:hover{background:#028fb3;}
+.t3-halb .t3-mini-footer{border-top:1px solid var(--line);margin-top:50px;padding-top:24px;text-align:center;font-size:14px;color:var(--muted);}
+.t3-halb .t3-mini-footer a{color:var(--muted);text-decoration:underline;margin:0 8px;}
+.t3-halb .t3-photo{border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin:0 0 16px;}
+.t3-halb .t3-photo img{width:100%;height:auto;display:block;}
+.t3-halb .t3-photo-cap{font-size:14px;color:var(--muted);text-align:center;margin:0 0 14px;}
+@media (max-width:900px){.t3-halb .t3-cards,.t3-halb .t3-cards.t3-cards-6,.t3-halb .t3-cards.t3-cards-4{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:560px){.t3-halb section{margin:44px 0;}.t3-halb .t3-cards,.t3-halb .t3-cards.t3-cards-6,.t3-halb .t3-cards.t3-cards-4{grid-template-columns:repeat(2,1fr);}.t3-halb .t3-trust{grid-template-columns:repeat(2,1fr);}.t3-halb .t3-trust2,.t3-halb .t3-trust2.t3-trust2-3{grid-template-columns:1fr;}.t3-halb h2{font-size:22px;}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth;}}
+@media (prefers-reduced-motion:reduce){.t3-halb .t3-card,.t3-halb .t3-cta-btn{transition:none;}}
+.t3-halb .t3-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:t3step;list-style:none;padding:0;margin:0;}
+.t3-halb .t3-step{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px 18px;text-align:center;box-shadow:var(--shadow);}
+.t3-halb .t3-step .t3-stepnum{counter-increment:t3step;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;font-weight:bold;margin:0 auto 14px;}
+.t3-halb .t3-step .t3-stepnum:before{content:counter(t3step);}
+.t3-halb .t3-step p{font-size:15px;color:var(--muted);margin:0;}
+.t3-halb .t3-logo{display:block;width:100%;max-width:360px;height:auto;margin:0 auto 18px;}
+@media (max-width:900px){.t3-halb .t3-steps{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:560px){.t3-halb .t3-steps{grid-template-columns:1fr;}.t3-halb .t3-logo{max-width:260px;}}
+</style>
+<div class="t3-header-phone"><a href="tel:0738010665"><svg class="t3-hp-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.902.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.908.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>073-8010665</a></div>
+<div class="t3-halb" id="t3-halb-root">
+<div class="t3-hero-band">
+<img class="t3-logo" src="https://team3il.b-cdn.net/wp-content/uploads/2025/07/t3lumana-1.png" alt="צוות 3 ו-Lumana Video Analytics &amp; AI" width="1436" height="334">
+<p class="t3-hero-sub">מערכת ניהול וידאו מתקדמת (VMS) מבוססת בינה מלאכותית, שמאפשרת לרשויות למצות ערך אמיתי ממערך המצלמות הקיים – ללא החלפת תשתיות וללא השקעה כבדה בחומרה חדשה.</p>
+<p class="t3-hero-sub">טכנולוגיית Lumana מופיעה כאופציה במכרז הטכנולוגיה של משכ״ל – רכישה פשוטה ומהירה, ללא מכרז ייעודי.</p>
+<ul class="t3-trust">
+<li>שכבת AI על מצלמות קיימות</li>
+<li>זמינה במכרז משכ״ל</li>
+<li>חיבור למוקדים עירוניים</li>
+<li>ביטחון, בטיחות וניהול שוטף</li>
+</ul>
+</div>
+<section id="challenge">
+<h2>מערכת אחת לביטחון, בטיחות וניהול שוטף ברשות</h2>
+<p>רשויות מקומיות, מועצות אזוריות ומושבים מתמודדים עם אתגרי ביטחון, בטיחות וניהול מורכבים מאי פעם – לצד מגבלות תקציב, עומס רגולטורי ותהליכי רכש ארוכים.</p>
+<p>Lumana פועלת כשכבת AI חכמה על גבי המצלמות הקיימות, ומותאמת לעולם המוניציפלי: שטחים פתוחים, כניסות יישוב, מוסדות חינוך, מתקנים רגישים וצירים מרכזיים – הכל במקום אחד.</p>
+</section>
+<section id="capabilities">
+<h2>יכולות זיהוי מרכזיות של המערכת</h2>
+<div class="t3-cards t3-cards-4">
+<div class="t3-card">
+<div class="t3-icon" aria-hidden="true"><i class="fa fa-exclamation-triangle"></i></div>
+<h3>חריגים ואירועים בזמן אמת</h3>
+<p>זיהוי חריגים ואירועים בשגרה ובחירום.</p>
+</div>
+<div class="t3-card">
+<div class="t3-icon" aria-hidden="true"><i class="fa fa-ban"></i></div>
+<h3>חדירה לשטחים אסורים</h3>
+<p>התרעות על חדירה, תנועה חשודה והתקהלויות חריגות.</p>
+</div>
+<div class="t3-card">
+<div class="t3-icon" aria-hidden="true"><i class="fa fa-car"></i></div>
+<h3>כלי רכב</h3>
+<p>זיהוי כלי רכב, תנועת רכבים חשודה ודפוסי נסיעה חריגים.</p>
+</div>
+<div class="t3-card">
+<div class="t3-icon" aria-hidden="true"><i class="fa fa-users"></i></div>
+<h3>ספירת אנשים ורכבים</h3>
+<p>לצרכי בטיחות, בקרה וניהול עומסים.</p>
+</div>
+<div class="t3-card">
+<div class="t3-icon" aria-hidden="true"><i class="fa fa-trash"></i></div>
+<h3>השלכת אשפה</h3>
+<p>זיהוי השלכת אשפה באזורים אסורים.</p>
+</div>
+<div class="t3-card">
+<div class="t3-icon" aria-hidden="true"><i class="fa fa-truck"></i></div>
+<h3>בקרה על עבודות תפעול</h3>
+<p>ניקוי רחובות, משאיות זבל ועבודות שוטפות של המועצה.</p>
+</div>
+<div class="t3-card">
+<div class="t3-icon" aria-hidden="true"><i class="fa fa-shield"></i></div>
+<h3>זיהוי כלי נשק</h3>
+<p>יכולת זיהוי כלי נשק בתמונת הווידאו.</p>
+</div>
+<div class="t3-card">
+<div class="t3-icon" aria-hidden="true"><i class="fa fa-plug"></i></div>
+<h3>חיבור למוקדים</h3>
+<p>חיבור מלא למוקדים עירוניים ולמוקדי ביטחון אזוריים.</p>
+</div>
+</div>
+<p class="t3-emph">השרתים, ההתקנה והשירות ניתנים ללא חיוב על ידי החברה.</p>
+<div class="t3-cta-wrap"><a class="t3-cta-btn" href="#wrapper">תיאום הצגת המערכת</a></div>
+</section>
+<section id="benefits">
+<h2>יתרונות ייחודיים לרשויות מקומיות</h2>
+<ul class="t3-trust2">
+<li>שימוש במצלמות קיימות – ללא החלפת תשתית</li>
+<li>קיצור זמני תגובה באירועי אמת</li>
+<li>שיפור משמעותי במוכנות לחירום</li>
+<li>חיסכון תקציבי משמעותי לאורך זמן</li>
+<li>מערכת אחת המשלבת ביטחון, בטיחות וניהול שוטף</li>
+</ul>
+</section>
+<section id="mashcal">
+<h2>רכישה באמצעות משכ״ל – בנוהל מכרזי מהיר</h2>
+<p>רשויות יכולות לרכוש את מערכת Lumana בצורה פשוטה ומהירה, ללא מכרז ייעודי, בהתקשרות בנוהל תיחור בין 9 זכיינים דרך החברה למשק וכלכלה של השלטון המקומי (משכ״ל).</p>
+<ol class="t3-steps">
+<li class="t3-step"><span class="t3-stepnum" aria-hidden="true"></span><p>הרשות פונה לנציג משכ״ל ומציגה את הדרישה.</p></li>
+<li class="t3-step"><span class="t3-stepnum" aria-hidden="true"></span><p>יחד עם יועץ ביטחון טכנולוגי של משכ״ל נבנה כתב כמויות מותאם, ולאחר אישור הרשות מתפרסם תיחור ל-9 זכיינים.</p></li>
+<li class="t3-step"><span class="t3-stepnum" aria-hidden="true"></span><p>משך הזמן עד קביעת זכיין: כ-3–4 שבועות.</p></li>
+<li class="t3-step"><span class="t3-stepnum" aria-hidden="true"></span><p>ההתקשרות עם הזכיין נעשית דרך משכ״ל, שמלווה את הפרויקט מנהלתית ובפיקוח עליון מקצועי עד מסירת המערכת.</p></li>
+<li class="t3-step"><span class="t3-stepnum" aria-hidden="true"></span><p>Lumana נרכשת כפתרון משלים – תוכנה, אנליטיקה ובינה מלאכותית – על גבי התשתיות הקיימות.</p></li>
+<li class="t3-step"><span class="t3-stepnum" aria-hidden="true"></span><p>ללא מכרז פומבי – תחילת עבודה בתוך שבועות ספורים.</p></li>
+</ol>
+<p class="t3-emph">המודל מאפשר ליהנות מטכנולוגיה מתקדמת תוך עמידה מלאה בכללי הרכש, השקיפות והבקרה הנדרשים בגופים ציבוריים.</p>
+<div class="t3-cta-wrap"><a class="t3-cta-btn" href="#wrapper">בדקו התאמה לרשות שלכם</a></div>
+</section>
+<section id="visual">
+<div class="t3-photo"><img decoding="async" src="https://team3il.b-cdn.net/wp-content/uploads/2025/07/btmimage.jpg" alt="מערכת Lumana לניתוח וידאו מבוסס בינה מלאכותית" width="1290" height="797" loading="lazy"></div>
+</section>
+<section id="faq">
+<h2>שאלות נפוצות</h2>
+<details class="t3-faq-item">
+<summary>האם צריך להחליף את המצלמות הקיימות?</summary>
+<div class="t3-faq-a">
+<p>לא. Lumana פועלת כשכבת AI על גבי מערך המצלמות הקיים ברשות, ללא החלפת תשתיות.</p>
+</div>
+</details>
+<details class="t3-faq-item">
+<summary>האם אפשר לרכוש את המערכת בלי מכרז ייעודי?</summary>
+<div class="t3-faq-a">
+<p>כן. טכנולוגיית Lumana מופיעה כאופציה במכרז הטכנולוגיה של משכ״ל, והרכישה מתבצעת בנוהל תיחור בין 9 זכיינים.</p>
+</div>
+</details>
+<details class="t3-faq-item">
+<summary>כמה זמן לוקח התהליך?</summary>
+<div class="t3-faq-a">
+<p>משך הזמן עד קביעת זכיין הוא כ-3–4 שבועות, ותחילת העבודה אפשרית בתוך שבועות ספורים.</p>
+</div>
+</details>
+<details class="t3-faq-item">
+<summary>האם המערכת מתחברת למוקד העירוני?</summary>
+<div class="t3-faq-a">
+<p>כן, המערכת מאפשרת חיבור מלא למוקדים עירוניים ולמוקדי ביטחון אזוריים.</p>
+</div>
+</details>
+</section>
+<section id="final-cta">
+<div class="t3-final">
+<h2>נשמח להציג לכם את המערכת</h2>
+<p>פגישה מקצועית קצרה להצגת Lumana, לבחינת התאמה לצרכי הרשות ולמענה לשאלות מקצועיות, תפעוליות ורגולטוריות.</p>
+<div class="t3-cta-wrap"><a class="t3-cta-btn" href="#wrapper">תיאום הצגת המערכת</a></div>
+</div>
+</section>
+<div class="t3-mini-footer">
+<div>צוות 3 &nbsp;|&nbsp; מכירות: <a href="tel:0738010665">073-8010665</a></div>
+<div class="t3-mf-links"><a href="https://www.team3.co.il/privacy-policy/">מדיניות פרטיות</a><a href="https://www.team3.co.il/%d7%94%d7%a6%d7%94%d7%a8%d7%aa-%d7%a0%d7%92%d7%99%d7%a9%d7%95%d7%aa/">הצהרת נגישות</a></div>
+</div>
+</div>
+<div class="t3-sticky-cta"><a href="#wrapper" class="t3-sticky-btn t3-sticky-btn--primary"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>לקבלת הצעה</a><a href="tel:0738010665" class="t3-sticky-btn t3-sticky-btn--call"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.902.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.908.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>חייגו עכשיו</a></div>
