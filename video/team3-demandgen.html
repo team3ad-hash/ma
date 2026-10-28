@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>צוות 3 – מיגון ומוקד 24/7</title>
+<style>
+@font-face{font-family:Heebo;src:url(assets/heebo-hebrew.woff2) format('woff2');font-weight:100 900;unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:Heebo;src:url(assets/heebo-latin.woff2) format('woff2');font-weight:100 900;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+:root{--navy:#041971;--deep:#020a2e;--ink:#01051a;--cyan:#22d3ff;--red:#ff3b4a;--green:#2ee59d;--white:#fff;--u:10.8px}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;overflow:hidden}
+body{font-family:Heebo,sans-serif;color:var(--white)}
+#stage{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 50% 35%,#0a1f7a 0%,var(--deep) 55%,var(--ink) 100%)}
+#grid{position:absolute;inset:-10%;background-image:linear-gradient(rgba(34,211,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,255,.07) 1px,transparent 1px);background-size:calc(var(--u)*6) calc(var(--u)*6)}
+#scanline{position:absolute;left:0;right:0;height:calc(var(--u)*18);background:linear-gradient(180deg,transparent,rgba(34,211,255,.08),transparent)}
+#flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(255,59,74,.55),rgba(255,59,74,.15) 60%,transparent);opacity:0;mix-blend-mode:screen}
+.scene{position:absolute;inset:0;opacity:0}
+.vis{position:absolute;width:calc(var(--u)*82);height:calc(var(--u)*82)}
+.vis svg{width:100%;height:100%;overflow:visible}
+.txt{position:absolute;text-align:center}
+.h{font-weight:900;font-size:calc(var(--u)*7.4);line-height:1.12;letter-spacing:-.01em}
+.h .hl{color:var(--cyan)}
+.h .red{color:var(--red)}
+.s{font-weight:400;font-size:calc(var(--u)*4.1);line-height:1.3;margin-top:calc(var(--u)*2.2);color:#cfe6ff}
+.w{display:inline-block;white-space:pre}
+/* portrait 9:16 */
+.portrait .vis{left:50%;top:15%;margin-left:calc(var(--u)*-41)}
+.portrait .txt{left:7%;right:7%;top:61%}
+/* landscape 16:9 / square */
+.landscape .vis{left:5%;top:50%;margin-top:calc(var(--u)*-41)}
+.landscape .txt{right:5%;width:48%;top:50%;transform:translateY(-50%);text-align:right}
+.landscape .h{font-size:calc(var(--u)*8.4)}
+.square .vis{left:50%;top:6%;margin-left:calc(var(--u)*-30);width:calc(var(--u)*60);height:calc(var(--u)*60)}
+.square .txt{left:6%;right:6%;top:66%}
+.square .h{font-size:calc(var(--u)*6.6)}
+.square .s{font-size:calc(var(--u)*3.8);margin-top:calc(var(--u)*1.4)}
+.square .stat b{font-size:calc(var(--u)*11)}
+.square .stats{gap:calc(var(--u)*3)}
+.square #bug span{display:none}
+/* brand bug */
+#bug{position:absolute;top:calc(var(--u)*4);right:calc(var(--u)*4);display:flex;align-items:center;gap:calc(var(--u)*1.6);opacity:0}
+#bug img{width:calc(var(--u)*10);height:calc(var(--u)*10);border-radius:calc(var(--u)*2.2);background:#fff;padding:calc(var(--u)*.6)}
+#bug span{font-weight:700;font-size:calc(var(--u)*3.3);letter-spacing:.02em}
+.portrait #bug{top:calc(var(--u)*6)}
+/* stats */
+.stats{display:flex;justify-content:center;gap:calc(var(--u)*5);width:100%;height:100%;align-items:center;flex-direction:column}
+.stat{text-align:center}
+.stat b{display:block;font-weight:900;font-size:calc(var(--u)*15);line-height:1;color:var(--white);font-variant-numeric:tabular-nums;direction:ltr}
+.stat i{display:block;font-style:normal;font-size:calc(var(--u)*4.4);color:var(--cyan);margin-top:calc(var(--u)*.6)}
+/* CTA */
+#cta .vis{display:flex;align-items:center;justify-content:center}
+#ctaLogo{width:calc(var(--u)*40);height:calc(var(--u)*40);border-radius:calc(var(--u)*7);background:#fff;padding:calc(var(--u)*2.2);box-shadow:0 0 calc(var(--u)*10) rgba(34,211,255,.35)}
+.btn{display:inline-block;margin-top:calc(var(--u)*3.4);background:var(--cyan);color:var(--ink);font-weight:900;font-size:calc(var(--u)*5.2);padding:calc(var(--u)*2) calc(var(--u)*6);border-radius:999px;box-shadow:0 0 calc(var(--u)*6) rgba(34,211,255,.55)}
+.contact{margin-top:calc(var(--u)*3);font-size:calc(var(--u)*4.2);font-weight:700;color:#cfe6ff;direction:ltr;unicode-bidi:isolate}
+.contact span{color:var(--white)}
+.square #ctaLogo{width:calc(var(--u)*34);height:calc(var(--u)*34)}
+.square .btn{margin-top:calc(var(--u)*2);font-size:calc(var(--u)*4.6);padding:calc(var(--u)*1.6) calc(var(--u)*5)}
+.square .contact{margin-top:calc(var(--u)*1.8);font-size:calc(var(--u)*3.8)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="grid"></div>
+  <div id="scanline"></div>
+  <div id="flash"></div>
+
+  <!-- 1 + 2 : the house at night, then the alarm -->
+  <section class="scene" id="s1">
+    <div class="vis"><svg viewBox="0 0 400 400">
+      <circle id="moon" cx="320" cy="70" r="26" fill="#e9f2ff"/>
+      <circle cx="332" cy="62" r="24" fill="#071660" id="moonCut"/>
+      <g id="stars" fill="#fff"></g>
+      <g fill="none" stroke="#22d3ff" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+        <path id="house" d="M70 350 V190 L200 85 L330 190 V350 Z" pathLength="1"/>
+        <path id="door" d="M175 350 V275 H225 V350" pathLength="1"/>
+        <rect id="win1" x="98" y="215" width="50" height="45" rx="4" pathLength="1"/>
+        <rect id="win2" x="252" y="215" width="50" height="45" rx="4" pathLength="1"/>
+        <path id="ground" d="M20 350 H380" pathLength="1"/>
+      </g>
+      <g id="intruder" opacity="0">
+        <circle cx="200" cy="296" r="9" fill="#ff3b4a"/>
+        <path d="M188 350 L192 312 Q200 304 208 312 L212 350 Z" fill="#ff3b4a"/>
+      </g>
+      <g id="waves" fill="none" stroke="#ff3b4a" stroke-width="5"></g>
+      <g id="sensor"><rect x="240" y="270" width="22" height="14" rx="4" fill="#fff"/><circle cx="251" cy="277" r="3.5" fill="#ff3b4a" id="sensorLed"/></g>
+      <g id="alertBadge" opacity="0">
+        <rect x="120" y="22" width="160" height="48" rx="24" fill="#ff3b4a"/>
+        <text x="200" y="55" fill="#fff" font-size="26" font-weight="900" text-anchor="middle" font-family="Heebo">⚠ התראה!</text>
+      </g>
+    </svg></div>
+    <div class="txt">
+      <div class="h" data-in="0.35" data-out="3.15">מי שומר על <span class="hl">הבית והעסק</span> כשאתם לא שם?</div>
+    </div>
+  </section>
+
+  <section class="scene" id="s2">
+    <div class="txt">
+      <div class="h" data-in="3.55" data-out="6.6">מערכת אזעקה <span class="red">שמזהה כל חדירה</span></div>
+      <div class="s" data-in="3.95" data-out="6.6">התראה מיידית — ברגע שזה קורה</div>
+    </div>
+  </section>
+
+  <!-- 3 : cameras + phone -->
+  <section class="scene" id="s3">
+    <div class="vis"><svg viewBox="0 0 400 400">
+      <defs>
+        <linearGradient id="cone" x1="0" x2="1"><stop offset="0" stop-color="#22d3ff" stop-opacity=".55"/><stop offset="1" stop-color="#22d3ff" stop-opacity="0"/></linearGradient>
+        <clipPath id="screenClip"><rect x="-70" y="-128" width="140" height="256" rx="18"/></clipPath>
+      </defs>
+      <g id="cam" transform="translate(110 110)">
+        <rect x="-10" y="-60" width="20" height="50" fill="#9fb4d9"/>
+        <g id="camHead">
+          <path id="camCone" d="M40 0 L260 -70 L260 70 Z" fill="url(#cone)"/>
+          <rect x="-35" y="-22" width="85" height="44" rx="10" fill="#e9f2ff"/>
+          <rect x="44" y="-16" width="14" height="32" rx="4" fill="#0b1b5c"/>
+          <circle cx="51" cy="0" r="7" fill="#22d3ff"/>
+          <circle cx="-20" cy="-10" r="4" fill="#ff3b4a" id="camLed"/>
+        </g>
+      </g>
+      <g id="phone" transform="translate(275 250)">
+        <rect x="-80" y="-140" width="160" height="280" rx="28" fill="#0b1440" stroke="#e9f2ff" stroke-width="5"/>
+        <g clip-path="url(#screenClip)">
+          <rect x="-70" y="-128" width="140" height="256" fill="#06103a"/>
+          <g opacity=".9" stroke="#22d3ff" stroke-width="3" fill="none">
+            <path d="M-50 60 V-5 L0 -45 L50 -5 V60 Z"/><path d="M-10 60 V25 H10 V60"/>
+          </g>
+          <rect id="scanBar" x="-70" y="-128" width="140" height="6" fill="#22d3ff" opacity=".6"/>
+          <g id="recDot"><circle cx="-48" cy="-105" r="6" fill="#ff3b4a"/><text x="-36" y="-99" fill="#fff" font-size="17" font-weight="700" font-family="Heebo">LIVE</text></g>
+          <text x="0" y="110" fill="#cfe6ff" font-size="15" text-anchor="middle" font-family="Heebo" id="clock">02:14:07</text>
+        </g>
+      </g>
+      <g id="notif" opacity="0">
+        <rect x="180" y="40" width="200" height="56" rx="16" fill="#fff"/>
+        <circle cx="352" cy="68" r="14" fill="#2ee59d"/>
+        <path d="M345 68 l5 5 l9 -10" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <text x="330" y="75" fill="#020a2e" font-size="19" font-weight="700" text-anchor="start" font-family="Heebo">הכל תקין בבית ✓</text>
+      </g>
+    </svg></div>
+    <div class="txt">
+      <div class="h" data-in="7.0" data-out="10.4">מצלמות אבטחה <span class="hl">חכמות</span></div>
+      <div class="s" data-in="7.4" data-out="10.4">צפייה חיה מהנייד — מכל מקום, בכל רגע</div>
+    </div>
+  </section>
+
+  <!-- 4 : 24/7 operations center -->
+  <section class="scene" id="s4">
+    <div class="vis"><svg viewBox="0 0 400 400">
+      <g id="links" stroke="#22d3ff" stroke-width="3" stroke-dasharray="6 8" fill="none" opacity=".7"></g>
+      <g id="packets" fill="#22d3ff"></g>
+      <g id="nodes"></g>
+      <g id="rings" fill="none" stroke="#22d3ff"></g>
+      <circle cx="200" cy="200" r="78" fill="#041971" stroke="#22d3ff" stroke-width="5"/>
+      <text id="h247" x="200" y="214" fill="#fff" font-size="54" font-weight="900" text-anchor="middle" font-family="Heebo" direction="ltr">24/7</text>
+      <text x="200" y="248" fill="#22d3ff" font-size="20" font-weight="700" text-anchor="middle" font-family="Heebo">מוקד מבצעי</text>
+    </svg></div>
+    <div class="txt">
+      <div class="h" data-in="10.85" data-out="14.4">מחוברים <span class="hl">למוקד מבצעי</span> 24/7</div>
+      <div class="s" data-in="11.3" data-out="14.4">מוקדנים ויחידת סיור — ערניים גם כשאתם ישנים</div>
+    </div>
+  </section>
+
+  <!-- 5 : trust -->
+  <section class="scene" id="s5">
+    <div class="vis"><div class="stats">
+      <div class="stat" data-in="14.85" data-out="17.6"><b id="cnt">0</b><i>לקוחות סומכים עלינו</i></div>
+      <div class="stat" data-in="15.25" data-out="17.6"><b>1990</b><i>מגינים על ישראל מאז</i></div>
+    </div></div>
+    <div class="txt">
+      <div class="h" data-in="15.0" data-out="17.6">ניסיון של <span class="hl">עשרות שנים</span> בביטחון</div>
+      <div class="s" data-in="15.4" data-out="17.6">התקנה מקצועית ושירות בפריסה ארצית</div>
+    </div>
+  </section>
+
+  <!-- 6 : CTA -->
+  <section class="scene" id="cta">
+    <div class="vis"><img id="ctaLogo" src="assets/logo-sq.png" alt="צוות 3"></div>
+    <div class="txt">
+      <div class="h" data-in="18.2">מגנים עליכם <span class="hl">מכל כיוון</span></div>
+      <div data-in="18.75"><span class="btn" id="btn">לקבלת הצעת מחיר ←</span></div>
+      <div class="contact" data-in="19.2"><span>team3.co.il</span> &nbsp;|&nbsp; 073-8010665</div>
+    </div>
+  </section>
+
+  <div id="bug"><img src="assets/logo-sq.png" alt=""><span>מיגון ומוקד</span></div>
+</div>
+
+<script>
+const DUR = 22;
+const params = new URLSearchParams(location.search);
+const fmt = params.get('format') || 'portrait'; // portrait | landscape | square
+const SIZES = {portrait:[1080,1920], landscape:[1920,1080], square:[1080,1080]};
+const [W,H] = SIZES[fmt];
+const stage = document.getElementById('stage');
+stage.style.width = W+'px'; stage.style.height = H+'px';
+document.body.classList.add(fmt);
+document.documentElement.style.setProperty('--u', (Math.min(W,H)/100)+'px');
+
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const prog=(t,a,b)=>clamp((t-a)/(b-a));
+const eOut=x=>1-Math.pow(1-x,3);
+const eInOut=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eBack=x=>{const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+const mk=(tag,attrs,parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e};
+
+// split headlines into words with staggered entry
+document.querySelectorAll('.h[data-in]').forEach(h=>{
+  const t0=parseFloat(h.dataset.in), out=h.dataset.out;
+  const walk=(node,acc)=>{[...node.childNodes].forEach(n=>{
+    if(n.nodeType===3){n.textContent.split(/(\s+)/).forEach(p=>{if(!p)return;
+      if(/^\s+$/.test(p)){acc.push(document.createTextNode(p));return}
+      const s=document.createElement('span');s.className='w';s.textContent=p;acc.push(s)});n.remove()}
+    else{const inner=[];walk(n,inner);inner.forEach(x=>n.appendChild(x));acc.push(n)}})};
+  const acc=[];walk(h,acc);acc.forEach(x=>h.appendChild(x));
+  let i=0;h.querySelectorAll('.w').forEach(w=>{w.dataset.in=(t0+i*0.07).toFixed(3);if(out)w.dataset.out=out;i++});
+  delete h.dataset.in; delete h.dataset.out;
+});
+
+// static decorations
+const stars=$('stars');
+for(let i=0;i<14;i++)mk('circle',{cx:(37*i*7)%380+10,cy:(53*i*3)%140+10,r:1.2+(i%3)*.6},stars);
+const waves=$('waves');
+for(let i=0;i<3;i++)mk('circle',{cx:251,cy:277,r:10},waves);
+const nodesDef=[[70,80,'home'],[330,80,'store'],[60,320,'home'],[340,320,'store'],[200,30,'patrol']];
+const links=$('links'),nodes=$('nodes'),packets=$('packets'),rings=$('rings');
+nodesDef.forEach(([x,y,k])=>{
+  mk('line',{x1:200,y1:200,x2:x,y2:y},links);
+  const g=mk('g',{transform:`translate(${x} ${y})`},nodes);
+  mk('circle',{r:30,fill:'#0b1b5c',stroke:'#e9f2ff','stroke-width':3},g);
+  const p={home:'M-14 12 V-2 L0 -14 L14 -2 V12 Z',store:'M-15 12 V-4 H15 V12 Z M-17 -4 L-12 -14 H12 L17 -4',patrol:'M-16 6 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M4 6 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M-10 6 L0 -8 H8 L10 6'}[k];
+  mk('path',{d:p,fill:'none',stroke:'#22d3ff','stroke-width':3,'stroke-linejoin':'round'},g);
+  mk('circle',{r:5},packets);
+});
+for(let i=0;i<3;i++)mk('circle',{cx:200,cy:200,r:80},rings);
+
+const SCENES=[['s1',0,6.8],['s2',3.4,6.8],['s3',6.8,10.6],['s4',10.6,14.6],['s5',14.6,17.8],['cta',17.8,99]];
+
+function render(t){
+  // background
+  $('grid').style.transform=`translate(${(t*6)%60}px,${(t*14)%60}px)`;
+  $('scanline').style.top=(((t*0.35)%1.2)-0.1)*H+'px';
+  $('bug').style.opacity=eOut(prog(t,0.4,1.0))*(1-prog(t,17.6,18.0));
+
+  SCENES.forEach(([id,a,b])=>{$(id).style.opacity=prog(t,a,a+0.3)*(1-prog(t,b-0.25,b))});
+
+  // generic entries
+  document.querySelectorAll('[data-in]').forEach(el=>{
+    const a=parseFloat(el.dataset.in), p=eOut(prog(t,a,a+0.45));
+    const o=el.dataset.out?1-prog(t,parseFloat(el.dataset.out)-0.2,parseFloat(el.dataset.out)):1;
+    el.style.opacity=p*o;
+    el.style.transform=`translateY(${(1-p)*4.5}vmin)`;
+    el.style.filter=p<1?`blur(${(1-p)*6}px)`:'none';
+  });
+
+  // scene 1: draw house
+  const dr=(id,a,b)=>$(id).style.strokeDasharray=`${eInOut(prog(t,a,b))} 1`;
+  dr('ground',0.0,0.6);dr('house',0.15,1.3);dr('door',0.9,1.5);dr('win1',1.0,1.5);dr('win2',1.1,1.6);
+  $('moon').style.opacity=$('moonCut').style.opacity=prog(t,0.2,0.8);
+  stars.style.opacity=prog(t,0.4,1.0)*(0.6+0.4*Math.sin(t*3));
+  $('sensor').style.opacity=prog(t,1.6,2.0);
+  // intruder approaches
+  const ip=prog(t,2.2,3.4);
+  $('intruder').setAttribute('opacity',ip>0?Math.min(1,ip*3):0);
+  $('intruder').setAttribute('transform',`translate(${(1-eOut(ip))*-150} 0)`);
+  // scene 2: alarm
+  const alarm=t>3.4&&t<6.8;
+  [...waves.children].forEach((c,i)=>{const ph=((t-3.4)*1.4+i/3)%1;
+    c.setAttribute('r',10+ph*110);c.setAttribute('opacity',alarm?(1-ph)*.9:0)});
+  $('sensorLed').setAttribute('fill',alarm&&Math.floor(t*6)%2?'#fff':'#ff3b4a');
+  $('flash').style.opacity=alarm?(0.25+0.35*Math.max(0,Math.sin((t-3.4)*Math.PI*2.5)))*(1-prog(t,6.2,6.8)):0;
+  const ab=eBack(prog(t,3.45,3.85));
+  $('alertBadge').setAttribute('opacity',alarm?1:0);
+  $('alertBadge').setAttribute('transform',`translate(200 46) scale(${ab}) translate(-200 -46)`);
+  // shake on alarm hit
+  const sh=t>3.4&&t<3.8?(1-prog(t,3.4,3.8))*10:0;
+  $('s1').querySelector('.vis').style.transform=`translate(${Math.sin(t*90)*sh}px,${Math.cos(t*77)*sh}px)`;
+
+  // scene 3: camera sweep + phone
+  const ang=-10+28*Math.sin((t-6.8)*1.6);
+  $('camHead').setAttribute('transform',`rotate(${ang})`);
+  $('camCone').setAttribute('opacity',.6+.4*Math.sin(t*5));
+  $('camLed').setAttribute('opacity',Math.floor(t*3)%2?1:.25);
+  const pp=eBack(prog(t,7.6,8.2));
+  $('phone').setAttribute('transform',`translate(275 ${250+(1-pp)*260}) scale(${0.85+0.15*pp})`);
+  $('scanBar').setAttribute('y',-128+((t*90)%256));
+  $('recDot').setAttribute('opacity',Math.floor(t*2.5)%2?1:.35);
+  const sec=7+Math.floor(t-6.8);$('clock').textContent=`02:14:${String(sec).padStart(2,'0')}`;
+  const np=eBack(prog(t,8.8,9.2));
+  $('notif').setAttribute('opacity',prog(t,8.8,9.0));
+  $('notif').setAttribute('transform',`translate(280 68) scale(${np}) translate(-280 -68)`);
+
+  // scene 4: hub
+  const lp=prog(t,10.8,11.6);
+  links.style.strokeDashoffset=-t*30;
+  [...links.children].forEach((l,i)=>{const [x,y]=nodesDef[i];const k=eOut(prog(t,10.8+i*0.12,11.5+i*0.12));
+    l.setAttribute('x2',200+(x-200)*k);l.setAttribute('y2',200+(y-200)*k)});
+  [...nodes.children].forEach((g,i)=>{const [x,y]=nodesDef[i];const k=eBack(prog(t,11.2+i*0.12,11.6+i*0.12));
+    g.setAttribute('transform',`translate(${x} ${y}) scale(${k})`)});
+  [...packets.children].forEach((c,i)=>{const [x,y]=nodesDef[i];const ph=((t*0.9)+i*0.37)%1;
+    c.setAttribute('cx',x+(200-x)*ph);c.setAttribute('cy',y+(200-y)*ph);c.setAttribute('opacity',t>11.8?Math.sin(ph*Math.PI):0)});
+  [...rings.children].forEach((c,i)=>{const ph=((t-10.6)*0.7+i/3)%1;
+    c.setAttribute('r',80+ph*110);c.setAttribute('stroke-width',4*(1-ph));c.setAttribute('opacity',(1-ph)*.8)});
+  const hb=1+0.05*Math.max(0,Math.sin(t*Math.PI*1.67));
+  $('h247').setAttribute('transform',`translate(200 200) scale(${hb}) translate(-200 -200)`);
+
+  // scene 5: counter
+  const cp=eOut(prog(t,14.9,16.6));
+  $('cnt').textContent=Math.round(52000*cp).toLocaleString('en-US')+'+';
+
+  // CTA
+  const lg=eBack(prog(t,17.9,18.5));
+  $('ctaLogo').style.transform=`scale(${lg}) rotate(${(1-lg)*-12}deg)`;
+  $('ctaLogo').style.opacity=prog(t,17.9,18.15);
+  const pulse=t>19.6?1+0.045*Math.max(0,Math.sin((t-19.6)*Math.PI*1.6)):1;
+  $('btn').style.transform=`scale(${pulse})`;
+}
+window.render=render; window.DUR=DUR; window.SIZE=[W,H];
+
+if(!params.has('render')){ // live preview: loop in real time
+  const fit=()=>{const s=Math.min(innerWidth/W,innerHeight/H);stage.style.transform=`scale(${s})`;stage.style.transformOrigin='0 0';
+    stage.style.position='absolute';stage.style.left=(innerWidth-W*s)/2+'px';stage.style.top=(innerHeight-H*s)/2+'px'};
+  addEventListener('resize',fit);fit();
+  const t0=performance.now();
+  const loop=()=>{render(((performance.now()-t0)/1000)%DUR);requestAnimationFrame(loop)};
+  document.fonts.ready.then(loop);
+}
+</script>
+</body>
+</html>
