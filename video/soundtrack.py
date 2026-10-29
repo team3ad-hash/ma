@@ -1,6 +1,7 @@
 # Synthesizes the 22s soundtrack (pad + pulse + transition hits + alarm + notification ping).
 import numpy as np, wave, os, sys
 BED=('--bed' in sys.argv)  # music bed only (pad + pulse), effects come from the HyperFrames SFX library
+FX=('--fx' in sys.argv)    # effects only (alarm, risers, hits, pings), to layer over music.py's score
 SR=44100; D=22.0; n=int(SR*D); t=np.arange(n)/SR
 out=np.zeros(n)
 rng=np.random.default_rng(3)
@@ -16,10 +17,10 @@ fade=np.clip(t/1.5,0,1)*np.clip((D-t)/1.2,0,1)
 chord1=[110,130.81,164.81,220]; chord2=[87.31,130.81,174.61,220]
 mix=np.clip((t-17.8)/0.6,0,1)
 pad=sum(np.sin(2*np.pi*f*t+np.sin(2*np.pi*0.2*t)*0.5) for f in chord1)*(1-mix)+sum(np.sin(2*np.pi*f*t) for f in chord2)*mix
-out+=0.05*pad*fade*(1+0.3*np.sin(2*np.pi*0.25*t))
+if not FX: out+=0.05*pad*fade*(1+0.3*np.sin(2*np.pi*0.25*t))
 # kick pulse at 100 bpm
 beat=60/100
-for k in np.arange(0.0,17.8,beat):
+for k in (np.arange(0.0,17.8,beat) if not FX else []):
     L=int(0.35*SR); x=np.arange(L)/SR; i0=int(k*SR)
     f=45+80*np.exp(-x*30); ph=2*np.pi*np.cumsum(f)/SR
     vol=0.35 if k<10.6 else 0.5
@@ -51,6 +52,6 @@ out=lp(out,0.6)
 out/=np.max(np.abs(out))*1.12
 st=np.stack([out,out],1)
 os.makedirs('out',exist_ok=True)
-with wave.open('out/soundtrack-bed.wav' if BED else 'out/soundtrack.wav','wb') as w:
+with wave.open('out/soundtrack-bed.wav' if BED else 'out/soundtrack-fx.wav' if FX else 'out/soundtrack.wav','wb') as w:
     w.setnchannels(2);w.setsampwidth(2);w.setframerate(SR);w.writeframes((st*32767).astype('<i2').tobytes())
 print('ok')
