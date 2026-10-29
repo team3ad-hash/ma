@@ -52,10 +52,10 @@ svg { position: absolute; overflow: visible; }
 /* photos */
 .photo { position: absolute; inset: 0; overflow: hidden; }
 .photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 50%;
-  filter: contrast(1.18) saturate(.78) brightness(.82); }
+  filter: contrast(1.08) saturate(.9) brightness(.96); }
 .photo::after { content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(4,12,24,.55) 0%, rgba(4,12,24,0) 35%, rgba(4,12,24,.15) 60%, rgba(2,6,12,.85) 100%),
-              linear-gradient(90deg, rgba(0,60,90,.25), rgba(255,140,40,.06)); mix-blend-mode: normal; }
+  background: linear-gradient(180deg, rgba(4,12,24,.4) 0%, rgba(4,12,24,0) 30%, rgba(4,12,24,0) 55%, rgba(2,6,12,.72) 100%),
+              linear-gradient(90deg, rgba(0,60,90,.14), rgba(255,140,40,.04)); mix-blend-mode: normal; }
 .scene.missing .photo { display: none; }
 #s6b img { object-position: 50% 15%; transform-origin: 50% 15%; }
 #s5p { left: auto; width: 46%; border-left: 2px solid var(--amber); -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%); }
@@ -66,9 +66,9 @@ svg { position: absolute; overflow: visible; }
 /* kinetic type */
 .kt { position: absolute; left: 0; right: 0; direction: rtl; text-align: center; font-family: Heebo; line-height: 1.02; }
 .kt .w { display: inline-block; white-space: pre; will-change: transform, opacity, filter; }
-.h1 { font-weight: 900; font-size: calc(var(--u)*9.2); letter-spacing: -.01em; text-shadow: 0 0 calc(var(--u)*3) rgba(0,0,0,.6); }
-.h2 { font-weight: 800; font-size: calc(var(--u)*6.4); text-shadow: 0 0 calc(var(--u)*2) rgba(0,0,0,.7); }
-.h3 { font-weight: 500; font-size: calc(var(--u)*3.6); letter-spacing: .01em; text-shadow: 0 0 calc(var(--u)*1.5) rgba(0,0,0,.8); }
+.h1 { font-weight: 900; font-size: calc(var(--u)*9.2); letter-spacing: -.01em; text-shadow: 0 calc(var(--u)*.25) calc(var(--u)*.6) rgba(0,0,0,.7), 0 0 calc(var(--u)*3) rgba(0,0,0,.65); }
+.h2 { font-weight: 800; font-size: calc(var(--u)*6.4); text-shadow: 0 calc(var(--u)*.2) calc(var(--u)*.5) rgba(0,0,0,.75), 0 0 calc(var(--u)*2) rgba(0,0,0,.7); }
+.h3 { font-weight: 500; font-size: calc(var(--u)*3.6); letter-spacing: .01em; text-shadow: 0 calc(var(--u)*.15) calc(var(--u)*.4) rgba(0,0,0,.8), 0 0 calc(var(--u)*1.5) rgba(0,0,0,.8); }
 .cy { color: var(--bp); }
 .rd { color: var(--alert); }
 .am { color: var(--amber); }
@@ -85,7 +85,7 @@ svg { position: absolute; overflow: visible; }
 #flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; mix-blend-mode: screen; }
 #redwash { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(255,30,50,.0) 20%, rgba(255,20,40,.55) 100%); opacity: 0; }
 #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 75% 70% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.72) 100%); pointer-events: none; }
-#grain { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .10; mix-blend-mode: overlay; pointer-events: none; image-rendering: pixelated; }
+#grain { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .05; mix-blend-mode: overlay; pointer-events: none; }
 #streak { position: absolute; left: -20%; right: -20%; height: calc(var(--u)*.35); top: 50%; opacity: 0;
   background: linear-gradient(90deg, transparent, rgba(95,212,255,.0) 10%, rgba(140,225,255,.9) 50%, rgba(95,212,255,0) 90%, transparent);
   filter: blur(2px); mix-blend-mode: screen; }
@@ -118,7 +118,7 @@ svg { position: absolute; overflow: visible; }
 
     <!-- S3: alarm, CCTV feed 8 - 10s -->
     <section class="scene" id="s3">
-      <div class="photo"><img data-src="assets/cctv.jpg"></div>
+      <div class="photo"><img data-src="assets/hd/cctv.jpg"></div>
       <div class="fallback layer" style="background:#0b120f">
         <svg class="bp" id="cctvFallback" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" style="inset:0;width:100%;height:100%"></svg>
       </div>
@@ -127,8 +127,8 @@ svg { position: absolute; overflow: visible; }
 
     <!-- S4: operations center 10 - 14s -->
     <section class="scene" id="s4">
-      <div class="photo" id="s4a"><img data-src="assets/moked.jpg"></div>
-      <div class="photo" id="s4b"><img data-src="assets/moked2.jpg"></div>
+      <div class="photo" id="s4a"><img data-src="assets/hd/moked.jpg"></div>
+      <div class="photo" id="s4b"><img data-src="assets/hd/moked2.jpg"></div>
       <div class="fallback layer" style="background:#050b14">
         <svg class="bp" id="mokedFallback" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" style="inset:0;width:100%;height:100%"></svg>
       </div>
@@ -141,14 +141,14 @@ svg { position: absolute; overflow: visible; }
         <div class="grid"></div>
         <svg class="bp" id="motoFallback" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" style="inset:0;width:100%;height:100%"></svg>
       </div>
-      <div class="photo" id="s5p"><img data-src="assets/moto.jpg"></div>
+      <div class="photo" id="s5p"><img data-src="assets/hd/moto.jpg"></div>
       <div class="layer" id="speedlines"></div>
     </section>
 
     <!-- S6: patrol officers 18 - 22s -->
     <section class="scene" id="s6">
-      <div class="photo" id="s6a"><img data-src="assets/patrol.jpg"></div>
-      <div class="photo" id="s6b"><img data-src="assets/patrol2.jpg"></div>
+      <div class="photo" id="s6a"><img data-src="assets/hd/patrol.jpg"></div>
+      <div class="photo" id="s6b"><img data-src="assets/hd/patrol2.jpg"></div>
       <div class="fallback layer" style="background:#050b14">
         <div class="grid"></div>
         <svg class="bp" id="mapFallback" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" style="inset:0;width:100%;height:100%"></svg>
@@ -157,10 +157,10 @@ svg { position: absolute; overflow: visible; }
 
     <!-- S7: proof points 22 - 26s -->
     <section class="scene" id="s7">
-      <div class="photo" id="s7a"><img data-src="assets/ops_room.jpg"></div>
-      <div class="photo" id="s7b"><img data-src="assets/hq.jpg"></div>
+      <div class="photo" id="s7a"><img data-src="assets/hd/ops_room.jpg"></div>
+      <div class="photo" id="s7b"><img data-src="assets/hd/hq.jpg"></div>
       <div class="fallback layer"><div class="grid"></div></div>
-      <div class="layer" style="background:rgba(4,8,16,.62)"></div>
+      <div class="layer" style="background:rgba(4,8,16,.52)"></div>
     </section>
 
     <!-- S8: CTA 26 - 30s -->
@@ -501,7 +501,7 @@ const hideAll = (...els) => els.forEach(e => e.style.opacity = 0);
 // Film grain (deterministic, precomputed tiles)
 // ===========================================================================
 const grain = $('#grain');
-const GW = Math.round(W / 3), GH = Math.round(H / 3);
+const GW = Math.round(W / 1.5), GH = Math.round(H / 1.5);
 grain.width = GW; grain.height = GH;
 const gctx = grain.getContext('2d');
 const GRAINS = [];
@@ -529,6 +529,8 @@ function sceneVis(id, t) {
 }
 function kb(img, x, s0, s1, dx0, dx1, dy0 = 0, dy1 = 0) {
   if (!img) return;
+  const K = .4;  // keeps photos close to native size so they stay sharp
+  s0 = 1 + (s0 - 1) * K; s1 = 1 + (s1 - 1) * K; dx0 *= K; dx1 *= K; dy0 *= K; dy1 *= K;
   img.style.transform = `translate(${lerp(dx0, dx1, x)}%, ${lerp(dy0, dy1, x)}%) scale(${lerp(s0, s1, x)})`;
 }
 const two = n => String(n).padStart(2, '0');
@@ -604,7 +606,7 @@ window.seek = function (t) {
   // ---- S5 motorcycle ----
   const x5 = sceneVis('s5', t);
   if (x5 >= 0) {
-    kb($('#s5 img'), E.out3(x5), 1.25, 1.02, 2, -2, 0, 0);
+    kb($('#s5 img'), E.out3(x5), 1.25, 1.05, 2, -2, 0, 0);
     const blur = punch(t, 14, .5) * 6;
     $('#s5 .photo img').style.filter = `contrast(1.2) saturate(.8) brightness(.85) blur(${blur}px)`;
     SPEED.forEach(s => { const ph = (s.off + (t - 14) * s.speed * 1.6) % 1; s.d.style.right = `${-40 + ph * 160}%`; s.d.style.opacity = .25 + punch(t, 14, .8) * .6; });
@@ -703,7 +705,7 @@ window.seek = function (t) {
   const bug = $('#bug');
   bug.style.top = (lb + (VERT ? H * .02 : H * .025)) + 'px';
   bug.style.opacity = .95 * E.out3(p(t, .6, 1.4)) * (1 - p(t, 25.7, 26));
-  gctx.putImageData(GRAINS[Math.floor(t * 24) % GRAINS.length], 0, 0);
+  gctx.putImageData(GRAINS[Math.floor(t * 12) % GRAINS.length], 0, 0);
   // fade in / out
   $('#stage').style.filter = `brightness(${clamp(p(t, 0, .35) * 1) * (1 - p(t, 29.4, 30))})`;
 };

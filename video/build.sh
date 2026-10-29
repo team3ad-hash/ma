@@ -3,6 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 [ -d node_modules ] || npm ci
+./upscale_assets.sh
 python3 music.py build/music.wav
 node render.js 1920 1080 build/team3_demandgen_16x9.mp4
 node render.js 1080 1920 build/team3_demandgen_9x16.mp4
