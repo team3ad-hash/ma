@@ -32,7 +32,7 @@ const server = http.createServer((req, res) => {
   if (missing.length) console.log('photos not found, using blueprint fallbacks for:', missing.join(', '));
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'png', '-i', '-',
+  const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-',
     '-i', path.join(ROOT, 'build/music.wav'),
     '-vf', 'unsharp=5:5:0.35:5:5:0', '-c:v', 'libx264', '-preset', 'slow', '-tune', 'film', '-crf', '14', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-movflags', '+faststart',
     '-af', 'loudnorm=I=-14:TP=-1.0:LRA=9', '-c:a', 'aac', '-b:a', '256k', '-ar', '48000', '-shortest', OUT], { stdio: ['pipe', 'inherit', 'inherit'] });
@@ -40,7 +40,7 @@ const server = http.createServer((req, res) => {
   const N = DUR * FPS;
   for (let i = 0; i < N; i++) {
     await page.evaluate(t => window.seek(t), i / FPS);
-    const buf = await page.screenshot({ type: 'png' });
+    const buf = await page.screenshot({ type: 'jpeg', quality: 98 });  // visually lossless, ~3x faster than png
     if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
     if (i % 150 === 0) console.log(`frame ${i}/${N}`);
   }
