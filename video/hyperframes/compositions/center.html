@@ -1,0 +1,88 @@
+<template>
+  <style>
+    @font-face { font-family: Heebo; src: url('assets/fonts/heebo-hebrew.woff2') format('woff2'); font-weight: 100 900; unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+    @font-face { font-family: Heebo; src: url('assets/fonts/heebo-latin.woff2') format('woff2'); font-weight: 100 900; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+    #root { position: absolute; inset: 0; container-type: size; container-name: scene; font-family: Heebo, sans-serif; color: #fff; direction: rtl; }
+    .stage { position: absolute; inset: 0; }
+    .vis { position: absolute; left: 50%; top: 14%; width: 66cqmin; height: 66cqmin; margin-left: -33cqmin; }
+    .vis svg { width: 100%; height: 100%; overflow: visible; }
+    .txt { position: absolute; left: 12%; right: 12%; top: 52%; text-align: center; }
+    .h { font-weight: 900; font-size: 7.6cqmin; line-height: 1.12; letter-spacing: -0.01em; }
+    .s { font-weight: 400; font-size: 4.2cqmin; line-height: 1.3; margin-top: 2.2cqmin; color: #cfe6ff; }
+    .hl { color: #22d3ff; } .red { color: #ff3b4a; }
+    .w { display: inline-block; white-space: pre; }
+    @container scene (min-aspect-ratio: 5/4) {
+      .vis { left: 5%; top: 50%; width: 82cqmin; height: 82cqmin; margin: -41cqmin 0 0 0; }
+      .txt { left: auto; right: 5%; width: 48%; top: 50%; transform: translateY(-50%); text-align: right; }
+      .h { font-size: 8.4cqmin; }
+    }
+    @container scene (min-aspect-ratio: 4/5) and (max-aspect-ratio: 5/4) {
+      .vis { top: 6%; width: 56cqmin; height: 56cqmin; margin-left: -28cqmin; }
+      .txt { left: 6%; right: 6%; top: 66%; }
+      .h { font-size: 6.6cqmin; }
+      .s { font-size: 3.8cqmin; margin-top: 1.4cqmin; }
+    }
+    .cc-node circle { fill: #0b1b5c; stroke: #e9f2ff; stroke-width: 3; }
+    .cc-node path { fill: none; stroke: #22d3ff; stroke-width: 3; stroke-linejoin: round; }
+  </style>
+  <div id="root" data-composition-id="center" data-composition-variables='[{"id":"centerSub","type":"string","label":"Center subline","default":"מוקדנים ויחידת סיור — ערניים גם כשאתם ישנים"}]'>
+    <div class="stage" id="cc-stage">
+      <div class="vis"><svg viewBox="0 0 400 400">
+        <g stroke="#22d3ff" stroke-width="3" stroke-dasharray="6 8" fill="none" opacity=".7" id="cc-links">
+          <line id="cc-l1" x1="200" y1="200" x2="200" y2="200"/>
+          <line id="cc-l2" x1="200" y1="200" x2="200" y2="200"/>
+          <line id="cc-l3" x1="200" y1="200" x2="200" y2="200"/>
+          <line id="cc-l4" x1="200" y1="200" x2="200" y2="200"/>
+          <line id="cc-l5" x1="200" y1="200" x2="200" y2="200"/>
+        </g>
+        <g fill="#22d3ff">
+          <circle id="cc-p1" r="5" cx="70" cy="80" opacity="0"/>
+          <circle id="cc-p2" r="5" cx="330" cy="80" opacity="0"/>
+          <circle id="cc-p3" r="5" cx="60" cy="320" opacity="0"/>
+          <circle id="cc-p4" r="5" cx="340" cy="320" opacity="0"/>
+          <circle id="cc-p5" r="5" cx="200" cy="30" opacity="0"/>
+        </g>
+        <g class="cc-node" id="cc-n1" transform="translate(70 80)"><g class="cc-pop"><circle r="30"/><path d="M-14 12 V-2 L0 -14 L14 -2 V12 Z"/></g></g>
+        <g class="cc-node" id="cc-n2" transform="translate(330 80)"><g class="cc-pop"><circle r="30"/><path d="M-15 12 V-4 H15 V12 Z M-17 -4 L-12 -14 H12 L17 -4"/></g></g>
+        <g class="cc-node" id="cc-n3" transform="translate(60 320)"><g class="cc-pop"><circle r="30"/><path d="M-14 12 V-2 L0 -14 L14 -2 V12 Z"/></g></g>
+        <g class="cc-node" id="cc-n4" transform="translate(340 320)"><g class="cc-pop"><circle r="30"/><path d="M-15 12 V-4 H15 V12 Z M-17 -4 L-12 -14 H12 L17 -4"/></g></g>
+        <g class="cc-node" id="cc-n5" transform="translate(200 30)"><g class="cc-pop"><circle r="30"/><path d="M-16 6 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M4 6 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M-10 6 L0 -8 H8 L10 6"/></g></g>
+        <g fill="none" stroke="#22d3ff">
+          <circle id="cc-r1" cx="200" cy="200" r="80" opacity="0"/>
+          <circle id="cc-r2" cx="200" cy="200" r="80" opacity="0"/>
+          <circle id="cc-r3" cx="200" cy="200" r="80" opacity="0"/>
+        </g>
+        <g id="cc-hub">
+          <circle cx="200" cy="200" r="78" fill="#041971" stroke="#22d3ff" stroke-width="5"/>
+          <text x="200" y="214" fill="#fff" font-size="54" font-weight="900" text-anchor="middle" font-family="Heebo" direction="ltr">24/7</text>
+          <text x="200" y="248" fill="#22d3ff" font-size="20" font-weight="700" text-anchor="middle" font-family="Heebo">מוקד מבצעי</text>
+        </g>
+      </svg></div>
+      <div class="txt">
+        <div class="h" id="cc-h"><span class="w">מחוברים </span><span class="w hl">למוקד </span><span class="w hl">מבצעי </span><span class="w">24/7</span></div>
+        <div class="s" id="cc-s" data-var-text="centerSub">מוקדנים ויחידת סיור — ערניים גם כשאתם ישנים</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const ends = [[70, 80], [330, 80], [60, 320], [340, 320], [200, 30]];
+    tl.fromTo("#cc-hub", { scale: 0.6, opacity: 0, svgOrigin: "200 200" }, { scale: 1, opacity: 1, svgOrigin: "200 200", duration: 0.5, ease: "back.out(1.4)" }, 0);
+    ends.forEach(([x, y], i) => {
+      tl.fromTo(`#cc-l${i + 1}`, { attr: { x2: 200, y2: 200 } }, { attr: { x2: x, y2: y }, duration: 0.7, ease: "expo.out" }, 0.2 + i * 0.12);
+      tl.fromTo(`#cc-n${i + 1} .cc-pop`, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.6)" }, 0.6 + i * 0.12);
+      // alarm signals travel from each site to the hub
+      tl.fromTo(`#cc-p${i + 1}`, { attr: { cx: x, cy: y }, opacity: 0 }, { attr: { cx: 200, cy: 200 }, keyframes: { opacity: [0, 1, 1, 0] }, duration: 1.1, repeat: 1, ease: "none", immediateRender: false }, 1.2 + i * 0.22);
+    });
+    ["#cc-r1", "#cc-r2", "#cc-r3"].forEach((r, i) => {
+      tl.fromTo(r, { attr: { r: 80, "stroke-width": 4 }, opacity: 0.8 }, { attr: { r: 190, "stroke-width": 0 }, opacity: 0, duration: 1.4, repeat: 1, ease: "power1.out", immediateRender: false }, 0.3 + i * 0.47);
+    });
+    tl.fromTo("#cc-links", { strokeDashoffset: 0 }, { strokeDashoffset: -120, duration: 4, ease: "none" }, 0);
+    // words arrive from grey to ink, no movement
+    tl.fromTo("#cc-h .w", { opacity: 0.25 }, { opacity: 1, duration: 0.25, stagger: 0.09, ease: "power2.out" }, 0.25);
+    tl.fromTo("#cc-h", { opacity: 0 }, { opacity: 1, duration: 0.12 }, 0.25);
+    tl.fromTo("#cc-s", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, 0.7);
+    tl.to("#cc-stage", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 3.8);
+    window.__timelines["center"] = tl;
+  </script>
+</template>

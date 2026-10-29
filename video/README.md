@@ -31,3 +31,25 @@ H.264 + AAC, 30fps, סאונד מקורי מסונתז (ללא זכויות יו
 ```bash
 python3 soundtrack.py && node render.js portrait && node render.js landscape && node render.js square
 ```
+
+## גרסת HyperFrames (`hyperframes/`)
+
+אותו סרטון, בנוי מחדש כפרויקט [HyperFrames](https://hyperframes.heygen.com) (HTML + GSAP, נפתח לעריכה ב-Studio / באפליקציית HyperFrames).
+
+| קובץ | יחס |
+|---|---|
+| `hyperframes/renders/team3-demandgen-portrait.mp4` | 9:16 |
+| `hyperframes/renders/team3-demandgen-landscape.mp4` | 16:9 |
+| `hyperframes/renders/team3-demandgen-square.mp4` | 1:1 |
+
+- `index.html` — הקומפוזיציה הראשית (9:16): רקע, 6 סצנות ופס הסאונד.
+- `compositions/` — סצנה לכל קובץ: `house` (פתיח + אזעקה), `cameras`, `center` (מוקד 24/7), `trust`, `cta`, `brand` (לוגו בפינה). כל סצנה מסדרת את עצמה לפי יחס המסך (container queries), כך שאותם קבצים משמשים לשלושת הפורמטים.
+- טקסטים ניתנים לעריכה כמשתנים (Variables) בכל סצנה: שורות משנה, טקסט הכפתור, האתר והטלפון.
+- סאונד: פס מוזיקה (`assets/audio/bed.wav`, נוצר ב-`soundtrack.py --bed`) + אפקטים מספריית HyperFrames (Pixabay License, מותר לשימוש מסחרי — `assets/sfx/CREDITS.md`) על כל פעולה במסך.
+
+```bash
+cd hyperframes
+npx hyperframes preview      # תצוגה ועריכה ב-Studio
+npm run check                # בדיקות lint / layout / contrast
+./render-formats.sh          # רינדור 9:16 + 16:9 + 1:1 אל renders/
+```
