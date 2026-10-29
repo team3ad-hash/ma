@@ -57,6 +57,9 @@ svg { position: absolute; overflow: visible; }
   background: linear-gradient(180deg, rgba(4,12,24,.55) 0%, rgba(4,12,24,0) 35%, rgba(4,12,24,.15) 60%, rgba(2,6,12,.85) 100%),
               linear-gradient(90deg, rgba(0,60,90,.25), rgba(255,140,40,.06)); mix-blend-mode: normal; }
 .scene.missing .photo { display: none; }
+#s5p { left: auto; width: 46%; border-left: 2px solid var(--amber); -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%); }
+.vert #s5p img { object-position: 50% 0%; transform-origin: 50% 0%; }
+.vert #s5p { left: 0; width: auto; bottom: auto; height: 58%; border-left: 0; border-bottom: 2px solid var(--amber); -webkit-mask-image: linear-gradient(0deg, transparent, #000 12%); }
 .scene:not(.missing) .fallback { display: none; }
 
 /* kinetic type */
@@ -118,7 +121,8 @@ svg { position: absolute; overflow: visible; }
 
     <!-- S4: operations center 10 - 14s -->
     <section class="scene" id="s4">
-      <div class="photo"><img data-src="assets/moked.jpg"></div>
+      <div class="photo" id="s4a"><img data-src="assets/moked.jpg"></div>
+      <div class="photo" id="s4b"><img data-src="assets/moked2.jpg"></div>
       <div class="fallback layer" style="background:#050b14">
         <svg class="bp" id="mokedFallback" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" style="inset:0;width:100%;height:100%"></svg>
       </div>
@@ -126,11 +130,12 @@ svg { position: absolute; overflow: visible; }
 
     <!-- S5: motorcycle patrol 14 - 18s -->
     <section class="scene" id="s5">
-      <div class="photo"><img data-src="assets/moto.jpg"></div>
-      <div class="fallback layer" style="background:#050b14">
+      <!-- the route map is always shown; the patrol photo sits beside it as a split-screen panel -->
+      <div class="layer" style="background:#050b14">
         <div class="grid"></div>
         <svg class="bp" id="motoFallback" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" style="inset:0;width:100%;height:100%"></svg>
       </div>
+      <div class="photo" id="s5p"><img data-src="assets/moto.jpg"></div>
       <div class="layer" id="speedlines"></div>
     </section>
 
@@ -183,6 +188,7 @@ const DUR = 30, BEAT = 0.5;
 const U = Math.min(W, H) / 100;
 document.documentElement.style.setProperty('--u', U + 'px');
 const stage = document.getElementById('stage');
+if (VERT) document.body.classList.add('vert');
 stage.style.width = W + 'px'; stage.style.height = H + 'px';
 const $ = s => document.querySelector(s);
 const NS = 'http://www.w3.org/2000/svg';
@@ -413,9 +419,9 @@ line([['מוקד', 10.5], ['מבצעי', 10.75]], 11.4, VERT ? 44 : 50, 'h2', 'r
 line([['מזהה.', 11.5], ['מאמת.', 12.0, 'cy'], ['מזניק.', 12.5, 'am']], 13.95, VERT ? 40 : 40, 'h1', 'slam');
 line([['תוך', 13.0], ['שניות', 13.25], ['מהקריאה', 13.5]], 13.95, VERT ? 54 : 58, 'h3');
 // S5  14-18 motorcycle patrol
-line([['סיירת', 14.0], ['האופנועים', 14.25, 'am']], 15.9, VERT ? 62 : 66, 'h1', 'slam');
-line([['חוצה', 16.0], ['את', 16.25], ['העיר', 16.5]], 17.9, VERT ? 62 : 66, 'h1', 'slam');
-line([['ומגיעה', 17.0, 'cy'], ['אליך', 17.25, 'cy']], 17.9, VERT ? 74 : 80, 'h2');
+[line([['סיירת', 14.0], ['האופנועים', 14.25, 'am']], 15.9, VERT ? 62 : 66, 'h1', 'slam'),
+ line([['חוצה', 16.0], ['את', 16.25], ['העיר', 16.5]], 17.9, VERT ? 62 : 66, 'h1', 'slam'),
+ line([['ומגיעה', 17.0, 'cy'], ['אליך', 17.25, 'cy']], 17.9, VERT ? 74 : 80, 'h2')].forEach(b => { if (!VERT) b.style.right = '46%'; });
 // S6  18-22 patrol officers + slogan
 line([['כשכל', 18.0], ['דקה', 18.5], ['קובעת', 19.0, 'am']], 21.9, VERT ? 58 : 60, 'h1', 'slam');
 line([['אנחנו', 20.0], ['כבר', 20.5], ['בדרך.', 21.0, 'cy']], 21.9, VERT ? 70 : 74, 'h1', 'slam');
@@ -578,7 +584,11 @@ window.seek = function (t) {
   // ---- S4 operations center ----
   const x4 = sceneVis('s4', t);
   if (x4 >= 0) {
-    kb($('#s4 img'), E.inOut3(x4), 1.06, 1.22, -2, 2, 0, -1);
+    const cut4 = t >= 12;
+    $('#s4a').style.opacity = cut4 ? 0 : 1;
+    $('#s4b').style.opacity = cut4 ? 1 : 0;
+    kb($('#s4a img'), E.inOut3(p(t, 10, 12)), 1.04, 1.16, -2, 1, 0, -1);
+    kb($('#s4b img'), E.inOut3(p(t, 12, 14)), 1.18, 1.06, 1, -1);
     document.querySelectorAll('#mokedFallback .flick').forEach((n, i) => n.setAttribute('opacity', .2 + .5 * Math.abs(Math.sin(t * 6 + i * 1.7))));
     document.querySelectorAll('#mokedFallback .alertMon').forEach(n => n.setAttribute('opacity', beatPulse(t, 10, 14)));
     $('#mokedFallback').style.transform = `scale(${lerp(1.05, 1.2, E.inOut3(x4))})`;
@@ -587,7 +597,7 @@ window.seek = function (t) {
   // ---- S5 motorcycle ----
   const x5 = sceneVis('s5', t);
   if (x5 >= 0) {
-    kb($('#s5 img'), E.out3(x5), 1.35, 1.08, 3, -3, 0, 0);
+    kb($('#s5 img'), E.out3(x5), 1.25, 1.02, 2, -2, 0, 0);
     const blur = punch(t, 14, .5) * 6;
     $('#s5 .photo img').style.filter = `contrast(1.2) saturate(.8) brightness(.85) blur(${blur}px)`;
     SPEED.forEach(s => { const ph = (s.off + (t - 14) * s.speed * 1.6) % 1; s.d.style.right = `${-40 + ph * 160}%`; s.d.style.opacity = .25 + punch(t, 14, .8) * .6; });
@@ -646,7 +656,7 @@ window.seek = function (t) {
     corners.forEach(c => { c.style.opacity = .7; c.style.borderColor = 'rgba(255,255,255,.75)'; });
   }
   if (t >= 14 && t < 18) {
-    miniWrap.style.opacity = $('#s5').classList.contains('missing') ? 0 : E.out3(p(t, 14.4, 14.9));
+    miniWrap.style.opacity = 0;  // the full-frame route map replaces the mini map
     unitChip.style.opacity = 1;
     unitChip.innerHTML = `<span class="chip" style="direction:ltr"><span class="dot" style="background:#ffb627;box-shadow:0 0 10px #ffb627"></span>UNIT M-07 · EN ROUTE</span>`;
   }
