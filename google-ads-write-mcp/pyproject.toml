@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "google-ads-write-mcp"
+version = "0.1.0"
+requires-python = ">=3.10"
+description = "Campaign write tools (all campaign types, incl. Demand Gen) for the official Google Ads MCP server."
+dependencies = [
+    # Pinned to the upstream commit these tools were built and tested against.
+    "google-ads-mcp @ git+https://github.com/googleads/google-ads-mcp@9a78cbdceebae71a6bc8483bdec333695834ef9c",
+    "google-ads>=34.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+google-ads-write-mcp = "ads_write_mcp.server:run_server"
+
+[tool.setuptools]
+packages = ["ads_write_mcp"]
