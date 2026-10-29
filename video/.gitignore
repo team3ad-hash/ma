@@ -1,0 +1,5 @@
+node_modules/
+build/*
+!build/team3_demandgen_16x9.mp4
+!build/team3_demandgen_9x16.mp4
+!build/poster_16x9.jpg
