@@ -18,7 +18,7 @@ const path = require('path'), fs = require('fs');
   }
   const start = sArg ? +sArg : 0, end = eArg ? +eArg : DUR;
   fs.mkdirSync('out', { recursive: true });
-  const outFile = `out/raw_${aspect}.mp4`;
+  const outFile = process.env.OUT || `out/raw_${aspect}.mp4`;
   const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'mjpeg', '-i', '-',
     '-vf', `tmix=frames=2:weights='1 1',fps=30,noise=alls=6:allf=t+u,format=yuv420p`,
     '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-r', '30', outFile], { stdio: ['pipe', 'inherit', 'inherit'] });

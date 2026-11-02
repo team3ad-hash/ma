@@ -374,19 +374,19 @@ tl.to('#ch2', { scale: 1, opacity: 1, duration: .5, ease: 'back.out(2)' }, 21.35
 SFX.push({ t: 21.0, type: 'pop' }, { t: 21.35, type: 'pop' });
 
 /* ======================================================== 08 PULLBACK + CTA */
-tl.to(kinbg, { opacity: 1, duration: .5 }, 23.25);
-[['#k1', 23.42], ['#k2', 23.82], ['#k3', 24.3]].forEach(([s, t]) => { tl.to(`${s} span`, { yPercent: 0, duration: .55, ease: 'expo.out' }, t); SFX.push({ t, type: 'slam' }); });
+tl.to(kinbg, { opacity: 1, duration: .5 }, 22.95);
+[['#k1', 23.1], ['#k2', 23.47], ['#k3', 23.97]].forEach(([s, t]) => { tl.to(`${s} span`, { yPercent: 0, duration: .55, ease: 'expo.out' }, t); SFX.push({ t, type: 'slam' }); });
 tl.to('#kin .kline', { scale: 1.5, opacity: 0, filter: 'blur(10px)', duration: .4, ease: 'power2.in', stagger: .04 }, 24.62);
 tl.to(kinbg, { opacity: 0, duration: .4 }, 24.7);
 plate('cta', 24.55);
 $$('.tbc').forEach((c, i) => tl.to(c, { clipPath: 'inset(0% 0% 0% 0%)', duration: .55, ease: 'expo.out' }, 24.8 + i * .07));
-tl.fromTo('.ctaD .logo', { opacity: 0, scale: 1.8, filter: 'blur(18px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: .55, ease: 'expo.out' }, 24.86);
-SFX.push({ t: 24.86, type: 'slam' });
-tl.fromTo('.stamp', { opacity: 0, scale: 3.2 }, { opacity: 1, scale: 1, duration: .28, ease: 'power4.in' }, 25.5);
-SFX.push({ t: 25.78, type: 'stamp' });
-flash(25.78, .3); shakes.push({ t: 25.78, a: 22 });
+tl.fromTo('.ctaD .logo', { opacity: 0, scale: 1.8, filter: 'blur(18px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: .55, ease: 'expo.out' }, 25.15);
+SFX.push({ t: 25.15, type: 'slam' });
+tl.fromTo('.stamp', { opacity: 0, scale: 3.2 }, { opacity: 1, scale: 1, duration: .28, ease: 'power4.in' }, 25.62);
+SFX.push({ t: 25.9, type: 'stamp' });
+flash(25.9, .3); shakes.push({ t: 25.9, a: 22 });
 // cursor glides in and clicks the CTA
-tl.fromTo('.cursor', { opacity: 0, x: 260, y: 220 }, { opacity: 1, x: 0, y: 0, duration: .75, ease: 'power3.out' }, 25.85);
+tl.fromTo('.cursor', { opacity: 0, x: 260, y: 220 }, { opacity: 1, x: 0, y: 0, duration: .75, ease: 'power3.out' }, 26.0);
 [26.7, 28.1].forEach(t => {
   tl.to('.cursor', { scale: .82, duration: .09, yoyo: true, repeat: 1, transformOrigin: '10% 5%' }, t);
   tl.fromTo('.btn', { scale: 1 }, { scale: .96, duration: .09, yoyo: true, repeat: 1 }, t);
