@@ -188,3 +188,9 @@ html.port #s-prof .mega{font-size:160px}
 html.sq #s-prof .mega{font-size:150px}
 #route{pointer-events:none}
 .st svg text{direction:ltr;unicode-bidi:plaintext}
+.c-cta{position:relative}
+.cursor{position:absolute;width:74px;height:92px;left:38%;top:52%;z-index:3;filter:drop-shadow(0 8px 14px rgba(0,0,0,.55));opacity:0}
+.ripple{position:absolute;left:38%;top:52%;width:20px;height:20px;margin:-10px 0 0 -10px;border:5px solid #fff;border-radius:50%;opacity:0;z-index:2}
+.c-wa b{font-family:'IBM Plex Mono';font-size:60px}
+.c-wa small{font-size:30px}
+html.port .kline{font-size:210px} html.sq .kline{font-size:180px}

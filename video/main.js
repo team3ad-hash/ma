@@ -385,6 +385,14 @@ SFX.push({ t: 24.86, type: 'slam' });
 tl.fromTo('.stamp', { opacity: 0, scale: 3.2 }, { opacity: 1, scale: 1, duration: .28, ease: 'power4.in' }, 25.5);
 SFX.push({ t: 25.78, type: 'stamp' });
 flash(25.78, .3); shakes.push({ t: 25.78, a: 22 });
+// cursor glides in and clicks the CTA
+tl.fromTo('.cursor', { opacity: 0, x: 260, y: 220 }, { opacity: 1, x: 0, y: 0, duration: .75, ease: 'power3.out' }, 25.85);
+[26.7, 28.1].forEach(t => {
+  tl.to('.cursor', { scale: .82, duration: .09, yoyo: true, repeat: 1, transformOrigin: '10% 5%' }, t);
+  tl.fromTo('.btn', { scale: 1 }, { scale: .96, duration: .09, yoyo: true, repeat: 1 }, t);
+  tl.fromTo('.ripple', { opacity: .9, scale: .5 }, { opacity: 0, scale: 9, duration: .6, ease: 'power2.out' }, t + .04);
+  SFX.push({ t, type: 'check' });
+});
 frameFns.push(T => {
   const btn = $('.btn');
   const ph = T > 26 ? ((T - 26) % 1.2) / 1.2 : -1;
