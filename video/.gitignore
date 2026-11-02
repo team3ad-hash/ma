@@ -1,0 +1,7 @@
+node_modules/
+out/raw_*.mp4
+out/log_*.txt
+qa/
+audio/*.raw
+audio/*.wav
+!audio/mix.wav

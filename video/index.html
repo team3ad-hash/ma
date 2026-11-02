@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Team3 · Armed Security · Blueprint</title>
+<link rel="stylesheet" href="node_modules/@fontsource/heebo/300.css">
+<link rel="stylesheet" href="node_modules/@fontsource/heebo/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/heebo/700.css">
+<link rel="stylesheet" href="node_modules/@fontsource/heebo/900.css">
+<link rel="stylesheet" href="node_modules/@fontsource/suez-one/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/ibm-plex-mono/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/ibm-plex-mono/600.css">
+<link rel="stylesheet" href="style.css">
+<script src="node_modules/gsap/dist/gsap.min.js"></script>
+</head>
+<body>
+<div id="vp">
+  <div id="world">
+    <div id="sheet">
+      <div id="zones"></div>
+      <svg id="route" width="8400" height="8400" viewBox="0 0 8400 8400"></svg>
+      <svg id="scribbles" width="8400" height="8400" viewBox="0 0 8400 8400"></svg>
+    </div>
+
+    <!-- ============ 01 HOOK ============ -->
+    <section class="st" id="s-hook" data-x="6200" data-y="1250" data-rot="0">
+      <div class="txt">
+        <div class="kicker"><span class="kl"></span><span class="type" data-text="גיליון 01 · מפרט לוחם"></span></div>
+        <h1 class="mega"><span class="w"><span class="wi">סיימת</span></span> <span class="w"><span class="wi">שירות</span></span></h1>
+        <svg class="dim" viewBox="0 0 1000 60" preserveAspectRatio="none"><path class="draw" d="M10 30 H990 M10 10 V50 M990 10 V50 M10 30 l22 -9 M10 30 l22 9 M990 30 l-22 -9 M990 30 l-22 9"/></svg>
+        <h1 class="mega amber"><span class="w"><span class="wi">קרבי</span></span> <span class="w"><span class="wi">מלא?</span></span></h1>
+      </div>
+      <svg class="hook-cross" viewBox="-600 -600 1200 1200">
+        <circle class="draw f" r="520"/><circle class="draw f" r="380"/>
+        <path class="draw f" d="M-580 0 H580 M0 -580 V580 M-410 -410 L410 410 M410 -410 L-410 410"/>
+      </svg>
+    </section>
+
+    <!-- ============ 02 RIFLE / REQUIREMENTS ============ -->
+    <section class="st" id="s-rifle" data-x="3600" data-y="1500" data-rot="0">
+      <div class="txt">
+        <div class="kicker"><span class="kl"></span><span class="type" data-text="בדיקת התאמה · פרופיל נדרש"></span></div>
+        <h2 class="h2"><span class="w"><span class="wi">מי</span></span> <span class="w"><span class="wi">אנחנו</span></span> <span class="w"><span class="wi amber">מחפשים</span></span></h2>
+        <ul class="reqs">
+          <li><i class="num">01</i><svg class="cb" viewBox="0 0 60 60"><rect class="draw" x="5" y="5" width="50" height="50"/><path class="draw ck" d="M14 31 L26 43 L47 17"/></svg><span class="rt"><span class="rti">שירות צבאי מלא</span></span></li>
+          <li><i class="num">02</i><svg class="cb" viewBox="0 0 60 60"><rect class="draw" x="5" y="5" width="50" height="50"/><path class="draw ck" d="M14 31 L26 43 L47 17"/></svg><span class="rt"><span class="rti">רובאי <b class="amber">03</b> ומעלה</span></span></li>
+          <li><i class="num">03</i><svg class="cb" viewBox="0 0 60 60"><rect class="draw" x="5" y="5" width="50" height="50"/><path class="draw ck" d="M14 31 L26 43 L47 17"/></svg><span class="rt"><span class="rti">תעודת לוחם</span></span></li>
+          <li><i class="num">04</i><svg class="cb" viewBox="0 0 60 60"><rect class="draw" x="5" y="5" width="50" height="50"/><path class="draw ck" d="M14 31 L26 43 L47 17"/></svg><span class="rt"><span class="rti">רישיון נהיגה בתוקף</span></span></li>
+        </ul>
+      </div>
+      <div class="dwg">
+        <svg id="rifle" viewBox="0 0 1000 400">
+          <defs>
+            <pattern id="hatch" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="14" stroke="#9fc3ff" stroke-opacity=".35" stroke-width="2"/></pattern>
+          </defs>
+          <path class="draw f cl" d="M10 190 H995"/>
+          <!-- overall dimension -->
+          <path class="draw dimc" d="M40 58 H995 M40 40 V170 M995 40 V140 M40 58 l20 -8 M40 58 l20 8 M995 58 l-20 -8 M995 58 l-20 8"/>
+          <text class="mono t-dim fade" x="517" y="45" text-anchor="middle">L = 1000</text>
+          <!-- body -->
+          <g class="rf">
+            <path class="draw" d="M40 180 H85 V200 H40 Z M52 180 V200 M64 180 V200 M76 180 V200"/>
+            <path class="draw" d="M85 185 H300 M85 195 H300"/>
+            <path class="draw" d="M280 200 V178 H332 V200 M298 178 L303 120 H315 L320 178"/>
+            <path class="draw" d="M332 158 H560 V222 H332 Q320 190 332 158 Z"/>
+            <path class="draw f2" d="M352 168 V212 M372 168 V212 M392 168 V212 M412 168 V212 M432 168 V212 M452 168 V212 M472 168 V212 M492 168 V212 M512 168 V212 M532 168 V212"/>
+            <path class="draw" d="M560 150 H574 V230 H560 Z"/>
+            <path class="draw" d="M574 153 H772 L792 170 V206 H574 Z"/>
+            <path class="draw" d="M602 153 V124 H760 V153 M622 124 V114 H702 V124 M740 124 V102 H758 V124"/>
+            <path class="draw" d="M772 146 H806 V154 H772"/>
+            <path class="draw" d="M592 206 H782 V236 L762 244 H604 Z"/>
+            <path class="draw" d="M614 236 H690 L714 348 Q702 372 680 370 L644 372 Q630 316 614 236 Z" fill="url(#hatch)"/>
+            <path class="draw" d="M700 244 Q704 274 740 274 H772 V244 M736 244 Q731 258 741 268"/>
+            <path class="draw" d="M772 236 H808 L840 332 Q834 344 820 344 L798 344 Z"/>
+            <path class="draw" d="M792 170 H842"/>
+            <path class="draw" d="M842 160 L985 146 Q995 148 995 158 V250 Q995 260 985 260 L900 254 L842 214 Z" fill="url(#hatch)"/>
+            <path class="draw" d="M978 148 V258"/>
+          </g>
+          <!-- callouts -->
+          <g class="co" id="co1"><path class="draw dimc" d="M309 120 L250 70 H170"/><circle class="draw" cx="309" cy="120" r="7"/><circle class="draw" cx="150" cy="70" r="22"/><text class="mono t-co" x="150" y="78" text-anchor="middle">01</text></g>
+          <g class="co" id="co2"><path class="draw dimc" d="M664 300 L560 330 H500"/><circle class="draw" cx="664" cy="300" r="7"/><circle class="draw" cx="478" cy="330" r="22"/><text class="mono t-co" x="478" y="338" text-anchor="middle">02</text></g>
+          <g class="co" id="co3"><path class="draw dimc" d="M920 220 L930 320 H960"/><circle class="draw" cx="920" cy="220" r="7"/><circle class="draw" cx="975" cy="320" r="22" /><text class="mono t-co" x="975" y="328" text-anchor="middle">03</text></g>
+          <g class="co" id="co4"><path class="draw dimc" d="M800 300 L860 370 H890"/><circle class="draw" cx="800" cy="300" r="7"/><circle class="draw" cx="912" cy="370" r="22"/><text class="mono t-co" x="912" y="378" text-anchor="middle">04</text></g>
+        </svg>
+        <svg id="grade" viewBox="0 0 1000 230">
+          <text class="mono t-lbl fade" x="40" y="34">RIFLE GRADE · רובאי</text>
+          <path class="draw" d="M40 130 H960"/>
+          <g id="gticks"></g>
+          <path class="draw amberS thick" id="gbar" d="M320 104 H960"/>
+          <path class="draw amberS" d="M960 104 l-22 -10 M960 104 l-22 10"/>
+          <g id="gptr"><path class="amberF" d="M0 0 L-16 -26 H16 Z"/></g>
+          <text class="hv t-big amberT fade" id="g03" x="320" y="90" text-anchor="middle">03+</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============ 03 PROFESSIONALISM ============ -->
+    <section class="st" id="s-prof" data-x="1450" data-y="3050" data-rot="-90">
+      <div class="txt">
+        <div class="kicker"><span class="kl"></span><span class="type" data-text="גיליון 02 · ניסיון מבצעי"></span></div>
+        <h1 class="mega outline" id="prof1"><span class="w"><span class="wi">המקצועיות</span></span> <span class="w"><span class="wi">שלך</span></span></h1>
+        <h1 class="mega amber" id="prof2"><span class="w"><span class="wi">לא</span></span> <span class="w"><span class="wi">השתחררה.</span></span></h1>
+        <svg class="dim" viewBox="0 0 1000 60" preserveAspectRatio="none"><path class="draw amberS thick" d="M10 20 H990"/><path class="draw" d="M10 45 H990 M10 35 V55 M990 35 V55 M500 35 V55"/></svg>
+      </div>
+    </section>
+
+    <!-- ============ 04 SITE ============ -->
+    <section class="st" id="s-site" data-x="3500" data-y="4000" data-rot="0">
+      <div class="txt">
+        <div class="kicker"><span class="kl"></span><span class="type" data-text="משרה 123088 · גיוס מיידי"></span></div>
+        <h2 class="h2 big"><span class="w"><span class="wi">דרושים</span></span> <span class="w"><span class="wi">מאבטחים</span></span><br><span class="w"><span class="wi amber">חמושים</span></span></h2>
+        <div class="sub"><span class="w"><span class="wi">לחברה מובילה</span></span> <span class="sep">·</span> <span class="w"><span class="wi">תחנת כוח בהקמה</span></span></div>
+        <div class="pin"><svg viewBox="0 0 40 52"><path d="M20 50 C20 50 4 30 4 19 A16 16 0 1 1 36 19 C36 30 20 50 20 50 Z" fill="#ffb627"/><circle cx="20" cy="19" r="6" fill="#06101f"/></svg><span>ליד צומת מוסמוס</span></div>
+        <ol class="duties">
+          <li><i class="num">01</i>בקרת כניסה לקבלנים ומשאיות</li>
+          <li><i class="num">02</i>סיור ממונע בשטח</li>
+          <li><i class="num">03</i>תגובה לאירועים</li>
+          <li><i class="num">04</i>נוכחות מרתיעה</li>
+        </ol>
+      </div>
+      <div class="dwg">
+        <svg id="site" viewBox="0 0 1000 840">
+          <defs>
+            <pattern id="hatch2" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><line x1="0" y1="0" x2="0" y2="16" stroke="#9fc3ff" stroke-opacity=".28" stroke-width="2"/></pattern>
+          </defs>
+          <rect class="draw f" x="6" y="6" width="988" height="828"/>
+          <text class="mono t-lbl fade" x="24" y="40">SITE PLAN · תוכנית אתר</text>
+          <!-- highway + access road -->
+          <path class="draw" d="M6 772 H994 M6 812 H994"/>
+          <path class="draw f2" d="M6 792 H994" stroke-dasharray=".012 .01"/>
+          <path class="draw" d="M478 772 V706 M522 772 V706"/>
+          <!-- fence -->
+          <path class="draw fence" id="fence" d="M478 700 H142 Q120 700 120 678 V142 Q120 120 142 120 H858 Q880 120 880 142 V678 Q880 700 858 700 H522"/>
+          <path class="fenceX fade" d="M478 700 H142 Q120 700 120 678 V142 Q120 120 142 120 H858 Q880 120 880 142 V678 Q880 700 858 700 H522"/>
+          <!-- turbine hall -->
+          <rect class="draw" x="190" y="190" width="340" height="150"/>
+          <path class="draw f2" d="M224 190 V340 M258 190 V340 M292 190 V340 M326 190 V340 M360 190 V340 M394 190 V340 M428 190 V340 M462 190 V340 M496 190 V340"/>
+          <text class="t-he fade" x="360" y="270" text-anchor="middle">אולם טורבינות</text>
+          <!-- HRSG -->
+          <rect class="draw" x="560" y="190" width="120" height="150" fill="url(#hatch2)"/>
+          <!-- stacks -->
+          <circle class="draw" cx="760" cy="230" r="36"/><circle class="draw" cx="760" cy="230" r="22"/>
+          <circle class="draw" cx="760" cy="310" r="36"/><circle class="draw" cx="760" cy="310" r="22"/>
+          <text class="t-he fade" x="760" y="378" text-anchor="middle">ארובות</text>
+          <!-- transformers -->
+          <g class="tyard"></g>
+          <text class="t-he fade" x="690" y="560" text-anchor="middle">שנאים</text>
+          <!-- construction zone -->
+          <rect class="draw dashR" id="czone" x="190" y="400" width="340" height="230" fill="url(#hatch2)"/>
+          <text class="t-he fade" x="360" y="600" text-anchor="middle">בהקמה</text>
+          <g id="crane"><circle class="draw" cx="0" cy="0" r="16"/><path class="draw" d="M0 0 L190 -60 M0 0 L-60 20"/><rect class="draw" x="-74" y="12" width="22" height="22"/></g>
+          <!-- parking -->
+          <path class="draw f2" d="M150 600 h100 M150 630 h100 M150 660 h100 M170 600 v60 M200 600 v60 M230 600 v60"/>
+          <!-- patrol route -->
+          <path class="draw amberS dashP" id="patrol" d="M500 666 H176 Q154 666 154 644 V176 Q154 154 176 154 H824 Q846 154 846 176 V644 Q846 666 824 666 Z"/>
+          <g id="car"><rect x="-14" y="-8" width="28" height="16" rx="3" class="amberF"/><rect x="2" y="-6" width="8" height="12" fill="#06101f"/></g>
+          <!-- trucks -->
+          <g id="truck1" class="truck"><rect x="-11" y="-26" width="22" height="52" rx="2"/><rect x="-11" y="-26" width="22" height="14" class="cab"/></g>
+          <g id="truck2" class="truck"><rect x="-11" y="-26" width="22" height="52" rx="2"/><rect x="-11" y="-26" width="22" height="14" class="cab"/></g>
+          <!-- gate -->
+          <rect class="draw" x="532" y="712" width="34" height="26"/>
+          <line id="barrier" x1="478" y1="704" x2="526" y2="704" class="barrier"/>
+          <!-- watch post + radar -->
+          <rect class="draw" x="846" y="102" width="40" height="40"/>
+          <path id="radar" d="M866 122 L866 -78 A200 200 0 0 1 1007 -19 Z" class="radar"/>
+          <!-- junction pin -->
+          <g id="jpin"><path d="M120 792 C120 792 100 768 100 754 A20 20 0 1 1 140 754 C140 768 120 792 120 792 Z" class="amberF"/><circle cx="120" cy="754" r="7" fill="#06101f"/></g>
+          <text class="t-he amberT fade" id="jlbl" x="150" y="762" text-anchor="start">צומת מוסמוס</text>
+          <!-- compass + scale -->
+          <g transform="translate(70 120)"><circle class="draw f" r="30"/><path class="draw" d="M0 26 L0 -26 M0 -26 l-9 18 M0 -26 l9 18"/><text class="mono t-co fade" y="-38" text-anchor="middle">N</text></g>
+          <path class="draw" d="M800 742 H960 M800 734 V750 M840 736 V748 M880 734 V750 M960 734 V750"/>
+          <!-- dims -->
+          <path class="draw dimc" d="M120 92 H880 M120 82 V112 M880 82 V112"/>
+          <path class="draw dimc" d="M930 120 V700 M920 120 H940 M920 700 H940"/>
+          <!-- site callouts -->
+          <g class="sco" id="sc1" transform="translate(500 704)"><circle class="ring" r="26"/><text class="mono t-co" y="8" text-anchor="middle">01</text></g>
+          <g class="sco" id="sc2" transform="translate(154 420)"><circle class="ring" r="26"/><text class="mono t-co" y="8" text-anchor="middle">02</text></g>
+          <g class="sco" id="sc3" transform="translate(470 470)"><circle class="ring" r="26"/><text class="mono t-co" y="8" text-anchor="middle">03</text></g>
+          <g class="sco" id="sc4" transform="translate(866 122)"><circle class="ring" r="26"/><text class="mono t-co" y="8" text-anchor="middle">04</text></g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============ 05 SALARY ============ -->
+    <section class="st" id="s-sal" data-x="6300" data-y="3500" data-rot="0">
+      <div class="txt">
+        <div class="kicker"><span class="kl"></span><span class="type" data-text="שכר · לשעה"></span></div>
+        <div class="money" dir="ltr"><span id="m1">68</span><span id="mdash">–</span><span id="m2">75</span></div>
+        <svg class="dim" viewBox="0 0 1000 60" preserveAspectRatio="none"><path class="draw" d="M10 30 H990 M10 10 V50 M990 10 V50 M10 30 l22 -9 M10 30 l22 9 M990 30 l-22 -9 M990 30 l-22 9"/></svg>
+        <div class="unit"><span class="w"><span class="wi">₪</span></span> <span class="w"><span class="wi">לשעה</span></span></div>
+      </div>
+      <div class="dwg">
+        <svg id="gauge" viewBox="0 0 900 540">
+          <path class="draw" d="M70 460 A380 380 0 0 1 830 460"/>
+          <path class="draw f" d="M130 460 A320 320 0 0 1 770 460"/>
+          <g id="gaugeTicks"></g>
+          <path id="band" class="band" d=""/>
+          <g id="needle"><path d="M0 0 L-8 -6 L-300 0 L-8 6 Z" class="amberF"/><circle r="22" class="hub"/><circle r="8" fill="#06101f"/></g>
+          <text class="mono t-lbl fade" x="450" y="525" text-anchor="middle">₪ / HOUR</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============ 06 BONUS ============ -->
+    <section class="st" id="s-bon" data-x="6900" data-y="5500" data-rot="6">
+      <div class="txt">
+        <div class="kicker"><span class="kl"></span><span class="type" data-text="בונוס · קורס מתקדם ב׳"></span></div>
+        <div class="bonus"><span class="upto">עד</span><span class="bnum" dir="ltr"><span id="bn">10,000</span><span class="cur">₪</span></span></div>
+        <div class="sub"><span class="w"><span class="wi">לבעלי</span></span> <span class="w"><span class="wi">קורס</span></span> <span class="w"><span class="wi">מתקדם</span></span> <span class="w"><span class="wi amber">ב׳</span></span> <span class="w"><span class="wi">בתוקף</span></span></div>
+        <div class="foot fade">* הבונוס משולם בפריסה</div>
+      </div>
+      <div class="dwg">
+        <svg id="badge" viewBox="0 0 900 600">
+          <path class="draw" d="M450 40 L700 110 V300 Q700 470 450 560 Q200 470 200 300 V110 Z"/>
+          <path class="draw f" d="M450 72 L670 134 V300 Q670 446 450 526 Q230 446 230 300 V134 Z"/>
+          <path class="draw amberS thick" d="M330 250 L450 200 L570 250 M330 310 L450 260 L570 310"/>
+          <text class="hv t-badge fade" id="bdgT" x="450" y="410" text-anchor="middle">מתקדם ב׳</text>
+          <g id="cells"></g>
+          <text class="mono t-lbl fade" x="40" y="590">0</text>
+          <text class="mono t-lbl fade" x="860" y="590" text-anchor="end">10K</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============ 07 BENEFITS ============ -->
+    <section class="st" id="s-ben" data-x="3700" data-y="6450" data-rot="0">
+      <div class="txt">
+        <div class="kicker"><span class="kl"></span><span class="type" data-text="תנאים · משמרות 24/7"></span></div>
+        <h2 class="h2"><span class="w"><span class="wi">מה</span></span> <span class="w"><span class="wi amber">מקבלים?</span></span></h2>
+        <ul class="reqs ben">
+          <li><svg class="cb" viewBox="0 0 60 60"><rect class="draw" x="5" y="5" width="50" height="50"/><path class="draw ck" d="M14 31 L26 43 L47 17"/></svg><span class="rt"><span class="rti">משרה <b class="amber">מועדפת</b></span></span></li>
+          <li><svg class="cb" viewBox="0 0 60 60"><rect class="draw" x="5" y="5" width="50" height="50"/><path class="draw ck" d="M14 31 L26 43 L47 17"/></svg><span class="rt"><span class="rti">הסעות למקום העבודה</span></span></li>
+          <li><svg class="cb" viewBox="0 0 60 60"><rect class="draw" x="5" y="5" width="50" height="50"/><path class="draw ck" d="M14 31 L26 43 L47 17"/></svg><span class="rt"><span class="rti">ארוחות</span></span></li>
+          <li><svg class="cb" viewBox="0 0 60 60"><rect class="draw" x="5" y="5" width="50" height="50"/><path class="draw ck" d="M14 31 L26 43 L47 17"/></svg><span class="rt"><span class="rti">קרן השתלמות <b class="amber">מהיום הראשון</b></span></span></li>
+          <li><svg class="cb" viewBox="0 0 60 60"><rect class="draw" x="5" y="5" width="50" height="50"/><path class="draw ck" d="M14 31 L26 43 L47 17"/></svg><span class="rt"><span class="rti">תנאים סוציאליים מלאים</span></span></li>
+        </ul>
+      </div>
+      <div class="dwg">
+        <svg id="dial" viewBox="-450 -430 900 900">
+          <circle class="draw" r="330"/>
+          <circle class="draw f" r="260"/>
+          <g id="dialTicks"></g>
+          <path id="arcM" class="arc a1" d=""/>
+          <path id="arcE" class="arc a2" d=""/>
+          <path id="arcN" class="arc a3" d=""/>
+          <text class="t-he2 fade" id="lM" x="0" y="0" text-anchor="middle">בוקר</text>
+          <text class="t-he2 fade" id="lE" x="0" y="0" text-anchor="middle">ערב</text>
+          <text class="t-he2 fade" id="lN" x="0" y="0" text-anchor="middle">לילה</text>
+          <g id="hand"><path d="M0 0 V-300" class="handL"/><circle r="12" class="hub"/></g>
+          <text class="hv t-247 fade" id="t247" x="0" y="26" text-anchor="middle" direction="ltr">24/7</text>
+        </svg>
+        <div class="chips"><span class="chip" id="ch1">סטודנטים מוזמנים</span><span class="chip" id="ch2">קורס הכשרה · 8 ימים</span></div>
+      </div>
+    </section>
+
+    <!-- ============ 08 CTA / TITLE BLOCK ============ -->
+    <section class="st" id="s-cta" data-x="6650" data-y="7650" data-rot="0">
+      <div class="txt">
+        <div class="tb">
+          <div class="tbc c-head"><span class="mono">TITLE BLOCK</span><span>משרה 123088 · גיליון 01/01</span></div>
+          <div class="tbc c-role"><small>תפקיד</small><b>מאבטח/ת חמוש/ה</b></div>
+          <div class="tbc c-pay"><small>שכר</small><b><span dir="ltr">68–75</span> ₪ לשעה</b></div>
+          <div class="tbc c-loc"><small>מיקום</small><b>ליד צומת מוסמוס</b></div>
+          <div class="tbc c-bonus"><small>בונוס</small><b>עד <span dir="ltr">10,000</span> ₪</b></div>
+          <div class="tbc c-cta"><div class="btn"><span>השאירו פרטים עכשיו</span><svg viewBox="0 0 60 40"><path d="M58 20 H6 M22 4 L6 20 L22 36" fill="none" stroke="#06101f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="tbc c-wa"><small>WhatsApp</small><b dir="ltr">053-521-6650</b></div>
+          <div class="tbc c-legal">המשרה מיועדת לנשים ולגברים כאחד</div>
+        </div>
+      </div>
+      <div class="dwg ctaD">
+        <img class="logo" src="assets/logo.png" alt="">
+        <div class="stamp"><span>מתאים</span><small>APPROVED · 03+</small></div>
+      </div>
+    </section>
+  </div>
+
+  <canvas id="fx"></canvas>
+  <div id="kin"><div class="kline" id="k1"><span>השאירו</span></div><div class="kline" id="k2"><span>פרטים</span></div><div class="kline amber" id="k3"><span>עכשיו</span></div></div>
+  <div id="light"></div>
+  <div id="hud">
+    <i class="cr tl"></i><i class="cr tr"></i><i class="cr bl"></i><i class="cr br"></i>
+    <img class="hlogo" src="assets/logo.png" alt="">
+    <div class="h-tl mono" dir="ltr">SHEET 01/01 · JOB #123088</div>
+    <div class="h-bl mono" dir="ltr" id="hcoord">X 0000.0  Y 0000.0  Z 1.00×</div>
+    <div class="h-br mono" dir="ltr" id="htc">00:00:00:00</div>
+    <div class="h-scale" dir="ltr"><i id="hsb"></i><span class="mono" id="hsl">1:100</span></div>
+    <div class="xh"></div>
+  </div>
+  <div id="vig"></div>
+  <div id="flash"></div>
+</div>
+<script src="main.js"></script>
+</body>
+</html>
