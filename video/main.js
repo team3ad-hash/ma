@@ -546,7 +546,7 @@ window.seek = seek; window.DUR = DUR; window.ASPECT = A;
 window.__ready = (async () => {
   await document.fonts.ready;
   await Promise.all(['300', '400', '700', '900'].map(w => document.fonts.load(`${w} 40px Heebo`, 'אבגד 0123')));
-  await document.fonts.load('400 40px "Suez One"', 'מתאים');
+  await document.fonts.load('400 40px "Suez One"', 'מתאימים');
   await document.fonts.load('400 40px "IBM Plex Mono"', 'AB01'); await document.fonts.load('600 40px "IBM Plex Mono"', 'AB01');
   await Promise.all($$('img').map(i => i.complete ? 1 : new Promise(r => { i.onload = r; i.onerror = r; })));
   buildCamera();

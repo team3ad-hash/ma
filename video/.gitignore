@@ -5,3 +5,4 @@ qa/
 audio/*.raw
 audio/*.wav
 !audio/mix.wav
+audio/events_prev.json
