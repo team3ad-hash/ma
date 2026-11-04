@@ -1,0 +1,3 @@
+﻿Campaign,Campaign Type,Networks,Budget,Budget type,Bid Strategy Type,Languages,Final URL suffix,Campaign Status
+SRC | אבטחה נגב | High Intent,Search,Google search,80,Daily,Maximize clicks,he;en;ar,utm_source=google&utm_medium=cpc&utm_campaign={campaignid}&utm_content={adgroupid}&utm_term={keyword},Paused
+SRC | דרושים נגב | Geo Broad,Search,Google search,25,Daily,Maximize clicks,he;en;ar,utm_source=google&utm_medium=cpc&utm_campaign={campaignid}&utm_content={adgroupid}&utm_term={keyword},Paused
