@@ -74,7 +74,7 @@ H_COMMON = [
 # ---------------------------------------------------------------- campaigns
 CAMPAIGNS = [
     {
-        "name": "SRC | משרה 124651 | מאבטחים עידן הנגב",
+        "name": "סודה סטרים - עידן הנגב 4/11/26",
         "short": "עידן הנגב",
         "job": "#124651 — מאבטחים/ות חמושים/ות, עידן הנגב",
         "budget": 80,
@@ -117,7 +117,7 @@ CAMPAIGNS = [
         ],
     },
     {
-        "name": "SRC | משרה 124655 | מאבטחים נאות חובב",
+        "name": "אדמה - מכתשים 4/11/26",
         "short": "נאות חובב",
         "job": "#124655 — מאבטחים/ות חמושים/ות, נאות חובב / באר שבע",
         "budget": 80,
@@ -161,6 +161,70 @@ CAMPAIGNS = [
         ],
     },
 ]
+
+
+# ---------------------------------------------------------------- extra RSA angles
+# Google allows max 3 ENABLED RSAs per ad group -> v1, v2, v3 enabled; v4 paused (backup).
+ANGLES = {
+    "עידן הנגב": [
+        ("v2_benefits", "זווית: תנאים והטבות", "Enabled", [
+            "תנאים סוציאליים מלאים", "תנאים מהיום הראשון לעבודה", "ארוחות במשמרת על חשבוננו",
+            "הסעות מסודרות לעבודה", "קידום והתפתחות בתפקיד", "עבודה יציבה במפעל מוביל",
+            "משמרות מגוונות בכל שעות היום", "הכשרה קצרה - יום אחד", "סיורים ובקרת כניסה במפעל",
+            "הצטרפו לצוות האבטחה", "השאירו פרטים ונחזור אליכם"], [
+            "תנאים סוציאליים מלאים מהיום הראשון, ארוחות במשמרת והסעות. הצטרפו לצוות האבטחה.",
+            "עבודה כמאבטח/ת חמוש/ה במפעל מוביל בעידן הנגב: סיורים ובקרת כניסה במשמרות 24/7.",
+            "הכשרה של יום אחד בלבד ואפשרויות קידום נרחבות. השאירו פרטים בטופס הקצר.",
+            "דרישות: שירות צבאי מלא, פרופיל 02 ומעלה ורישיון נהיגה. עבודה מועדפת!"]),
+        ("v3_discharged", "זווית: חיילים משוחררים / עבודה מועדפת", "Enabled", [
+            "השתחררתם? יש לנו עבודה", "עבודה מועדפת למשוחררים/ות", "עבודה מועדפת עם תנאים טובים",
+            "עבודה מועדפת בנגב עם הסעות", "מתאים לפרופיל 02 ומעלה", "שירות מלא ורישיון נהיגה? בואו",
+            "אחרי הצבא - לעבודה באבטחה", "מאבטח/ת חמוש/ה בעידן הנגב", "הכשרה של יום ומתחילים",
+            "ארוחות והסעות כלולות", "הגישו מועמדות בקלות"], [
+            "השתחררתם? עבודה מועדפת כמאבטחים/ות חמושים/ות במפעל מוביל בעידן הנגב. הגישו עכשיו",
+            "מתאים למשוחררים/ות עם שירות צבאי מלא, פרופיל 02 ומעלה ורישיון נהיגה.",
+            "הכשרה של יום אחד, ארוחות והסעות ותנאים סוציאליים מלאים מהיום הראשון.",
+            "משמרות מגוונות 24/7 ואפשרויות קידום. השאירו פרטים ונחזור אליכם בהקדם."]),
+        ("v4_easy_apply", "זווית: הגשה קלה ומהירה (גיבוי)", "Paused", [
+            "טופס קצר ופשוט להגשה", "נחזור אליכם בהקדם", "גיוס פעיל למאבטחים/ות",
+            "מגייסים מאבטחים/ות לנגב", "הכשרה של יום - ויוצאים לדרך", "אפשר לפנות גם בוואטסאפ",
+            "מאבטח/ת חמוש/ה - עידן הנגב", "משמרות 24/7 במפעל מוביל", "תנאים מלאים מהיום הראשון",
+            "ארוחות + הסעות לעבודה", "עבודה מועדפת - הגישו היום"], [
+            "מגייסים מאבטחים/ות חמושים/ות לעידן הנגב. ממלאים טופס קצר ונחזור אליכם בהקדם.",
+            "הכשרה של יום אחד בלבד, תנאים סוציאליים מלאים מהיום הראשון, ארוחות והסעות.",
+            "עבודה מועדפת! דרישות: שירות צבאי מלא, פרופיל 02 ומעלה ורישיון נהיגה.",
+            "סיורים ובקרת כניסה במשמרות מגוונות 24/7. אפשרויות קידום נרחבות בצוות 3."]),
+    ],
+    "נאות חובב": [
+        ("v2_benefits", "זווית: תנאים והטבות", "Enabled", [
+            "ארוחות חמות במשמרת", "הסעות מסודרות לעבודה", "קידום והתפתחות בתפקיד",
+            "עבודה יציבה במפעל מוביל", "משמרות מגוונות בכל שעות היום", "קורס נשק קצר - 9 שעות",
+            "סיורים ובקרת כניסה במפעל", "הצטרפו לצוות האבטחה", "השאירו פרטים ונחזור אליכם",
+            "עבודה ליד באר שבע", "מאבטח/ת חמוש/ה במפעל"], [
+            "ארוחות חמות במשמרת, הסעות ואפשרויות קידום. הצטרפו לצוות האבטחה בנאות חובב.",
+            "עבודה כמאבטח/ת חמוש/ה במפעל מוביל ליד באר שבע: סיורים ובקרת כניסה במשמרות 24/7.",
+            "קורס נשק קצר של 9 שעות לפני תחילת העבודה. השאירו פרטים בטופס הקצר.",
+            "דרישות: שירות צבאי מלא ורישיון נהיגה. עבודה מועדפת!"]),
+        ("v3_discharged", "זווית: חיילים משוחררים / עבודה מועדפת", "Enabled", [
+            "השתחררתם? יש לנו עבודה", "עבודה מועדפת למשוחררים/ות", "עבודה מועדפת עם ארוחות חמות",
+            "עבודה מועדפת בנגב עם הסעות", "שירות מלא ורישיון נהיגה? בואו", "אחרי הצבא - לעבודה באבטחה",
+            "מאבטח/ת חמוש/ה בנאות חובב", "קורס נשק של 9 שעות בלבד", "ארוחות והסעות כלולות",
+            "הגישו מועמדות בקלות", "קידום והתפתחות בתפקיד"], [
+            "השתחררתם? עבודה מועדפת כמאבטחים/ות חמושים/ות במפעל מוביל בנאות חובב. הגישו עכשיו",
+            "מתאים למשוחררים/ות עם שירות צבאי מלא ורישיון נהיגה. קורס נשק קצר של 9 שעות.",
+            "ארוחות חמות במשמרת, הסעות ואפשרויות קידום והתפתחות.",
+            "משמרות מגוונות 24/7 ליד באר שבע. השאירו פרטים ונחזור אליכם בהקדם."]),
+        ("v4_easy_apply", "זווית: הגשה קלה ומהירה (גיבוי)", "Paused", [
+            "טופס קצר ופשוט להגשה", "נחזור אליכם בהקדם", "גיוס פעיל למאבטחים/ות",
+            "מגייסים מאבטחים/ות לנגב", "קורס של 9 שעות - ויוצאים לדרך", "אפשר לפנות גם בוואטסאפ",
+            "מאבטח/ת חמוש/ה - נאות חובב", "משמרות 24/7 במפעל מוביל", "ארוחות חמות + הסעות",
+            "עבודה מועדפת - הגישו היום", "עבודה ליד באר שבע"], [
+            "מגייסים מאבטחים/ות חמושים/ות לנאות חובב. ממלאים טופס קצר ונחזור אליכם בהקדם.",
+            "קורס נשק קצר של 9 שעות, ארוחות חמות במשמרת, הסעות ואפשרויות קידום.",
+            "עבודה מועדפת! דרישות: שירות צבאי מלא ורישיון נהיגה.",
+            "סיורים ובקרת כניסה במשמרות מגוונות 24/7. אפשרויות קידום בצוות 3."]),
+    ],
+}
 
 # ---------------------------------------------------------------- negatives (phrase)
 NEG_COMMON = [
@@ -209,22 +273,38 @@ def check(text, kind, where):
         sys.exit(f"TOO LONG ({len(text)}>{LIMITS[kind]}) {kind} @ {where}: {text}")
 
 
-def rsa_for(camp, ag):
-    heads = ag["headlines"] + H_COMMON + camp["headlines_job"]
-    return heads[:15], camp["descriptions"]
+def _uniq(seq):
+    out = []
+    for x in seq:
+        if x not in out:
+            out.append(x)
+    return out
+
+
+def rsa_variants(camp, ag):
+    """[(key, label, status, headlines[15], descriptions[4])] for an ad group."""
+    fill = H_COMMON + camp["headlines_job"]
+    res = [("v1_core", "מודעה מקורית", "Enabled",
+            _uniq(ag["headlines"] + fill)[:15], camp["descriptions"])]
+    for key, label, status, heads, descs in ANGLES[camp["short"]]:
+        res.append((key, label, status, _uniq(ag["headlines"] + heads + fill)[:15], descs))
+    return res
 
 
 for camp in CAMPAIGNS:
     names = [a["name"] for a in camp["ad_groups"]]
     assert len(set(names)) == len(names)
     for ag in camp["ad_groups"]:
-        h, d = rsa_for(camp, ag)
-        where = f'{camp["name"]} / {ag["name"]}'
-        assert len(h) == 15 and len(set(h)) == 15, where
-        for t in h:
-            check(t, "headline", where)
-        for t in d:
-            check(t, "description", where)
+        variants = rsa_variants(camp, ag)
+        assert sum(v[2] == "Enabled" for v in variants) <= 3, "max 3 enabled RSAs per ad group"
+        for key, _, _, h, d in variants:
+            where = f'{camp["name"]} / {ag["name"]} / {key}'
+            assert len(h) == 15 and len(set(h)) == 15, where
+            assert len(d) == 4 and len(set(d)) == 4, where
+            for t in h:
+                check(t, "headline", where)
+            for t in d:
+                check(t, "description", where)
         for p in ag["path"]:
             check(p, "path", where)
         assert final_url(camp["url"], camp["utm_campaign"], ag["slug"]).startswith(camp["url"])
@@ -277,9 +357,9 @@ rsa_header = (["Campaign", "Ad Group", "Ad type"] + [f"Headline {i}" for i in ra
 rsa_rows = []
 for c in CAMPAIGNS:
     for ag in c["ad_groups"]:
-        h, d = rsa_for(c, ag)
-        rsa_rows.append([c["name"], ag["name"], "Responsive search ad"] + h + d + list(ag["path"])
-                        + [final_url(c["url"], c["utm_campaign"], ag["slug"]), "Enabled"])
+        for key, _, status, h, d in rsa_variants(c, ag):
+            rsa_rows.append([c["name"], ag["name"], "Responsive search ad"] + h + d + list(ag["path"])
+                            + [final_url(c["url"], c["utm_campaign"], f'{ag["slug"]}_{key}'), status])
 write_csv("05_responsive_search_ads.csv", rsa_header, rsa_rows)
 
 write_csv("06_callouts.csv", ["Campaign", "Callout text"],
@@ -398,7 +478,7 @@ for c in CAMPAIGNS:
     struct.append([c["name"], "", f"₪{c['budget']}/יום", "", c["job"], "", ""])
     for ag in c["ad_groups"]:
         struct.append(["", ag["name"], "", f"₪{ag['cpc']:.0f}", len(ag["keywords"]), "/".join(ag["path"]),
-                       final_url(c["url"], c["utm_campaign"], ag["slug"])])
+                       final_url(c["url"], c["utm_campaign"], ag["slug"]) + "_v1…v4"])
 ws = sheet("מבנה", ["קמפיין", "קבוצת מודעות", "תקציב", "Max CPC", "משרה / מס' מילות מפתח",
                     "Display path", "Final URL (כולל UTM)"], struct, [36, 28, 12, 10, 40, 26, 90])
 for row in ws.iter_rows(min_row=2):
@@ -411,10 +491,11 @@ for row in ws.iter_rows(min_row=2):
 utm_rows = []
 for c in CAMPAIGNS:
     for ag in c["ad_groups"]:
-        utm_rows.append([c["name"], ag["name"], "google", "cpc", c["utm_campaign"], ag["slug"],
-                         "{keyword} (דינמי, Final URL suffix)"])
-ws = sheet("UTM", ["קמפיין", "קבוצת מודעות", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"],
-           utm_rows, [36, 28, 12, 12, 34, 28, 34])
+        for key, label, status, _, _ in rsa_variants(c, ag):
+            utm_rows.append([c["name"], ag["name"], f"{key} ({status})", "google", "cpc", c["utm_campaign"],
+                             f'{ag["slug"]}_{key}', "{keyword} (דינמי, Final URL suffix)"])
+ws = sheet("UTM", ["קמפיין", "קבוצת מודעות", "מודעה", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"],
+           utm_rows, [30, 28, 24, 12, 12, 34, 40, 34])
 r = len(utm_rows) + 3
 ws.cell(r, 1, "utm_source / utm_medium / utm_campaign / utm_content כתובים ישירות ב-Final URL של כל מודעה. "
               "utm_term מתווסף אוטומטית דרך Final URL suffix ברמת הקמפיין (utm_term={keyword}). "
@@ -446,19 +527,20 @@ sheet("מילות שליליות", ["קמפיין", "קבוצת מודעות (ר
 rsa_sheet_rows = []
 for c in CAMPAIGNS:
     for ag in c["ad_groups"]:
-        h, d = rsa_for(c, ag)
-        for i, t in enumerate(h, 1):
-            rsa_sheet_rows.append([c["name"], ag["name"], f"Headline {i}", t, None, 30])
-        for i, t in enumerate(d, 1):
-            rsa_sheet_rows.append([c["name"], ag["name"], f"Description {i}", t, None, 90])
-        for i, t in enumerate(ag["path"], 1):
-            rsa_sheet_rows.append([c["name"], ag["name"], f"Path {i}", t, None, 15])
-ws = sheet("מודעות RSA", ["קמפיין", "קבוצת מודעות", "שדה", "טקסט", "תווים", "מקסימום", "תקין?"],
-           rsa_sheet_rows, [36, 28, 14, 80, 8, 10, 9])
+        for key, label, status, h, d in rsa_variants(c, ag):
+            ad = f"{key} — {label} ({status})"
+            for i, t in enumerate(h, 1):
+                rsa_sheet_rows.append([c["name"], ag["name"], ad, f"Headline {i}", t, None, 30])
+            for i, t in enumerate(d, 1):
+                rsa_sheet_rows.append([c["name"], ag["name"], ad, f"Description {i}", t, None, 90])
+            for i, t in enumerate(ag["path"], 1):
+                rsa_sheet_rows.append([c["name"], ag["name"], ad, f"Path {i}", t, None, 15])
+ws = sheet("מודעות RSA", ["קמפיין", "קבוצת מודעות", "מודעה", "שדה", "טקסט", "תווים", "מקסימום", "תקין?"],
+           rsa_sheet_rows, [28, 26, 34, 14, 80, 8, 10, 9])
 for r in range(2, len(rsa_sheet_rows) + 2):
-    ws.cell(r, 5, f"=LEN(D{r})")
-    ws.cell(r, 7, f'=IF(E{r}<=F{r},"✔","✘ ארוך")')
-    for col in (5, 6, 7):
+    ws.cell(r, 6, f"=LEN(E{r})")
+    ws.cell(r, 8, f'=IF(F{r}<=G{r},"✔","✘ ארוך")')
+    for col in (6, 7, 8):
         ws.cell(r, col).font = Font(name=F)
         ws.cell(r, col).alignment = Alignment(horizontal="center", vertical="top")
         ws.cell(r, col).border = BORDER
@@ -514,7 +596,7 @@ guide = [
     ["editor-csv/01…07", "אותו תוכן מפוצל לפי סוג ישות", "גיבוי — אם הקובץ המאוחד נכשל, לייבא לפי הסדר"],
     ["קמפיינים", "Search, Manual CPC, ₪80 ליום כל אחד, Final URL suffix = utm_term={keyword}, Paused", "חובה להגדיר מיקום ידנית — קמפיין בלי מיקום מטורגט לכל העולם"],
     ["שליליות", f"{len(neg_rows)} שורות: ברמת קמפיין + ברמת קבוצה (קבוצות גיאוגרפיות רחבות)", ""],
-    ["מודעות", f"{len(rsa_rows)} מודעות RSA (15 כותרות + 4 תיאורים), Final URL = דף המשרה + UTM", "ללא Pinning"],
+    ["מודעות", f"{len(rsa_rows)} מודעות RSA — 4 לכל קבוצה (15 כותרות + 4 תיאורים), Final URL = דף המשרה + UTM (utm_content = קבוצה_מודעה)", "גוגל מאפשר עד 3 RSA פעילות לקבוצה: v1–v3 פעילות, v4 מושהית כגיבוי. ללא Pinning"],
     ["קידוד", "UTF-8 עם BOM", "אם Editor מציג ג'יבריש — לבקש גרסת UTF-16"],
 ]
 sheet("ייבוא ל-Editor", ["קובץ / רכיב", "מה בפנים", "הערות"], guide, [36, 80, 60])
