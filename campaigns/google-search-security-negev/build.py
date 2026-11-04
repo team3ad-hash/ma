@@ -464,3 +464,25 @@ sheet("ייבוא ל-Editor", ["קובץ", "מה בפנים", "הערות"], gui
 brief_path = os.path.join(OUT, "brief-search-security-negev.xlsx")
 wb.save(brief_path)
 print("OK", brief_path)
+
+# ---------------------------------------------------------------- single combined Editor CSV
+import glob
+
+parts = sorted(glob.glob(os.path.join(EDITOR, "0*.csv")))
+all_cols, tables = [], []
+for pth in parts:
+    with open(pth, encoding="utf-8-sig", newline="") as f:
+        rows = list(csv.reader(f))
+    tables.append(rows)
+    for col in rows[0]:
+        if col not in all_cols:
+            all_cols.append(col)
+combined = os.path.join(OUT, "google-ads-editor-import.csv")
+with open(combined, "w", newline="", encoding="utf-8-sig") as f:
+    w = csv.writer(f)
+    w.writerow(all_cols)
+    for rows in tables:
+        idx = {c: i for i, c in enumerate(rows[0])}
+        for r in rows[1:]:
+            w.writerow([r[idx[c]] if c in idx else "" for c in all_cols])
+print("OK", combined)
