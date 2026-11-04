@@ -4,8 +4,8 @@
 
 | קמפיין | משרה | utm_campaign |
 |---|---|---|
-| SRC \| משרה 124651 \| מאבטחים עידן הנגב | #124651 | search_job124651_idan_hanegev |
-| SRC \| משרה 124655 \| מאבטחים נאות חובב | #124655 | search_job124655_neot_hovav |
+| סודה סטרים - עידן הנגב 4/11/26 | #124651 | sodastream-idan-hanegev-4-11-26 |
+| אדמה - מכתשים 4/11/26 | #124655 | adama-makhteshim-4-11-26 |
 
 - `output/google-ads-editor-import.csv` — קובץ אחד לייבוא ל-Google Ads Editor (הקמפיינים מיובאים במצב **Paused**).
 - `output/editor-csv/01…07_*.csv` — אותו תוכן מפוצל לפי סוג ישות (גיבוי).

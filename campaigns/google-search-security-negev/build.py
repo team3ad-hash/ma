@@ -79,7 +79,7 @@ CAMPAIGNS = [
         "job": "#124651 — מאבטחים/ות חמושים/ות, עידן הנגב",
         "budget": 80,
         "url": URL_SODA,
-        "utm_campaign": "search_job124651_idan_hanegev",
+        "utm_campaign": "sodastream-idan-hanegev-4-11-26",
         "geo": "רדיוס 25 ק\"מ סביב פארק התעשייה עידן הנגב (מכסה רהט, להבים, עומר, באר שבע, תל שבע, לקיה, חורה). Presence בלבד",
         "headlines_job": ["תנאים מעולים למאבטחים/ות", "תנאים סוציאליים מהיום הראשון", "הכשרה של יום אחד בלבד"],
         "descriptions": [
@@ -122,7 +122,7 @@ CAMPAIGNS = [
         "job": "#124655 — מאבטחים/ות חמושים/ות, נאות חובב / באר שבע",
         "budget": 80,
         "url": URL_ADAMA,
-        "utm_campaign": "search_job124655_neot_hovav",
+        "utm_campaign": "adama-makhteshim-4-11-26",
         "geo": "רדיוס 25 ק\"מ סביב נאות חובב (מכסה באר שבע, עומר, דימונה, ירוחם, שגב שלום, כסייפה). Presence בלבד",
         "headlines_job": ["ארוחות חמות בכל משמרת", "קורס נשק קצר של 9 שעות", "מאבטחים למפעל בנאות חובב"],
         "descriptions": [
