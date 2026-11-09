@@ -12,6 +12,36 @@
 | `management_update_campaign_status` | השהיה / הפעלה של קמפיין (אין מחיקת קמפיינים) |
 | `management_update_campaign_budget` | שינוי תקציב יומי |
 
+### חבילה 2 (`write-tools-2.patch`)
+| כלי | מה הוא עושה |
+|---|---|
+| `management_update_campaign_bidding` | Maximize Conversions עם יעד עלות להמרה, או Maximize Conversion Value עם יעד ROAS (כולל הסרת יעד) |
+| `management_update_campaign_location_targeting` | "נוכחות" או "נוכחות או עניין" |
+| `management_set_campaign_ad_schedule` | החלפת לוח הזמנים של קמפיין (כולל התאמות הצעת מחיר לשעות) |
+
+חבילה 2 מוסיפה רק שני קבצים חדשים, ודורשת שחבילה 1 כבר תהיה מותקנת.
+
+**התקנה ב-Cloud Shell** (מתוך התיקייה `google-ads-mcp`, אחרי העלאת הקובץ דרך ⋮ ← Upload):
+```bash
+git apply --check ~/write-tools-2.patch
+```
+```bash
+git apply ~/write-tools-2.patch
+```
+```bash
+python3 -m venv .venv && source .venv/bin/activate && pip install -q -e . pytest
+```
+```bash
+pytest tests/tools/campaign_settings_test.py tests/tools/campaign_management_test.py
+```
+```bash
+deactivate && rm -rf .venv
+```
+```bash
+gcloud run deploy google-ads-mcp --source . --region us-central1
+```
+ואז להתנתק ולהתחבר מחדש ל-Connector ב-claude.ai.
+
 ## איך זה שומר עליך
 כל כלי עובד בשני שלבים, באותו מנגנון שבו Google משתמשת בכלים הקיימים (`propose_and_confirm`):
 1. **הצעה**: הקריאה הראשונה רצה עם `validate_only=True`. Google Ads בודק את השינוי בלי לבצע אותו, והכלי מחזיר רשימה של מה שישתנה (כולל הערך הנוכחי) וקוד אימות (checksum).
