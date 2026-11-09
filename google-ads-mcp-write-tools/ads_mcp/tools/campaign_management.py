@@ -1,0 +1,1046 @@
+# Copyright 2026 Google LLC.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Write tools for day-to-day account management.
+
+Every tool here follows the two-step propose-and-confirm workflow from
+``ads_mcp.propose_and_confirm``:
+
+1. Call with ``validate_only=True`` (the default). The request is validated by
+   the Google Ads API without committing anything, and the tool returns the
+   proposed ``change_items`` plus a ``checksum``.
+2. Show the ``change_items`` to the user and wait for explicit approval.
+3. Call again with the exact same parameters, ``validate_only=False`` and the
+   ``checksum`` from step 1. Any change to the parameters invalidates the
+   checksum, so nothing other than what the user approved can be committed.
+
+Tools:
+  * update_conversion_action      - counting type, call length, primary goal, status
+  * add_shared_negative_keywords  - add negatives to a shared negative keyword list
+  * add_campaign_negative_keywords - add campaign-level negative keywords
+  * add_keywords                  - add positive keywords to an ad group
+  * update_keyword_status         - pause / enable / remove ad group keywords
+  * update_campaign_status        - pause / enable a campaign
+  * update_campaign_budget        - change a campaign budget's daily amount
+"""
+
+from enum import Enum
+from typing import Any
+
+from fastmcp import FastMCP
+from fastmcp.exceptions import ToolError
+from mcp.types import ToolAnnotations
+
+from ads_mcp import propose_and_confirm as pac
+import ads_mcp.utils as utils
+
+management_mcp = FastMCP("management")
+
+# Google Ads limits: 80 characters and 10 words per keyword. The batch cap
+# keeps a single approval reviewable by a human.
+_MAX_KEYWORD_CHARS = 80
+_MAX_KEYWORD_WORDS = 10
+_MAX_KEYWORDS_PER_CALL = 500
+_MAX_ITEMS_PER_CALL = 200
+
+
+class MatchType(str, Enum):
+    """Keyword match types."""
+
+    BROAD = "BROAD"
+    PHRASE = "PHRASE"
+    EXACT = "EXACT"
+
+
+class CountingType(str, Enum):
+    """Conversion counting types ("Every" vs. "One")."""
+
+    ONE_PER_CLICK = "ONE_PER_CLICK"
+    MANY_PER_CLICK = "MANY_PER_CLICK"
+
+
+class ConversionActionStatus(str, Enum):
+    """Settable conversion action statuses."""
+
+    ENABLED = "ENABLED"
+    HIDDEN = "HIDDEN"
+    REMOVED = "REMOVED"
+
+
+class KeywordStatus(str, Enum):
+    """Settable statuses for ad group keywords. REMOVED deletes the keyword."""
+
+    ENABLED = "ENABLED"
+    PAUSED = "PAUSED"
+    REMOVED = "REMOVED"
+
+
+class CampaignStatus(str, Enum):
+    """Settable campaign statuses (removal is intentionally not supported)."""
+
+    ENABLED = "ENABLED"
+    PAUSED = "PAUSED"
+
+
+# --------------------------------------------------------------------------
+# Helpers
+# --------------------------------------------------------------------------
+
+
+def _clean_cid(customer_id: str | int) -> str:
+    cleaned = utils.clean_customer_id(customer_id)
+    if not cleaned:
+        raise ToolError("Error: 'customer_id' must contain digits.")
+    return cleaned
+
+
+def _clean_id(value: str | int | None, name: str) -> str:
+    cleaned = utils.clean_customer_id(value) if value is not None else ""
+    if not cleaned:
+        raise ToolError(f"Error: '{name}' is required and must contain digits.")
+    return cleaned
+
+
+def _enum_value(value: Any, allowed: type[Enum], name: str) -> str:
+    raw = value.value if isinstance(value, Enum) else str(value).strip().upper()
+    if raw not in allowed.__members__:
+        valid = ", ".join(allowed.__members__)
+        raise ToolError(f"Error: Invalid {name} '{value}'. Must be one of: {valid}.")
+    return raw
+
+
+def _clean_keywords(keywords: list[str]) -> list[str]:
+    """Strips, de-duplicates (case-insensitive, order kept) and validates keywords."""
+    if not keywords:
+        raise ToolError("Error: 'keywords' must contain at least one keyword.")
+    seen: set[str] = set()
+    cleaned: list[str] = []
+    for kw in keywords:
+        text = " ".join(str(kw).split())
+        # Match-type punctuation is controlled by `match_type`, not the text.
+        text = text.strip('"').strip("[]").strip()
+        if not text:
+            continue
+        if len(text) > _MAX_KEYWORD_CHARS:
+            raise ToolError(
+                f"Error: Keyword '{text}' exceeds {_MAX_KEYWORD_CHARS} characters."
+            )
+        if len(text.split()) > _MAX_KEYWORD_WORDS:
+            raise ToolError(
+                f"Error: Keyword '{text}' exceeds {_MAX_KEYWORD_WORDS} words."
+            )
+        key = text.lower()
+        if key not in seen:
+            seen.add(key)
+            cleaned.append(text)
+    if not cleaned:
+        raise ToolError("Error: 'keywords' contained no usable keywords.")
+    if len(cleaned) > _MAX_KEYWORDS_PER_CALL:
+        raise ToolError(
+            f"Error: At most {_MAX_KEYWORDS_PER_CALL} keywords per call "
+            f"(got {len(cleaned)}). Split the list into several calls."
+        )
+    return cleaned
+
+
+def _match_type_enum(ga_client: Any, match_type: str) -> Any:
+    return getattr(
+        ga_client.get_type("KeywordMatchTypeEnum").KeywordMatchType, match_type
+    )
+
+
+def _lookup(
+    ga_client: Any, customer_id: str, query: str
+) -> list[Any]:
+    """Runs a read-only GAQL query; returns [] if anything goes wrong.
+
+    Used only to show the user current ("before") values next to proposed
+    values. It never affects what is validated or committed.
+    """
+    try:
+        ga_service = utils.get_googleads_service_from_client(
+            ga_client, "GoogleAdsService"
+        )
+        return list(ga_service.search(customer_id=customer_id, query=query))
+    except Exception:  # pylint: disable=broad-except
+        return []
+
+
+def _summarize_results(response: Any, noun: str, verb: str) -> str:
+    results = list(getattr(response, "results", []) or [])
+    ids = [utils.extract_id(r.resource_name) for r in results]
+    preview = ", ".join(ids[:20]) + (" ..." if len(ids) > 20 else "")
+    return f"Successfully {verb} {len(ids)} {noun}. IDs: {preview}"
+
+
+# --------------------------------------------------------------------------
+# Conversion actions
+# --------------------------------------------------------------------------
+
+
+@management_mcp.tool(
+    annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True)
+)
+def update_conversion_action(
+    customer_id: str | int,
+    conversion_action_id: str | int,
+    counting_type: CountingType | None = None,
+    phone_call_duration_seconds: int | None = None,
+    primary_for_goal: bool | None = None,
+    status: ConversionActionStatus | None = None,
+    login_customer_id: str | int | None = None,
+    validate_only: bool = True,
+    checksum: str | None = None,
+) -> str:
+    """Updates settings of an existing conversion action.
+
+    Typical uses: count a lead form once per click (counting_type=ONE_PER_CLICK),
+    raise the minimum call length that counts as a conversion
+    (phone_call_duration_seconds), or switch an action between primary and
+    secondary (primary_for_goal).
+
+    Propose & Confirm Workflow (`validate_only` and `checksum`):
+    1. Call with `validate_only=True` (the default). The tool validates the change and returns `change_items` (with current values) and a `checksum` without committing.
+    2. Present the `change_items` to the user and wait for explicit approval.
+    3. Only after approval, call again with the exact same parameters, `validate_only=False` and the returned `checksum`.
+
+    Args:
+        customer_id: Google Ads customer ID (digits or hyphenated).
+        conversion_action_id: ID of the conversion action (`conversion_action.id`).
+        counting_type: 'ONE_PER_CLICK' ("One") or 'MANY_PER_CLICK' ("Every").
+        phone_call_duration_seconds: Minimum call length in seconds for call conversions (0-10000). Only valid for call conversion actions.
+        primary_for_goal: True to make the action primary (used for bidding), False for secondary.
+        status: 'ENABLED', 'HIDDEN' or 'REMOVED'.
+        login_customer_id: Optional manager customer ID for the login-customer-id header.
+        validate_only: If True (default), validate only and return a proposal. If False, commit; requires `checksum`.
+        checksum: Checksum returned by the prior `validate_only=True` call. Required when `validate_only=False`.
+    """
+    cid = _clean_cid(customer_id)
+    ca_id = _clean_id(conversion_action_id, "conversion_action_id")
+
+    counting = (
+        _enum_value(counting_type, CountingType, "counting_type")
+        if counting_type is not None
+        else None
+    )
+    status_val = (
+        _enum_value(status, ConversionActionStatus, "status")
+        if status is not None
+        else None
+    )
+    if phone_call_duration_seconds is not None and not (
+        0 <= int(phone_call_duration_seconds) <= 10000
+    ):
+        raise ToolError(
+            "Error: 'phone_call_duration_seconds' must be between 0 and 10000."
+        )
+    if (
+        counting is None
+        and phone_call_duration_seconds is None
+        and primary_for_goal is None
+        and status_val is None
+    ):
+        raise ToolError(
+            "Error: Provide at least one field to update: 'counting_type', "
+            "'phone_call_duration_seconds', 'primary_for_goal' or 'status'."
+        )
+
+    ga_client = utils.get_googleads_client(login_customer_id=login_customer_id)
+    service = utils.get_googleads_service_from_client(
+        ga_client, "ConversionActionService"
+    )
+
+    resource_name = f"customers/{cid}/conversionActions/{ca_id}"
+    op = ga_client.get_type("ConversionActionOperation")
+    action = op.update
+    action.resource_name = resource_name
+    paths: list[str] = []
+
+    if counting is not None:
+        action.counting_type = getattr(
+            ga_client.get_type(
+                "ConversionActionCountingTypeEnum"
+            ).ConversionActionCountingType,
+            counting,
+        )
+        paths.append("counting_type")
+    if phone_call_duration_seconds is not None:
+        action.phone_call_duration_seconds = int(phone_call_duration_seconds)
+        paths.append("phone_call_duration_seconds")
+    if primary_for_goal is not None:
+        action.primary_for_goal = bool(primary_for_goal)
+        paths.append("primary_for_goal")
+    if status_val is not None:
+        action.status = getattr(
+            ga_client.get_type(
+                "ConversionActionStatusEnum"
+            ).ConversionActionStatus,
+            status_val,
+        )
+        paths.append("status")
+    op.update_mask.paths.extend(paths)
+
+    # Current values, for the before/after view only.
+    name = ""
+    original: dict[str, Any] = {}
+    rows = _lookup(
+        ga_client,
+        cid,
+        "SELECT conversion_action.name, conversion_action.counting_type, "
+        "conversion_action.phone_call_duration_seconds, "
+        "conversion_action.primary_for_goal, conversion_action.status "
+        f"FROM conversion_action WHERE conversion_action.id = {ca_id}",
+    )
+    if rows:
+        ca = rows[0].conversion_action
+        name = str(getattr(ca, "name", "") or "")
+        original = {
+            "Counting Type": getattr(getattr(ca, "counting_type", None), "name", None),
+            "Phone Call Duration (s)": getattr(ca, "phone_call_duration_seconds", None),
+            "Primary For Goal": getattr(ca, "primary_for_goal", None),
+            "Status": getattr(getattr(ca, "status", None), "name", None),
+        }
+
+    operation_payload = {
+        "tool": "update_conversion_action",
+        "conversion_action_id": ca_id,
+        "counting_type": counting,
+        "phone_call_duration_seconds": (
+            int(phone_call_duration_seconds)
+            if phone_call_duration_seconds is not None
+            else None
+        ),
+        "primary_for_goal": primary_for_goal,
+        "status": status_val,
+    }
+
+    change_items = pac.build_change_items(
+        operation="UPDATE",
+        entity_readable="Conversion Action",
+        primary_key_readable=f"{name} ({ca_id})" if name else resource_name,
+        fields={
+            "Counting Type": counting,
+            "Phone Call Duration (s)": operation_payload["phone_call_duration_seconds"],
+            "Primary For Goal": primary_for_goal,
+            "Status": status_val,
+        },
+        original_fields=original,
+    )
+
+    request = ga_client.get_type("MutateConversionActionsRequest")
+    request.customer_id = cid
+    request.operations.append(op)
+
+    def _validate() -> None:
+        request.validate_only = True
+        service.mutate_conversion_actions(request=request)
+
+    def _commit() -> str:
+        request.validate_only = False
+        response = service.mutate_conversion_actions(request=request)
+        return _summarize_results(response, "conversion action(s)", "updated")
+
+    return pac.propose_and_confirm(
+        customer_id=cid,
+        validate_only=validate_only,
+        checksum=checksum,
+        operation_payload=operation_payload,
+        change_items=change_items,
+        validate_fn=_validate,
+        commit_fn=_commit,
+        error_prefix="Failed to update conversion action",
+    )
+
+
+# --------------------------------------------------------------------------
+# Negative keywords
+# --------------------------------------------------------------------------
+
+
+@management_mcp.tool(
+    annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False)
+)
+def add_shared_negative_keywords(
+    customer_id: str | int,
+    shared_set_id: str | int,
+    keywords: list[str],
+    match_type: MatchType = MatchType.PHRASE,
+    login_customer_id: str | int | None = None,
+    validate_only: bool = True,
+    checksum: str | None = None,
+) -> str:
+    """Adds negative keywords to an existing shared negative keyword list.
+
+    The list keeps applying to every campaign it is already attached to. Find
+    `shared_set_id` with a search on `shared_set` (type NEGATIVE_KEYWORDS) or
+    `campaign_shared_set`. Keywords are de-duplicated; pass plain text (no
+    quotes or brackets) and choose the match type with `match_type`.
+
+    Propose & Confirm Workflow (`validate_only` and `checksum`):
+    1. Call with `validate_only=True` (the default) to validate and get `change_items` and a `checksum`.
+    2. Present the `change_items` to the user and wait for explicit approval.
+    3. Only after approval, call again with the exact same parameters, `validate_only=False` and the `checksum`.
+
+    Args:
+        customer_id: Google Ads customer ID.
+        shared_set_id: ID of the shared negative keyword list (`shared_set.id`).
+        keywords: Keyword texts to add (max 500 per call).
+        match_type: 'BROAD', 'PHRASE' (default) or 'EXACT'.
+        login_customer_id: Optional manager customer ID for the login-customer-id header.
+        validate_only: If True (default), validate only and return a proposal. If False, commit; requires `checksum`.
+        checksum: Checksum returned by the prior `validate_only=True` call.
+    """
+    cid = _clean_cid(customer_id)
+    set_id = _clean_id(shared_set_id, "shared_set_id")
+    match = _enum_value(match_type, MatchType, "match_type")
+    kws = _clean_keywords(keywords)
+
+    ga_client = utils.get_googleads_client(login_customer_id=login_customer_id)
+    service = utils.get_googleads_service_from_client(
+        ga_client, "SharedCriterionService"
+    )
+
+    shared_set_rn = f"customers/{cid}/sharedSets/{set_id}"
+    match_enum = _match_type_enum(ga_client, match)
+
+    request = ga_client.get_type("MutateSharedCriteriaRequest")
+    request.customer_id = cid
+    for kw in kws:
+        op = ga_client.get_type("SharedCriterionOperation")
+        crit = op.create
+        crit.shared_set = shared_set_rn
+        crit.keyword.text = kw
+        crit.keyword.match_type = match_enum
+        request.operations.append(op)
+
+    set_name = ""
+    rows = _lookup(
+        ga_client,
+        cid,
+        "SELECT shared_set.name, shared_set.member_count FROM shared_set "
+        f"WHERE shared_set.id = {set_id}",
+    )
+    if rows:
+        set_name = str(getattr(rows[0].shared_set, "name", "") or "")
+
+    operation_payload = {
+        "tool": "add_shared_negative_keywords",
+        "shared_set_id": set_id,
+        "match_type": match,
+        "keywords": kws,
+    }
+    target = f"{set_name} ({set_id})" if set_name else shared_set_rn
+    change_items = [
+        pac.ChangeItem(
+            operation="CREATE",
+            entity_readable=f"Shared Negative Keyword ({match})",
+            primary_key_readable=target,
+            field_readable="Keyword",
+            value_readable=kw,
+        )
+        for kw in kws
+    ]
+
+    def _validate() -> None:
+        request.validate_only = True
+        service.mutate_shared_criteria(request=request)
+
+    def _commit() -> str:
+        request.validate_only = False
+        response = service.mutate_shared_criteria(request=request)
+        return _summarize_results(
+            response, f"negative keyword(s) to list {target}", "added"
+        )
+
+    return pac.propose_and_confirm(
+        customer_id=cid,
+        validate_only=validate_only,
+        checksum=checksum,
+        operation_payload=operation_payload,
+        change_items=change_items,
+        validate_fn=_validate,
+        commit_fn=_commit,
+        error_prefix="Failed to add shared negative keywords",
+    )
+
+
+@management_mcp.tool(
+    annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False)
+)
+def add_campaign_negative_keywords(
+    customer_id: str | int,
+    campaign_id: str | int,
+    keywords: list[str],
+    match_type: MatchType = MatchType.PHRASE,
+    login_customer_id: str | int | None = None,
+    validate_only: bool = True,
+    checksum: str | None = None,
+) -> str:
+    """Adds negative keywords directly to one campaign.
+
+    Prefer `add_shared_negative_keywords` when the same negatives should apply
+    to several campaigns.
+
+    Propose & Confirm Workflow (`validate_only` and `checksum`):
+    1. Call with `validate_only=True` (the default) to validate and get `change_items` and a `checksum`.
+    2. Present the `change_items` to the user and wait for explicit approval.
+    3. Only after approval, call again with the exact same parameters, `validate_only=False` and the `checksum`.
+
+    Args:
+        customer_id: Google Ads customer ID.
+        campaign_id: ID of the campaign.
+        keywords: Keyword texts to add as negatives (max 500 per call).
+        match_type: 'BROAD', 'PHRASE' (default) or 'EXACT'.
+        login_customer_id: Optional manager customer ID for the login-customer-id header.
+        validate_only: If True (default), validate only and return a proposal. If False, commit; requires `checksum`.
+        checksum: Checksum returned by the prior `validate_only=True` call.
+    """
+    cid = _clean_cid(customer_id)
+    camp_id = _clean_id(campaign_id, "campaign_id")
+    match = _enum_value(match_type, MatchType, "match_type")
+    kws = _clean_keywords(keywords)
+
+    ga_client = utils.get_googleads_client(login_customer_id=login_customer_id)
+    service = utils.get_googleads_service_from_client(
+        ga_client, "CampaignCriterionService"
+    )
+
+    campaign_rn = f"customers/{cid}/campaigns/{camp_id}"
+    match_enum = _match_type_enum(ga_client, match)
+
+    request = ga_client.get_type("MutateCampaignCriteriaRequest")
+    request.customer_id = cid
+    for kw in kws:
+        op = ga_client.get_type("CampaignCriterionOperation")
+        crit = op.create
+        crit.campaign = campaign_rn
+        crit.negative = True
+        crit.keyword.text = kw
+        crit.keyword.match_type = match_enum
+        request.operations.append(op)
+
+    camp_name = ""
+    rows = _lookup(
+        ga_client,
+        cid,
+        f"SELECT campaign.name FROM campaign WHERE campaign.id = {camp_id}",
+    )
+    if rows:
+        camp_name = str(getattr(rows[0].campaign, "name", "") or "")
+
+    operation_payload = {
+        "tool": "add_campaign_negative_keywords",
+        "campaign_id": camp_id,
+        "match_type": match,
+        "keywords": kws,
+    }
+    target = f"{camp_name} ({camp_id})" if camp_name else campaign_rn
+    change_items = [
+        pac.ChangeItem(
+            operation="CREATE",
+            entity_readable=f"Campaign Negative Keyword ({match})",
+            primary_key_readable=target,
+            field_readable="Keyword",
+            value_readable=kw,
+        )
+        for kw in kws
+    ]
+
+    def _validate() -> None:
+        request.validate_only = True
+        service.mutate_campaign_criteria(request=request)
+
+    def _commit() -> str:
+        request.validate_only = False
+        response = service.mutate_campaign_criteria(request=request)
+        return _summarize_results(
+            response, f"negative keyword(s) to campaign {target}", "added"
+        )
+
+    return pac.propose_and_confirm(
+        customer_id=cid,
+        validate_only=validate_only,
+        checksum=checksum,
+        operation_payload=operation_payload,
+        change_items=change_items,
+        validate_fn=_validate,
+        commit_fn=_commit,
+        error_prefix="Failed to add campaign negative keywords",
+    )
+
+
+# --------------------------------------------------------------------------
+# Ad group keywords
+# --------------------------------------------------------------------------
+
+
+@management_mcp.tool(
+    annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False)
+)
+def add_keywords(
+    customer_id: str | int,
+    ad_group_id: str | int,
+    keywords: list[str],
+    match_type: MatchType,
+    paused: bool = False,
+    login_customer_id: str | int | None = None,
+    validate_only: bool = True,
+    checksum: str | None = None,
+) -> str:
+    """Adds positive keywords to an ad group, all with the same match type.
+
+    To add the same text in several match types, call once per match type.
+
+    Propose & Confirm Workflow (`validate_only` and `checksum`):
+    1. Call with `validate_only=True` (the default) to validate and get `change_items` and a `checksum`.
+    2. Present the `change_items` to the user and wait for explicit approval.
+    3. Only after approval, call again with the exact same parameters, `validate_only=False` and the `checksum`.
+
+    Args:
+        customer_id: Google Ads customer ID.
+        ad_group_id: ID of the ad group.
+        keywords: Keyword texts (max 500 per call), without quotes or brackets.
+        match_type: 'BROAD', 'PHRASE' or 'EXACT'.
+        paused: If True, keywords are created paused. Default False (enabled).
+        login_customer_id: Optional manager customer ID for the login-customer-id header.
+        validate_only: If True (default), validate only and return a proposal. If False, commit; requires `checksum`.
+        checksum: Checksum returned by the prior `validate_only=True` call.
+    """
+    cid = _clean_cid(customer_id)
+    ag_id = _clean_id(ad_group_id, "ad_group_id")
+    match = _enum_value(match_type, MatchType, "match_type")
+    kws = _clean_keywords(keywords)
+    status_name = "PAUSED" if paused else "ENABLED"
+
+    ga_client = utils.get_googleads_client(login_customer_id=login_customer_id)
+    service = utils.get_googleads_service_from_client(
+        ga_client, "AdGroupCriterionService"
+    )
+
+    ad_group_rn = f"customers/{cid}/adGroups/{ag_id}"
+    match_enum = _match_type_enum(ga_client, match)
+    status_enum = getattr(
+        ga_client.get_type("AdGroupCriterionStatusEnum").AdGroupCriterionStatus,
+        status_name,
+    )
+
+    request = ga_client.get_type("MutateAdGroupCriteriaRequest")
+    request.customer_id = cid
+    for kw in kws:
+        op = ga_client.get_type("AdGroupCriterionOperation")
+        crit = op.create
+        crit.ad_group = ad_group_rn
+        crit.status = status_enum
+        crit.keyword.text = kw
+        crit.keyword.match_type = match_enum
+        request.operations.append(op)
+
+    ag_name = ""
+    rows = _lookup(
+        ga_client,
+        cid,
+        "SELECT ad_group.name, campaign.name FROM ad_group "
+        f"WHERE ad_group.id = {ag_id}",
+    )
+    if rows:
+        ag_name = (
+            f"{getattr(rows[0].campaign, 'name', '')} > "
+            f"{getattr(rows[0].ad_group, 'name', '')}"
+        )
+
+    operation_payload = {
+        "tool": "add_keywords",
+        "ad_group_id": ag_id,
+        "match_type": match,
+        "status": status_name,
+        "keywords": kws,
+    }
+    target = f"{ag_name} ({ag_id})" if ag_name else ad_group_rn
+    change_items = [
+        pac.ChangeItem(
+            operation="CREATE",
+            entity_readable=f"Keyword ({match}, {status_name})",
+            primary_key_readable=target,
+            field_readable="Keyword",
+            value_readable=kw,
+        )
+        for kw in kws
+    ]
+
+    def _validate() -> None:
+        request.validate_only = True
+        service.mutate_ad_group_criteria(request=request)
+
+    def _commit() -> str:
+        request.validate_only = False
+        response = service.mutate_ad_group_criteria(request=request)
+        return _summarize_results(response, f"keyword(s) to {target}", "added")
+
+    return pac.propose_and_confirm(
+        customer_id=cid,
+        validate_only=validate_only,
+        checksum=checksum,
+        operation_payload=operation_payload,
+        change_items=change_items,
+        validate_fn=_validate,
+        commit_fn=_commit,
+        error_prefix="Failed to add keywords",
+    )
+
+
+@management_mcp.tool(
+    annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True)
+)
+def update_keyword_status(
+    customer_id: str | int,
+    keyword_ids: list[str],
+    status: KeywordStatus,
+    login_customer_id: str | int | None = None,
+    validate_only: bool = True,
+    checksum: str | None = None,
+) -> str:
+    """Pauses, enables or removes ad group keywords.
+
+    Each keyword is identified as '{ad_group_id}~{criterion_id}'
+    (`ad_group.id` and `ad_group_criterion.criterion_id` from a search on
+    `keyword_view` or `ad_group_criterion`). REMOVED deletes the keyword and
+    cannot be undone; prefer PAUSED.
+
+    Propose & Confirm Workflow (`validate_only` and `checksum`):
+    1. Call with `validate_only=True` (the default) to validate and get `change_items` and a `checksum`.
+    2. Present the `change_items` to the user and wait for explicit approval.
+    3. Only after approval, call again with the exact same parameters, `validate_only=False` and the `checksum`.
+
+    Args:
+        customer_id: Google Ads customer ID.
+        keyword_ids: Keyword IDs in '{ad_group_id}~{criterion_id}' format (max 200 per call).
+        status: 'ENABLED', 'PAUSED' or 'REMOVED'.
+        login_customer_id: Optional manager customer ID for the login-customer-id header.
+        validate_only: If True (default), validate only and return a proposal. If False, commit; requires `checksum`.
+        checksum: Checksum returned by the prior `validate_only=True` call.
+    """
+    cid = _clean_cid(customer_id)
+    status_name = _enum_value(status, KeywordStatus, "status")
+
+    ids: list[str] = []
+    for raw in keyword_ids or []:
+        parts = str(raw).strip().split("~")
+        if len(parts) != 2 or not parts[0].isdigit() or not parts[1].isdigit():
+            raise ToolError(
+                f"Error: Invalid keyword id '{raw}'. Use "
+                "'{ad_group_id}~{criterion_id}', e.g. '123456~789012'."
+            )
+        key = f"{parts[0]}~{parts[1]}"
+        if key not in ids:
+            ids.append(key)
+    if not ids:
+        raise ToolError("Error: 'keyword_ids' must contain at least one id.")
+    if len(ids) > _MAX_ITEMS_PER_CALL:
+        raise ToolError(
+            f"Error: At most {_MAX_ITEMS_PER_CALL} keywords per call (got {len(ids)})."
+        )
+
+    ga_client = utils.get_googleads_client(login_customer_id=login_customer_id)
+    service = utils.get_googleads_service_from_client(
+        ga_client, "AdGroupCriterionService"
+    )
+
+    request = ga_client.get_type("MutateAdGroupCriteriaRequest")
+    request.customer_id = cid
+    resource_names = [f"customers/{cid}/adGroupCriteria/{k}" for k in ids]
+    if status_name == "REMOVED":
+        for rn in resource_names:
+            op = ga_client.get_type("AdGroupCriterionOperation")
+            op.remove = rn
+            request.operations.append(op)
+    else:
+        status_enum = getattr(
+            ga_client.get_type("AdGroupCriterionStatusEnum").AdGroupCriterionStatus,
+            status_name,
+        )
+        for rn in resource_names:
+            op = ga_client.get_type("AdGroupCriterionOperation")
+            op.update.resource_name = rn
+            op.update.status = status_enum
+            op.update_mask.paths.append("status")
+            request.operations.append(op)
+
+    # Current text / match type / status, for the before/after view only.
+    labels: dict[str, tuple[str, str]] = {}
+    rows = _lookup(
+        ga_client,
+        cid,
+        "SELECT ad_group.id, ad_group_criterion.criterion_id, "
+        "ad_group_criterion.keyword.text, ad_group_criterion.keyword.match_type, "
+        "ad_group_criterion.status FROM ad_group_criterion "
+        "WHERE ad_group_criterion.resource_name IN ("
+        + ", ".join(f"'{rn}'" for rn in resource_names)
+        + ")",
+    )
+    for row in rows:
+        try:
+            key = f"{row.ad_group.id}~{row.ad_group_criterion.criterion_id}"
+            kw = row.ad_group_criterion.keyword
+            labels[key] = (
+                f"{kw.text} [{getattr(kw.match_type, 'name', kw.match_type)}]",
+                str(getattr(row.ad_group_criterion.status, "name", "")),
+            )
+        except AttributeError:
+            continue
+
+    operation_payload = {
+        "tool": "update_keyword_status",
+        "status": status_name,
+        "keyword_ids": ids,
+    }
+    change_items = [
+        pac.ChangeItem(
+            operation="REMOVE" if status_name == "REMOVED" else "UPDATE",
+            entity_readable="Keyword",
+            primary_key_readable=(
+                f"{labels[k][0]} ({k})" if k in labels else f"adGroupCriteria/{k}"
+            ),
+            field_readable="Status",
+            value_readable=status_name,
+            original_value_readable=labels[k][1] if k in labels else "",
+        )
+        for k in ids
+    ]
+
+    def _validate() -> None:
+        request.validate_only = True
+        service.mutate_ad_group_criteria(request=request)
+
+    def _commit() -> str:
+        request.validate_only = False
+        response = service.mutate_ad_group_criteria(request=request)
+        verb = "removed" if status_name == "REMOVED" else f"set to {status_name}"
+        return _summarize_results(response, "keyword(s)", verb)
+
+    return pac.propose_and_confirm(
+        customer_id=cid,
+        validate_only=validate_only,
+        checksum=checksum,
+        operation_payload=operation_payload,
+        change_items=change_items,
+        validate_fn=_validate,
+        commit_fn=_commit,
+        error_prefix="Failed to update keyword status",
+    )
+
+
+# --------------------------------------------------------------------------
+# Campaigns and budgets
+# --------------------------------------------------------------------------
+
+
+@management_mcp.tool(
+    annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True)
+)
+def update_campaign_status(
+    customer_id: str | int,
+    campaign_id: str | int,
+    status: CampaignStatus,
+    login_customer_id: str | int | None = None,
+    validate_only: bool = True,
+    checksum: str | None = None,
+) -> str:
+    """Pauses or enables a campaign. Removing campaigns is not supported.
+
+    Propose & Confirm Workflow (`validate_only` and `checksum`):
+    1. Call with `validate_only=True` (the default) to validate and get `change_items` and a `checksum`.
+    2. Present the `change_items` to the user and wait for explicit approval.
+    3. Only after approval, call again with the exact same parameters, `validate_only=False` and the `checksum`.
+
+    Args:
+        customer_id: Google Ads customer ID.
+        campaign_id: ID of the campaign.
+        status: 'ENABLED' or 'PAUSED'.
+        login_customer_id: Optional manager customer ID for the login-customer-id header.
+        validate_only: If True (default), validate only and return a proposal. If False, commit; requires `checksum`.
+        checksum: Checksum returned by the prior `validate_only=True` call.
+    """
+    cid = _clean_cid(customer_id)
+    camp_id = _clean_id(campaign_id, "campaign_id")
+    status_name = _enum_value(status, CampaignStatus, "status")
+
+    ga_client = utils.get_googleads_client(login_customer_id=login_customer_id)
+    service = utils.get_googleads_service_from_client(ga_client, "CampaignService")
+
+    resource_name = f"customers/{cid}/campaigns/{camp_id}"
+    op = ga_client.get_type("CampaignOperation")
+    op.update.resource_name = resource_name
+    op.update.status = getattr(
+        ga_client.get_type("CampaignStatusEnum").CampaignStatus, status_name
+    )
+    op.update_mask.paths.append("status")
+
+    name, original_status = "", None
+    rows = _lookup(
+        ga_client,
+        cid,
+        f"SELECT campaign.name, campaign.status FROM campaign WHERE campaign.id = {camp_id}",
+    )
+    if rows:
+        name = str(getattr(rows[0].campaign, "name", "") or "")
+        original_status = getattr(getattr(rows[0].campaign, "status", None), "name", None)
+
+    operation_payload = {
+        "tool": "update_campaign_status",
+        "campaign_id": camp_id,
+        "status": status_name,
+    }
+    change_items = pac.build_change_items(
+        operation="UPDATE",
+        entity_readable="Campaign",
+        primary_key_readable=f"{name} ({camp_id})" if name else resource_name,
+        fields={"Status": status_name},
+        original_fields={"Status": original_status},
+    )
+
+    request = ga_client.get_type("MutateCampaignsRequest")
+    request.customer_id = cid
+    request.operations.append(op)
+
+    def _validate() -> None:
+        request.validate_only = True
+        service.mutate_campaigns(request=request)
+
+    def _commit() -> str:
+        request.validate_only = False
+        response = service.mutate_campaigns(request=request)
+        return _summarize_results(response, "campaign(s)", f"set to {status_name}")
+
+    return pac.propose_and_confirm(
+        customer_id=cid,
+        validate_only=validate_only,
+        checksum=checksum,
+        operation_payload=operation_payload,
+        change_items=change_items,
+        validate_fn=_validate,
+        commit_fn=_commit,
+        error_prefix="Failed to update campaign status",
+    )
+
+
+@management_mcp.tool(
+    annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True)
+)
+def update_campaign_budget(
+    customer_id: str | int,
+    campaign_budget_id: str | int,
+    daily_amount: float,
+    login_customer_id: str | int | None = None,
+    validate_only: bool = True,
+    checksum: str | None = None,
+) -> str:
+    """Changes the daily amount of a campaign budget, in the account currency.
+
+    Find `campaign_budget_id` with a search on `campaign` selecting
+    `campaign_budget.id`. A shared budget changes for every campaign using it;
+    the proposal lists those campaigns.
+
+    Propose & Confirm Workflow (`validate_only` and `checksum`):
+    1. Call with `validate_only=True` (the default) to validate and get `change_items` (with the current amount) and a `checksum`.
+    2. Present the `change_items` to the user and wait for explicit approval.
+    3. Only after approval, call again with the exact same parameters, `validate_only=False` and the `checksum`.
+
+    Args:
+        customer_id: Google Ads customer ID.
+        campaign_budget_id: ID of the campaign budget (`campaign_budget.id`).
+        daily_amount: New daily amount in account currency units (e.g. 450 for ₪450). Must be > 0.
+        login_customer_id: Optional manager customer ID for the login-customer-id header.
+        validate_only: If True (default), validate only and return a proposal. If False, commit; requires `checksum`.
+        checksum: Checksum returned by the prior `validate_only=True` call.
+    """
+    cid = _clean_cid(customer_id)
+    budget_id = _clean_id(campaign_budget_id, "campaign_budget_id")
+    try:
+        amount = float(daily_amount)
+    except (TypeError, ValueError) as exc:
+        raise ToolError("Error: 'daily_amount' must be a number.") from exc
+    if amount <= 0:
+        raise ToolError("Error: 'daily_amount' must be greater than 0.")
+    # Google Ads requires budget micros to be a multiple of 10,000 (0.01 units).
+    amount_micros = int(round(amount * 100)) * 10_000
+
+    ga_client = utils.get_googleads_client(login_customer_id=login_customer_id)
+    service = utils.get_googleads_service_from_client(
+        ga_client, "CampaignBudgetService"
+    )
+
+    resource_name = f"customers/{cid}/campaignBudgets/{budget_id}"
+    op = ga_client.get_type("CampaignBudgetOperation")
+    op.update.resource_name = resource_name
+    op.update.amount_micros = amount_micros
+    op.update_mask.paths.append("amount_micros")
+
+    original_amount = None
+    campaigns: list[str] = []
+    rows = _lookup(
+        ga_client,
+        cid,
+        "SELECT campaign.name, campaign_budget.amount_micros FROM campaign "
+        f"WHERE campaign_budget.id = {budget_id}",
+    )
+    for row in rows:
+        try:
+            original_amount = row.campaign_budget.amount_micros / 1_000_000
+            campaigns.append(str(row.campaign.name))
+        except AttributeError:
+            continue
+
+    operation_payload = {
+        "tool": "update_campaign_budget",
+        "campaign_budget_id": budget_id,
+        "amount_micros": amount_micros,
+    }
+    key = resource_name
+    if campaigns:
+        key = f"Budget {budget_id} (used by: {', '.join(campaigns)})"
+    change_items = pac.build_change_items(
+        operation="UPDATE",
+        entity_readable="Campaign Budget",
+        primary_key_readable=key,
+        fields={"Daily Amount": f"{amount_micros / 1_000_000:.2f}"},
+        original_fields={
+            "Daily Amount": (
+                f"{original_amount:.2f}" if original_amount is not None else None
+            )
+        },
+    )
+
+    request = ga_client.get_type("MutateCampaignBudgetsRequest")
+    request.customer_id = cid
+    request.operations.append(op)
+
+    def _validate() -> None:
+        request.validate_only = True
+        service.mutate_campaign_budgets(request=request)
+
+    def _commit() -> str:
+        request.validate_only = False
+        response = service.mutate_campaign_budgets(request=request)
+        return _summarize_results(response, "campaign budget(s)", "updated")
+
+    return pac.propose_and_confirm(
+        customer_id=cid,
+        validate_only=validate_only,
+        checksum=checksum,
+        operation_payload=operation_payload,
+        change_items=change_items,
+        validate_fn=_validate,
+        commit_fn=_commit,
+        error_prefix="Failed to update campaign budget",
+    )
