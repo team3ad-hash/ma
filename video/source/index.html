@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Team3 Migun Film</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+:root{
+  --bg:#040914; --line:#9CC4FF; --cyan:#4FD8FF; --amber:#FFB547; --red:#FF4D5E;
+  --white:#F4F8FF; --brand:#22387C; --u:1;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:Heebo,sans-serif;color:var(--white);-webkit-font-smoothing:antialiased}
+#viewport{position:absolute;inset:0;overflow:hidden;background:radial-gradient(ellipse at 50% 55%,#0b1836 0%,#060d20 55%,#03060f 100%)}
+#stage{position:absolute;transform-origin:50% 50%}
+#stage canvas,#stage svg{position:absolute;left:0;top:0}
+#fog{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(3,6,15,1) 0%,rgba(3,6,15,.75) 18%,rgba(3,6,15,0) 48%)}
+#glowfx{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen}
+#type{position:absolute;inset:0;pointer-events:none;direction:rtl}
+.line{position:absolute;white-space:nowrap;line-height:1;text-shadow:0 0 calc(var(--u)*28px) rgba(3,6,15,.9)}
+.l{display:inline-block;transform-origin:50% 70%}
+.h900{font-weight:900;letter-spacing:-.01em}
+.h700{font-weight:700}
+.h300{font-weight:300}
+.mono{font-family:'IBM Plex Mono',Heebo,monospace;font-weight:500;letter-spacing:.12em}
+.cy{color:var(--cyan)} .am{color:var(--amber)}
+.outline{color:transparent;-webkit-text-stroke:calc(var(--u)*2.2px) var(--cyan)}
+.anchor{position:absolute;left:0;top:0;white-space:nowrap;line-height:1}
+#hud{position:absolute;inset:0;pointer-events:none;font-family:'IBM Plex Mono',Heebo,monospace;color:rgba(190,215,255,.75)}
+.corner{position:absolute;width:calc(var(--u)*46px);height:calc(var(--u)*46px);border-color:rgba(190,215,255,.55);border-style:solid;border-width:0}
+.hudtxt{position:absolute;font-size:calc(var(--u)*15px);letter-spacing:.14em;white-space:nowrap}
+#titleblock{position:absolute;display:flex;direction:rtl;border:1px solid rgba(160,200,255,.35);background:rgba(4,10,24,.55);backdrop-filter:blur(2px)}
+#titleblock div{padding:calc(var(--u)*8px) calc(var(--u)*16px);border-left:1px solid rgba(160,200,255,.25);font-size:calc(var(--u)*14px);letter-spacing:.08em;white-space:nowrap}
+#titleblock div:last-child{border-left:0}
+#titleblock b{font-family:Heebo;font-weight:700;color:#fff;letter-spacing:0;margin-right:.4em}
+#grain{position:absolute;inset:0;pointer-events:none;opacity:.075;mix-blend-mode:overlay;image-rendering:pixelated}
+#vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(0,0,0,.6) 100%)}
+#flash{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,rgba(140,220,255,.9),rgba(79,216,255,.25) 60%,rgba(0,0,0,0));opacity:0;mix-blend-mode:screen}
+#lb{position:absolute;left:0;right:0;background:#000;pointer-events:none}
+#end{position:absolute;inset:0;pointer-events:none;direction:rtl}
+.cta{position:absolute;left:50%;display:flex;align-items:center;gap:calc(var(--u)*18px);background:#fff;color:var(--brand);border-radius:999px;font-weight:900;white-space:nowrap;box-shadow:0 0 calc(var(--u)*60px) rgba(79,216,255,.45)}
+.chip{display:inline-block;border:1px solid rgba(160,200,255,.45);border-radius:999px;padding:.35em .9em;margin:0 .3em;background:rgba(10,22,50,.6)}
+</style>
+<script src="logo_paths.js"></script>
+</head>
+<body>
+<div id="viewport">
+  <div id="stage"><canvas id="grid"></canvas><svg id="world" xmlns="http://www.w3.org/2000/svg"><defs id="defs"></defs><g id="cam"></g></svg></div>
+  <div id="fog"></div>
+  <div id="glowfx"></div>
+  <div id="anchors" style="position:absolute;inset:0;pointer-events:none"></div>
+  <div id="type"></div>
+  <div id="hud"></div>
+  <div id="end"></div>
+  <div id="flash"></div>
+  <canvas id="grain"></canvas>
+  <div id="vignette"></div>
+</div>
+<span style="position:absolute;opacity:0;font-family:Heebo;font-weight:900">א<b style="font-weight:300">ב</b><b style="font-weight:700">ג</b><i style="font-family:'IBM Plex Mono'">A</i></span>
+<script src="scene.js"></script>
+</body>
+</html>
