@@ -1,0 +1,187 @@
+[
+  {
+    "asset_operation": {
+      "create": {
+        "resource_name": "customers/4598680211/assets/-1",
+        "name": "RMK 9/11/26 - video 16x9",
+        "youtube_video_asset": {
+          "youtube_video_id": "FL8RVVDjBzA"
+        }
+      }
+    }
+  },
+  {
+    "asset_operation": {
+      "create": {
+        "resource_name": "customers/4598680211/assets/-2",
+        "name": "RMK 9/11/26 - video 9x16",
+        "youtube_video_asset": {
+          "youtube_video_id": "mDdxwkxF29I"
+        }
+      }
+    }
+  },
+  {
+    "asset_operation": {
+      "create": {
+        "resource_name": "customers/4598680211/assets/-3",
+        "name": "RMK 9/11/26 - CTA GET_QUOTE",
+        "call_to_action_asset": {
+          "call_to_action": "GET_QUOTE"
+        }
+      }
+    }
+  },
+  {
+    "ad_group_ad_operation": {
+      "create": {
+        "ad_group": "customers/4598680211/adGroups/205744008927",
+        "status": "PAUSED",
+        "ad": {
+          "name": "RMK 9/11/26 - Video 16x9",
+          "final_urls": [
+            "https://www.team3.co.il/lp2/security-remarketing/?utm_content=video_16x9"
+          ],
+          "demand_gen_video_responsive_ad": {
+            "headlines": [
+              {
+                "text": "עדיין חושבים על המיגון?"
+              },
+              {
+                "text": "מצלמות, אזעקה ומוקד 24/7"
+              },
+              {
+                "text": "מיגון לבית ולעסק – צוות 3"
+              },
+              {
+                "text": "מענה אנושי תוך שנייה"
+              },
+              {
+                "text": "מגנים עליכם מכל כיוון"
+              }
+            ],
+            "long_headlines": [
+              {
+                "text": "עדיין חושבים על המיגון? צוות 3 – מצלמות, אזעקה ומוקד מבצעי 24/7 לבית ולעסק"
+              },
+              {
+                "text": "מצלמות אבטחה, מוקד מבצעי 24/7 וניידות סיור – מעטפת מיגון אחת של צוות 3"
+              }
+            ],
+            "descriptions": [
+              {
+                "text": "מצלמות אבטחה, אזעקה וגלאים, מתוכננים ומותקנים בדיוק במקום הנכון. השאירו פרטים"
+              },
+              {
+                "text": "מחוברים למוקד המבצעי של צוות 3, 24/7, עם ניידות סיור בכל הארץ. קבלו הצעת מחיר"
+              },
+              {
+                "text": "52,000+ לקוחות ו-30+ שנות ניסיון. השאירו פרטים לייעוץ והצעת מחיר"
+              },
+              {
+                "text": "בית או עסק? נתאים לכם מיגון מלא – מצלמות, אזעקה ומוקד. קבלו הצעה מותאמת לנכס"
+              },
+              {
+                "text": "השאירו פרטים ונציג צוות 3 יחזור אליכם להתאמת פתרון המיגון"
+              }
+            ],
+            "videos": [
+              {
+                "asset": "customers/4598680211/assets/-1"
+              }
+            ],
+            "logo_images": [
+              {
+                "asset": "customers/4598680211/assets/40964021471"
+              }
+            ],
+            "business_name": {
+              "text": "צוות 3"
+            },
+            "call_to_actions": [
+              {
+                "asset": "customers/4598680211/assets/-3"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  {
+    "ad_group_ad_operation": {
+      "create": {
+        "ad_group": "customers/4598680211/adGroups/205744008927",
+        "status": "PAUSED",
+        "ad": {
+          "name": "RMK 9/11/26 - Video 9x16",
+          "final_urls": [
+            "https://www.team3.co.il/lp2/security-remarketing/?utm_content=video_9x16"
+          ],
+          "demand_gen_video_responsive_ad": {
+            "headlines": [
+              {
+                "text": "עדיין חושבים על המיגון?"
+              },
+              {
+                "text": "מצלמות, אזעקה ומוקד 24/7"
+              },
+              {
+                "text": "מיגון לבית ולעסק – צוות 3"
+              },
+              {
+                "text": "מענה אנושי תוך שנייה"
+              },
+              {
+                "text": "מגנים עליכם מכל כיוון"
+              }
+            ],
+            "long_headlines": [
+              {
+                "text": "עדיין חושבים על המיגון? צוות 3 – מצלמות, אזעקה ומוקד מבצעי 24/7 לבית ולעסק"
+              },
+              {
+                "text": "מצלמות אבטחה, מוקד מבצעי 24/7 וניידות סיור – מעטפת מיגון אחת של צוות 3"
+              }
+            ],
+            "descriptions": [
+              {
+                "text": "מצלמות אבטחה, אזעקה וגלאים, מתוכננים ומותקנים בדיוק במקום הנכון. השאירו פרטים"
+              },
+              {
+                "text": "מחוברים למוקד המבצעי של צוות 3, 24/7, עם ניידות סיור בכל הארץ. קבלו הצעת מחיר"
+              },
+              {
+                "text": "52,000+ לקוחות ו-30+ שנות ניסיון. השאירו פרטים לייעוץ והצעת מחיר"
+              },
+              {
+                "text": "בית או עסק? נתאים לכם מיגון מלא – מצלמות, אזעקה ומוקד. קבלו הצעה מותאמת לנכס"
+              },
+              {
+                "text": "השאירו פרטים ונציג צוות 3 יחזור אליכם להתאמת פתרון המיגון"
+              }
+            ],
+            "videos": [
+              {
+                "asset": "customers/4598680211/assets/-2"
+              }
+            ],
+            "logo_images": [
+              {
+                "asset": "customers/4598680211/assets/40964021471"
+              }
+            ],
+            "business_name": {
+              "text": "צוות 3"
+            },
+            "call_to_actions": [
+              {
+                "asset": "customers/4598680211/assets/-3"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "campaign_criterion_operation": {
+      "create": {
+        "campaign": "customers/4598680211/campaigns/15616397515",
+        "status": "ENABLED",
+        "user_list": {
+          "user_list": "customers/4598680211/userLists/9502190123"
+        }
+      }
+    }
+  },
+  {
+    "campaign_criterion_operation": {
+      "create": {
+        "campaign": "customers/4598680211/campaigns/14820720469",
+        "status": "ENABLED",
+        "user_list": {
+          "user_list": "customers/4598680211/userLists/9502190123"
+        }
+      }
+    }
+  }
+]

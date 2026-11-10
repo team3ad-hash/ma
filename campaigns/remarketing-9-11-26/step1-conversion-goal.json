@@ -1,0 +1,24 @@
+[
+  {
+    "custom_conversion_goal_operation": {
+      "create": {
+        "resource_name": "customers/4598680211/customConversionGoals/-1",
+        "name": "Sales Lead Form only - RMK 9/11/26",
+        "conversion_actions": [
+          "customers/4598680211/conversionActions/909567596"
+        ],
+        "status": "ENABLED"
+      }
+    }
+  },
+  {
+    "conversion_goal_campaign_config_operation": {
+      "update": {
+        "resource_name": "customers/4598680211/conversionGoalCampaignConfigs/24448494629",
+        "goal_config_level": "CAMPAIGN",
+        "custom_conversion_goal": "customers/4598680211/customConversionGoals/-1"
+      },
+      "update_mask": "goalConfigLevel,customConversionGoal"
+    }
+  }
+]
