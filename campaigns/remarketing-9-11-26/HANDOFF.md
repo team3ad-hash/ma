@@ -76,7 +76,7 @@ Final URL suffix:
 
 ## 4. פעולות פתוחות לפני הפעלה
 
-1. **משך החברות ברשימה 9502190123 עדיין 540 ימים ולא 30.** עדכון דרך ה-API החזיר הצלחה, אבל בבדיקה ב-10/11/2026 הערך עדיין היה 540. **צריך לתקן ידנית** ב-Audience Manager (Membership duration → 30). אל תנסה שוב דרך ה-API בלי אישור.
+1. ~~משך החברות ברשימה 9502190123~~: **נבדק, אין צורך בתיקון.** זו רשימת Website visitors מבוססת כללים (flexible rule). בסוג הזה חלון הזמן נקבע בכל כלל ב-`lookback_window_days`, וכל 5 הכללים (2 הכללה ו-3 החרגה) מוגדרים על **30**. השדה `membership_life_span=540` ברמת הרשימה לא קובע כאן, ובממשק אין לו שדה לעריכה. אל תנסה לשנות אותו.
 2. **הרשימות ריקות.** בבדיקה ב-10/11/2026 הרשימה 9502190123 הייתה בגודל 0 (Display ו-Search). שתי רשימות ה-CRM של ההחרגה (9053508459, 8572064613) בגודל 0. הקמפיין לא יקבל חשיפות עד שהרשימה תתמלא.
 3. **מגבלת תדירות:** ה-API דוחה `frequency_caps` בקמפיין Demand Gen. המשתמש אישר להקים בלעדיה. אם צריך, מגדירים ידנית בממשק.
 4. **אישור המודעות:** לוודא ש-`approval_status` של שתי המודעות הוא APPROVED.
@@ -87,8 +87,8 @@ Final URL suffix:
 ## 5. בדיקות לסשן הבא (קריאה בלבד)
 
 ```
-user_list: user_list.id, user_list.membership_life_span, user_list.size_for_display, user_list.size_for_search
-  WHERE user_list.id = 9502190123
+user_list: user_list.id, user_list.size_for_display, user_list.size_for_search
+  WHERE user_list.id = 9502190123        (בודקים אם הרשימה התמלאה; membership_life_span לא רלוונטי, ראה סעיף 4)
 
 ad_group_ad: ad_group_ad.ad.id, ad_group_ad.ad.name, ad_group_ad.status,
              ad_group_ad.policy_summary.approval_status, campaign.status
