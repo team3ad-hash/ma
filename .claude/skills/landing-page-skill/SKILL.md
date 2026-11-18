@@ -98,6 +98,7 @@ Flow: theme `dynamicForm` → `/wp-json/t3/v1/sendForm` (`formExtra=webhook`) �
 
 ## Assets
 - `assets/home-bottom_text.html`, `assets/business-bottom_text.html` — current page code (templates).
+- `assets/camera-installation-bottom_text.html` — post 13300 `/lp2/camera-installation/` (keyword: התקנת מצלמות אבטחה; root class `t3n-home t3n-cams`), built 2026-11-18 from Google Ads analysis (old camera pages CPA ₪142–462).
 - `assets/theme-custom-css-block.css` — theme Custom CSS block.
 - `assets/leadim-form-snippet.html` — form spec + city list.
 - `assets/standalone-home.html`, `assets/standalone-business.html` — standalone previews for management.
