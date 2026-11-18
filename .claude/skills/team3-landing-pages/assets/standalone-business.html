@@ -1,0 +1,446 @@
+<title>צוות 3 – מיגון לעסק</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: navy hero band with lead-form card beside it (stacks under the headline on phones), then light content sections */
+:root{
+  --navy:#1B3282; --navy-deep:#192C77; --ink:#171A36; --text:#2E3350; --muted:#4A5068; --soft:#5B6178;
+  --cyan:#00ACD2; --cyan-light:#5AE1FF; --on-navy:#DCE3F7; --bg:#F4F6FB; --surface:#FFFFFF; --tint:#EEF2FB;
+  --line:#DCE1EE; --field:#C9D0E3; --error:#B42318; --wa:#25D366;
+  --font:"Assistant", "Arial Hebrew", Arial, sans-serif;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.55;font-size:17px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--ink)}
+a{color:var(--navy)}
+h1,h2,h3{text-wrap:balance}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--ink);color:#fff}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:54px;height:52px;object-fit:contain;display:block}
+.brand span{font-size:16px;font-weight:600;color:#C7CDE6;border-right:1px solid #3A3F6B;padding-right:12px}
+.top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:10px;font-weight:800;text-decoration:none;font-size:17px;border:0;cursor:pointer;font-family:inherit}
+.btn-accent{background:var(--cyan);color:var(--ink)}
+.btn-accent:hover{background:var(--cyan-light);color:var(--ink)}
+.btn-ghost{border:1px solid #3A3F6B;color:#fff;font-weight:600}
+.btn-ghost:hover{color:#fff;background:#24284A}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy-deep);color:#fff}
+.btn-outline{border:2px solid var(--navy);color:var(--navy);background:transparent}
+.btn-outline-light{border:2px solid #fff;color:#fff;background:transparent}
+.btn-lg{min-height:56px;font-size:20px;border-radius:12px}
+svg{flex-shrink:0}
+
+/* hero */
+.hero{background:var(--navy);color:#fff}
+.hero .wrap{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start;padding-block:56px 64px}
+.hero-copy{flex:999 1 520px;min-width:0;display:flex;flex-direction:column;gap:22px}
+.pill{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:var(--navy-deep);color:var(--on-navy);font-size:16px;font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--cyan-light)}
+.hero h1{margin:0;font-size:clamp(36px,5vw,58px);line-height:1.08;font-weight:800;letter-spacing:-.5px}
+.lead{margin:0;font-size:clamp(18px,2vw,22px);color:var(--on-navy);max-width:560px}
+.checks{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;font-size:19px;font-weight:500}
+.checks li{display:flex;gap:10px;align-items:flex-start}
+.stats{display:flex;flex-wrap:wrap;gap:32px;padding-top:18px;border-top:1px solid #3A52A3}
+.stats div{display:flex;flex-direction:column}
+.stats b{font-size:38px;font-weight:800;color:var(--cyan-light);font-variant-numeric:tabular-nums}
+.stats span{font-size:16px;color:var(--on-navy)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.tile{background:var(--navy-deep);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:flex-start}
+.tile strong{display:block;font-size:18px}
+.tile span{font-size:16px;color:var(--on-navy)}
+
+/* form card */
+.card-form{flex:1 1 380px;min-width:0;max-width:460px;background:var(--surface);color:var(--ink);border-radius:18px;padding:28px;box-shadow:0 24px 60px rgba(23,26,54,.4);border-top:6px solid var(--cyan);scroll-margin-top:90px}
+.card-form h2{margin:0;font-size:28px;font-weight:800;line-height:1.2}
+.card-form .sub{margin:4px 0 0;font-size:17px;color:var(--muted)}
+form{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.fld{display:flex;flex-direction:column;gap:5px;font-size:15px;font-weight:700;position:relative;min-width:0}
+.fld input,.fld select{height:50px;padding:0 14px;border:1.5px solid var(--field);border-radius:10px;font-size:17px;font-weight:400;background:var(--surface);color:var(--ink);font-family:inherit;width:100%}
+.fld input:focus,.fld select:focus{border-color:var(--navy);outline:none;box-shadow:0 0 0 3px rgba(27,50,130,.15)}
+.fld input.ltr{direction:ltr;text-align:right}
+.fld.invalid input{border-color:var(--error)}
+.err{font-size:14px;font-weight:600;color:var(--error)}
+.combo{position:relative}
+.combo input{padding-left:40px}
+.combo .ico{position:absolute;left:14px;top:16px;pointer-events:none}
+.listbox{position:absolute;top:calc(100% + 4px);right:0;left:0;z-index:20;max-height:260px;overflow-y:auto;margin:0;padding:6px;list-style:none;background:var(--surface);border:1.5px solid var(--navy);border-radius:10px;box-shadow:0 14px 30px rgba(23,26,54,.18)}
+.listbox li{min-height:42px;padding:9px 12px;border-radius:8px;font-size:16px;font-weight:400;cursor:pointer;color:var(--ink)}
+.listbox li.active{background:var(--navy);color:#fff}
+.listbox li.empty{cursor:default;color:var(--soft)}
+.topic{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--tint);border-radius:10px;font-size:15px;color:var(--navy)}
+.fine{margin:0;text-align:center;font-size:14px;color:var(--soft)}
+.thanks{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:40px 8px}
+.thanks h2{margin:0}
+.thanks p{margin:0;font-size:18px;color:var(--muted)}
+
+/* bands & sections */
+.band{background:var(--surface);border-block:1px solid var(--line)}
+.trust .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px 32px;padding-block:22px;font-size:17px;font-weight:700;color:var(--navy)}
+.trust span{display:flex;align-items:center;gap:8px}
+.sec{padding-block:72px 32px}
+.eyebrow{font-size:17px;font-weight:800;color:var(--navy)}
+.sec-head{display:flex;flex-direction:column;gap:10px;max-width:760px;margin-bottom:36px}
+.sec-head h2,.sec h2{margin:0;font-size:clamp(28px,3.4vw,42px);line-height:1.15;font-weight:800}
+.sec-head p{margin:0;font-size:20px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:12px}
+.box h3{margin:0;font-size:23px;font-weight:800}
+.box p{margin:0;font-size:18px;color:var(--muted)}
+.num{width:48px;height:48px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800}
+.num.alt{background:var(--cyan);color:var(--ink)}
+
+/* packages */
+.pkgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;align-items:stretch}
+.pkg{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:30px;display:flex;flex-direction:column;gap:16px;position:relative}
+.pkg h3{margin:0;font-size:25px;font-weight:800}
+.pkg p{margin:0;font-size:17px;color:var(--muted)}
+.price{font-size:32px;font-weight:800;color:var(--navy)}
+.price small{font-size:17px;font-weight:500;color:var(--soft)}
+.pkg ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:17px;flex-grow:1}
+.pkg li::before{content:"✓ ";color:var(--cyan);font-weight:800}
+.pkg.featured{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 20px 50px rgba(27,50,130,.35)}
+.pkg.featured p,.pkg.featured .price small{color:var(--on-navy)}
+.pkg.featured .price{color:#fff}
+.pkg.featured li::before{color:var(--cyan-light)}
+.badge{position:absolute;top:-14px;right:24px;background:var(--cyan);color:var(--ink);padding:4px 14px;border-radius:999px;font-size:15px;font-weight:800}
+
+/* why */
+.why .wrap{display:flex;flex-wrap:wrap;gap:40px;align-items:center;padding-block:72px}
+.why-copy{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.why-copy p{margin:0;font-size:20px;color:var(--muted)}
+.why-grid{flex:1 1 480px;min-width:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.why-grid div{background:var(--tint);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:6px}
+.why-grid strong{font-size:20px;color:var(--navy)}
+.why-grid span{font-size:17px;color:var(--muted)}
+
+/* testimonials */
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.quote{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:14px}
+.stars{color:var(--navy);letter-spacing:2px}
+.quote blockquote{margin:0;font-size:18px;color:var(--text)}
+.quote figcaption{font-size:16px;font-weight:700}
+.placeholder{background:#FFF8E1;border:1px dashed #C99A00;border-radius:4px;padding:0 4px}
+
+/* faq */
+.faq{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 22px}
+.faq summary{cursor:pointer;font-size:19px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--cyan);font-size:24px;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq p{margin:12px 0 0;font-size:18px;color:var(--muted)}
+
+/* steps (business) */
+.steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.steps li{background:var(--navy);color:#fff;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:8px}
+.steps .k{font-size:16px;font-weight:800;color:var(--cyan-light)}
+.steps strong{font-size:21px}
+.steps span{font-size:17px;color:var(--on-navy)}
+.bigstats .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;text-align:center;padding-block:48px}
+.bigstats b{display:block;font-size:46px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums}
+.bigstats span{font-size:17px;color:var(--muted)}
+.clients .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px;padding-block:24px}
+.clients b{font-size:16px;color:var(--muted)}
+.clients span{font-size:17px;font-weight:700;color:var(--navy)}
+.bigquote{max-width:900px;margin:0 auto;text-align:center;display:flex;flex-direction:column;gap:18px;align-items:center}
+.bigquote blockquote{margin:0;font-size:clamp(21px,2.6vw,28px);line-height:1.4;font-weight:700}
+
+/* final cta + footer */
+.final{background:var(--navy);color:#fff}
+.final .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:28px;padding-block:64px}
+.final-copy{flex:999 1 460px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.final h2{margin:0;font-size:clamp(28px,3.4vw,40px);font-weight:800}
+.final p{margin:0;font-size:20px;color:var(--on-navy)}
+.final-actions{flex:1 1 300px;display:flex;flex-wrap:wrap;gap:12px}
+.final-actions .btn{flex:1 1 160px}
+.foot{background:var(--ink);color:#AEB4D0;font-size:15px}
+.foot .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding-block:24px}
+.foot a{color:var(--on-navy)}
+.note{background:#FFF8E1;color:#5C4400;font-size:14px;text-align:center;padding:8px 16px}
+
+/* sticky mobile bar */
+.mbar{display:none}
+
+@media (max-width:760px){
+  body{font-size:16px}
+  .brand span,.top .btn-ghost{display:none}
+  .brand img{width:46px;height:44px}
+  .hero .wrap{padding-block:24px 0;gap:20px}
+  .hero-copy{gap:14px}
+  .checks,.stats,.tiles.desk{display:none}
+  .card-form{max-width:none;padding:20px;border-radius:16px;margin-bottom:-40px;position:relative}
+  .card-form h2{font-size:23px}
+  .after-hero{padding-top:56px}
+  .trust .wrap{display:grid;grid-template-columns:1fr 1fr;font-size:15px;gap:12px}
+  .sec{padding-block:40px 8px}
+  .sec-head{margin-bottom:20px}
+  .sec-head p{font-size:17px}
+  .box{padding:18px;flex-direction:row;align-items:flex-start;gap:14px}
+  .box .num{flex-shrink:0;width:40px;height:40px;font-size:20px}
+  .box h3{font-size:19px}
+  .box p{font-size:16px}
+  .pkg{padding:22px}
+  .pkg.featured{order:-1}
+  .why .wrap{padding-block:40px;gap:20px}
+  .why-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .why-grid div{padding:14px}
+  .why-grid strong{font-size:16px}
+  .why-grid span{font-size:14px}
+  .quotes{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
+  .quote{flex:0 0 85%;scroll-snap-align:start}
+  .final .wrap{padding-block:40px}
+  .foot .wrap{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));justify-content:center;text-align:center}
+  .mobile-tiles{display:grid !important}
+  .mbar{display:flex;position:fixed;inset:auto 0 0;z-index:35;box-shadow:0 -4px 16px rgba(23,26,54,.2);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--navy-deep)}
+  .mbar a{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:60px;text-decoration:none;font-weight:800;font-size:17px}
+  .mbar .a1{background:var(--cyan);color:var(--ink)}
+  .mbar .a2{background:var(--navy-deep);color:#fff}
+}
+.mobile-tiles{display:none}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+.tile.light{background:var(--surface);border:1px solid var(--line);color:var(--ink);flex-direction:column;gap:6px;padding:14px}
+.tile.light strong{font-size:16px}
+.tile.light span{font-size:14px;color:var(--muted)}
+.mobile-only{display:none}
+@media (max-width:760px){.mobile-only{display:block}}
+
+</style>
+<div dir="rtl" lang="he">
+<div class="note">טיוטת עיצוב לבדיקה פנימית · הטופס בדף זה לא שולח לידים · המלצות ולוגואים מסומנים להשלמה</div>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><img src="data:image/png;base64,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" alt="צוות 3"><span>מיגון ומוקד לעסקים</span></div>
+    <div class="top-actions">
+      <a class="btn btn-accent" href="tel:0738010665">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>מכירות: 073-8010665</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-copy">
+      <span class="pill">לעסקים קטנים, חנויות, משרדים ומפעלים</span>
+      <h1>העסק נסגר בערב.<br>ההגנה שלו לא.</h1>
+      <p class="lead">מערכת מיגון מחוברת למוקד של צוות 3 – אזעקה, מצלמות עם אנליטיקה ובקרת כניסה – כדי שפריצה, גניבה או תקלה יטופלו לפני שהן הופכות להפסד.</p>
+      <div class="tiles desk">
+<div class="tile"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#5AE1FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"></path></svg><div><strong>אזעקה מנוטרת</strong><span>צופר על חנות ריקה לא מספיק – המוקד מגיב</span></div></div>
+<div class="tile"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#5AE1FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2"></rect></svg><div><strong>מצלמות אנליטיקה</strong><span>זיהוי חכם של אירועים חריגים (LUMANA)</span></div></div>
+<div class="tile"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#5AE1FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><div><strong>בקרת כניסה</strong><span>כרטיסי RFID, זיהוי פנים ואינטרקום חכם</span></div></div>
+<div class="tile"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#5AE1FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="7" width="15" height="10" rx="2"></rect><path d="M16 10h4l3 3v4h-7"></path><circle cx="5.5" cy="18.5" r="2"></circle><circle cx="18.5" cy="18.5" r="2"></circle></svg><div><strong>סיור ותגובה</strong><span>50+ ניידות ועשרות אופנועים בכל הארץ</span></div></div>
+      </div>
+    </div>
+
+    <div id="form" class="card-form">
+      <div id="thanks" class="thanks" hidden>
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#1B3282" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M8 12l3 3 5-6"></path></svg>
+        <h2>תודה! הפרטים התקבלו</h2>
+        <p>יועץ מיגון עסקי יחזור אליכם לתיאום סקר סיכונים בעסק.</p>
+        <p class="fine">(בטיוטה זו הטופס לא שולח לידים בפועל)</p>
+      </div>
+      <div id="formBody">
+        <h2>סקר סיכונים לעסק – ללא עלות</h2>
+        <p class="sub">יועץ ימפה נקודות תורפה ויבנה הצעת מחיר מותאמת</p>
+        <form method="post" name="contactForm" id="leadForm" novalidate>
+          <input type="hidden" name="formExtra" id="formExtra" value="webhook">
+          <input type="hidden" name="formType" id="formType" value="dynamicForm">
+          <input type="hidden" name="pageUrl" id="pageUrl" value="">
+          <input type="hidden" name="formPageId" id="formPageId" value="FORM_PAGE_ID">
+          <input type="hidden" name="lm_serfer" id="lm_serfer" class="lm_serfer" value="">
+          <input type="hidden" name="fieldנושא הפניה" id="field4" value="מכירות - קבלת הצעת מחיר">
+          <label class="fld" for="field1">שם מלא *
+            <input type="text" name="field*שם מלא" id="field1" class="txtbox req" required minlength="2" autocomplete="name">
+          </label>
+          <label class="fld" for="field2">טלפון *
+            <input type="tel" name="field*טלפון" id="field2" class="txtbox req ltr" required pattern="0[0-9\-\s]{8,11}" inputmode="tel" autocomplete="tel" placeholder="050-0000000">
+          </label>
+          <div class="fld" id="cityField">
+            <label for="field5-search">יישוב *</label>
+            <input type="hidden" name="field*יישוב" id="field5" value="0">
+            <div class="combo">
+              <input type="text" id="field5-search" role="combobox" aria-autocomplete="list" aria-controls="field5-list" aria-expanded="false" autocomplete="off" placeholder="הקלידו שם ישוב">
+              <svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6178" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+              <ul id="field5-list" class="listbox" role="listbox" aria-label="רשימת יישובים" hidden></ul>
+            </div>
+            <span id="cityErr" class="err" role="alert" hidden>יש לבחור יישוב מהרשימה</span>
+          </div>
+          <label class="fld" for="field3">סיווג הפונה
+            <select name="fieldסיווג הפונה" id="field3" class="select">
+              <option value="לקוח חדש">לקוח חדש</option>
+              <option value="לקוח קיים">לקוח קיים</option>
+            </select>
+          </label>
+          <div class="topic">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"></path><circle cx="7" cy="7" r="1.5"></circle></svg>
+            <span>נושא הפניה: <strong>מכירות - קבלת הצעת מחיר</strong></span>
+          </div>
+          <button type="submit" class="btn btn-navy btn-lg">תאמו לי סקר חינם ←</button>
+          <p class="fine">ללא התחייבות · הפרטים מאובטחים ולא יועברו לגורם אחר</p>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="after-hero">
+<section class="sec mobile-only" style="padding-top:24px"><div class="wrap">
+  <div class="tiles mobile-tiles" style="grid-template-columns:1fr 1fr;gap:10px">
+<div class="tile light"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1B3282" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"></path></svg><div><strong>אזעקה מנוטרת</strong><span>צופר על חנות ריקה לא מספיק – המוקד מגיב</span></div></div>
+<div class="tile light"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1B3282" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2"></rect></svg><div><strong>מצלמות אנליטיקה</strong><span>זיהוי חכם של אירועים חריגים (LUMANA)</span></div></div>
+<div class="tile light"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1B3282" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><div><strong>בקרת כניסה</strong><span>כרטיסי RFID, זיהוי פנים ואינטרקום חכם</span></div></div>
+<div class="tile light"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1B3282" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="7" width="15" height="10" rx="2"></rect><path d="M16 10h4l3 3v4h-7"></path><circle cx="5.5" cy="18.5" r="2"></circle><circle cx="18.5" cy="18.5" r="2"></circle></svg><div><strong>סיור ותגובה</strong><span>50+ ניידות ועשרות אופנועים בכל הארץ</span></div></div>
+  </div>
+</div></section>
+
+<section class="band clients"><div class="wrap">
+  <b>סומכים עלינו:</b>
+  <span>חברות הייטק</span><span>מפעלי תעשייה</span><span>מוסדות פיננסיים</span><span>רשויות מקומיות</span><span>מוסדות חינוך</span>
+  <span class="placeholder" style="font-weight:400;font-size:15px;color:#5C4400">[להחליף בלוגואים של לקוחות]</span>
+</div></section>
+</div>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">מה באמת עולה לעסק</span>
+    <h2>פריצה אחת יכולה לעלות יותר משנים של מיגון</h2>
+    <p>סחורה שנגנבה, ציוד שנהרס, ימי עבודה שאבדו ופרמיית ביטוח שעולה. מיגון נכון מונע – ומתעד כשצריך.</p>
+  </div>
+  <div class="grid">
+    <div class="box"><div><h3>מניעת פריצות לילה</h3><p>התרעה מאומתת במוקד ושליחת סייר – לא רק צופר שהשכנים מתעלמים ממנו.</p></div></div>
+    <div class="box"><div><h3>צמצום גניבות מבפנים</h3><p>מצלמות בקופות ובמחסן, הקלטה רציפה ואנליטיקה שמסמנת חריגות.</p></div></div>
+    <div class="box"><div><h3>שליטה מכל מקום</h3><p>צפייה חיה, דריכה ונטרול מהנייד, והרשאות כניסה לכל עובד.</p></div></div>
+    <div class="box"><div><h3>עמידה בדרישות ביטוח</h3><p>מוקד מאושר ע״י משטרת ישראל ומערכות של מותגים מובילים. <span class="placeholder">[לאשר מול המכירות]</span></p></div></div>
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-head"><h2>מהשיחה הראשונה ועד עסק מוגן</h2></div>
+  <ol class="steps">
+    <li><span class="k">שלב 1</span><strong>שיחת ייעוץ</strong><span>מבינים את העסק, השעות והסיכונים</span></li>
+    <li><span class="k">שלב 2</span><strong>סקר בשטח</strong><span>יועץ ממפה כניסות, קופות ונקודות תורפה</span></li>
+    <li><span class="k">שלב 3</span><strong>התקנה מקצועית</strong><span>טכנאי צוות 3, בשעות שלא מפריעות לעסק</span></li>
+    <li><span class="k">שלב 4</span><strong>ניטור 24/7</strong><span>המוקד שומר – אתם מתרכזים בעסק</span></li>
+  </ol>
+</div></section>
+
+<section class="band bigstats" style="margin-top:40px"><div class="wrap">
+  <div><b>1990</b><span>שנת הקמה</span></div>
+  <div><b>52,000</b><span>לקוחות פעילים</span></div>
+  <div><b>&lt;1 שנ׳</b><span>זמן מענה ממוצע במוקד</span></div>
+  <div><b>50+</b><span>ניידות סיור בפריסה ארצית</span></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <figure class="bigquote">
+    <blockquote>״<span class="placeholder">[ציטוט של בעל עסק – למשל: המוקד התקשר אליי שתי דקות אחרי שמישהו ניסה לפרוץ, והסייר כבר היה בדרך]</span>״</blockquote>
+    <figcaption>[שם], [תפקיד], [שם העסק]</figcaption>
+  </figure>
+</div></section>
+
+<section class="final" style="margin-top:40px"><div class="wrap">
+  <div class="final-copy"><h2>תנו לנו לבדוק את העסק שלכם.</h2><p>סקר סיכונים מקצועי, הצעה שקופה, בלי התחייבות.</p></div>
+  <div class="final-actions"><a class="btn btn-accent btn-lg" href="#form">לתיאום סקר</a><a class="btn btn-outline-light btn-lg" href="https://wa.me/972535216650">כתבו לנו בוואטסאפ</a></div>
+</div></section>
+
+<footer class="foot"><div class="wrap">
+  <span>צוות 3 מערכות מיגון · פרופ׳ א.ד. ברגמן 2, רחובות · info@team3.co.il</span>
+  <span><a href="https://www.team3.co.il/privacy-policy/">מדיניות פרטיות</a></span>
+</div></footer>
+
+<nav class="mbar" aria-label="פעולות מהירות">
+  <a class="a1" href="#form">לתיאום סקר</a>
+  <a class="a2" href="https://wa.me/972535216650">וואטסאפ</a>
+</nav>
+</div>
+
+<script>window.T3_CITIES=["אבו ג'ווייעד (שבט)", "אבו גוש", "אבו סנאן", "אבו סריחאן (שבט)", "אבו עבדון (שבט)", "אבו עמאר (שבט)", "אבו עמרה (שבט)", "אבו קורינאת (שבט)", "אבו קרינאת (יישוב)", "אבו רובייעה (שבט)", "אבו רוקייק (שבט)", "אבו תלול", "אבטין", "אבטליון", "אביאל", "אביבים", "אביגדור", "אביחיל", "אביטל", "אביעזר", "אבירים", "אבן יהודה", "אבן מנחם", "אבן ספיר", "אבן שמואל", "אבני איתן", "אבני חפץ", "אבנת", "אבשלום", "אדורה", "אדירים", "אדמית", "אדרת", "אודים", "אודם", "אוהד", "אום אל-פחם", "אום אל-קוטוף", "אום בטין", "אומן", "אומץ", "אופקים", "אור הגנוז", "אור הנר", "אור יהודה", "אור עקיבא", "אורה", "אורות", "אורטל", "אורים", "אורנים", "אורנית", "אושה", "אזור", "אחווה", "אחוזם", "אחוזת ברק", "אחיהוד", "אחיטוב", "אחיסמך", "אחיעזר", "אטרש (שבט)", "איבים", "אייל", "איילת השחר", "אילון", "אילות", "אילניה", "אילת", "אירוס", "איתמר", "איתן", "איתנים", "אכסאל", "אל סייד", "אל-עזי", "אל-עריאן", "אל-רום", "אלומה", "אלומות", "אלון הגליל", "אלון מורה", "אלון שבות", "אלוני אבא", "אלוני הבשן", "אלוני יצחק", "אלונים", "אלי-עד", "אליאב", "אליכין", "אליפז", "אליפלט", "אליקים", "אלישיב", "אלישמע", "אלמגור", "אלמוג", "אלעד", "אלעזר", "אלפי מנשה", "אלקוש", "אלקנה", "אמונים", "אמירים", "אמנון", "אמציה", "אניעם", "אסד (שבט)", "אספר", "אעבלין", "אעצם (שבט)", "אפיניש (שבט)", "אפיק", "אפיקים", "אפק", "אפרת", "ארבל", "ארגמן", "ארז", "אריאל", "ארסוף", "אשבול", "אשבל", "אשדוד", "אשדות יעקב (איחוד)", "אשדות יעקב (מאוחד)", "אשחר", "אשכולות", "אשל הנשיא", "אשלים", "אשקלון", "אשרת", "אשתאול", "אתגר", "באקה אל-גרביה", "באר אורה", "באר גנים", "באר טוביה", "באר יעקב", "באר מילכה", "באר שבע", "בארות יצחק", "בארותיים", "בארי", "בוסתן הגליל", "בועיינה-נוג'ידאת", "בוקעאתא", "בורגתה", "בחן", "בטחה", "ביצרון", "ביר אל-מכסור", "ביר הדאג'", "ביריה", "בית אורן", "בית אל", "בית אלעזרי", "בית אלפא", "בית אריה", "בית ברל", "בית ג'ן", "בית גוברין", "בית גמליאל", "בית דגן", "בית הגדי", "בית הלוי", "בית הלל", "בית העמק", "בית הערבה", "בית השיטה", "בית זיד", "בית זית", "בית זרע", "בית חורון", "בית חירות", "בית חלקיה", "בית חנן", "בית חנניה", "בית חשמונאי", "בית יהושע", "בית יוסף", "בית ינאי", "בית יצחק-שער חפר", "בית לחם הגלילית", "בית מאיר", "בית נחמיה", "בית ניר", "בית נקופה", "בית עובד", "בית עוזיאל", "בית עזרא", "בית עריף", "בית צבי", "בית קמה", "בית קשת", "בית רבן", "בית רימון", "בית שאן", "בית שמש", "בית שערים", "בית שקמה", "ביתן אהרן", "ביתר עילית", "בלפוריה", "בן זכאי", "בן עמי", "בן שמן (כפר נוער)", "בן שמן (מושב)", "בני ברק", "בני דקלים", "בני דרום", "בני דרור", "בני יהודה", "בני נצרים", "בני עטרות", "בני עי\"ש", "בני ציון", "בני ראם", "בניה", "בנימינה-גבעת עדה", "בסמ\"ה", "בסמת טבעון", "בענה", "בצרה", "בצת", "בקוע", "בקעות", "בר גיורא", "בר יוחאי", "ברוכין", "ברור חיל", "ברוש", "ברכה", "ברכיה", "ברעם", "ברק", "ברקאי", "ברקן", "ברקת", "בת הדר", "בת חן", "בת חפר", "בת ים", "בת עין", "בת שלמה", "ג'דיידה-מכר", "ג'ולס", "ג'לג'וליה", "ג'נאביב (שבט)", "ג'סר א-זרקא", "ג'ש (גוש חלב)", "ג'ת", "גאולי תימן", "גאולים", "גאליה", "גבולות", "גבים", "גבע", "גבע בנימין", "גבע כרמל", "גבעולים", "גבעון החדשה", "גבעות בר", "גבעת אבני", "גבעת אלה", "גבעת ברנר", "גבעת השלושה", "גבעת זאב", "גבעת ח\"ן", "גבעת חיים (איחוד)", "גבעת חיים (מאוחד)", "גבעת יואב", "גבעת יערים", "גבעת ישעיהו", "גבעת כ\"ח", "גבעת ניל\"י", "גבעת עוז", "גבעת שמואל", "גבעת שמש", "גבעת שפירא", "גבעתי", "גבעתיים", "גברעם", "גבת", "גדות", "גדיש", "גדעונה", "גדרה", "גונן", "גורן", "גורנות הגליל", "גזית", "גזר", "גיאה", "גיבתון", "גיזו", "גילון", "גילת", "גינוסר", "גיניגר", "גינתון", "גיתה", "גיתית", "גלאון", "גלגל", "גליל ים", "גלעד (אבן יצחק)", "גמזו", "גן הדרום", "גן השומרון", "גן חיים", "גן יאשיה", "גן יבנה", "גן נר", "גן שורק", "גן שלמה", "גן שמואל", "גנות", "גנות הדר", "גני הדר", "גני טל", "גני יוחנן", "גני מודיעין", "גני עם", "גני תקווה", "געש", "געתון", "גפן", "גרופית", "גשור", "גשר", "גשר הזיו", "גת (קיבוץ)", "גת רימון", "דאלית אל-כרמל", "דבורה", "דבוריה", "דבירה", "דברת", "דגניה א'", "דגניה ב'", "דוב\"ב", "דולב", "דור", "דורות", "דחי", "דייר אל-אסד", "דייר חנא", "דייר ראפאת", "דימונה", "דישון", "דליה", "דלתון", "דמיידה", "דן", "דפנה", "דקל", "דריג'את", "האון", "הבונים", "הגושרים", "הדר עם", "הוד השרון", "הודיה", "הודיות", "הוואשלה (שבט)", "הוזייל (שבט)", "הושעיה", "הזורע", "הזורעים", "החותרים", "היוגב", "הילה", "המעפיל", "הסוללים", "העוגן", "הר אדר", "הר גילה", "הר עמשא", "הראל", "הרדוף", "הרצליה", "הררית", "ורד יריחו", "ורדון", "זבארגה (שבט)", "זבדיאל", "זוהר", "זיקים", "זיתן", "זכרון יעקב", "זכריה", "זמר", "זמרת", "זנוח", "זרועה", "זרזיר", "זרחיה", "ח'ואלד", "ח'ואלד (שבט)", "חבצלת השרון", "חבר", "חברון", "חגור", "חגי", "חגלה", "חד-נס", "חדיד", "חדרה", "חוג'ייראת (ד'הרה)", "חולדה", "חולון", "חולית", "חולתה", "חוסן", "חוסנייה", "חופית", "חוקוק", "חורה", "חורפיש", "חורשים", "חזון", "חיבת ציון", "חיננית", "חיפה", "חירות", "חלוץ", "חלץ", "חמאם", "חמד", "חמדיה", "חמדת", "חמרה", "חניאל", "חניתה", "חנתון", "חספין", "חפץ חיים", "חפצי-בה", "חצב", "חצבה", "חצור הגלילית", "חצור-אשדוד", "חצרים", "חרב לאת", "חרוצים", "חריש", "חרמש", "חרשים", "חשמונאים", "טבריה", "טובא-זנגריה", "טורעאן", "טייבה", "טייבה (בעמק)", "טירה", "טירת יהודה", "טירת כרמל", "טירת צבי", "טל שחר", "טל-אל", "טללים", "טלמון", "טמרה", "טמרה (יזרעאל)", "טנא", "טפחות", "יאנוח-ג'ת", "יבול", "יבנאל", "יבנה", "יגור", "יגל", "יד בנימין", "יד השמונה", "יד חנה", "יד מרדכי", "יד נתן", "יד רמב\"ם", "ידידה", "יהוד-מונוסון", "יהל", "יובל", "יובלים", "יודפת", "יונתן", "יושיביה", "יזרעאל", "יחיעם", "יטבתה", "ייט\"ב", "יכיני", "ינוב", "ינון", "יסוד המעלה", "יסודות", "יסעור", "יעד", "יעל", "יעף", "יערה", "יפיע", "יפית", "יפעת", "יפתח", "יצהר", "יציץ", "יקום", "יקיר", "יקנעם (מושבה)", "יקנעם עילית", "יראון", "ירדנה", "ירוחם", "ירושלים", "ירחיב", "ירכא", "ירקונה", "ישע", "ישעי", "ישרש", "יתד", "כאבול", "כאוכב אבו אל-היג'א", "כברי", "כדורי", "כדיתה", "כוכב השחר", "כוכב יאיר", "כוכב יעקב", "כוכב מיכאל", "כורזים", "כחל", "כחלה", "כיסופים", "כישור", "כליל", "כלנית", "כמאנה", "כמהין", "כמון", "כנות", "כנף", "כנרת (מושבה)", "כנרת (קבוצה)", "כסיפה", "כסלון", "כסרא-סמיע", "כעביה-טבאש-חג'אג'רה", "כפר אביב", "כפר אדומים", "כפר אוריה", "כפר אחים", "כפר ביאליק", "כפר ביל\"ו", "כפר בלום", "כפר בן נון", "כפר ברא", "כפר ברוך", "כפר גדעון", "כפר גלים", "כפר גליקסון", "כפר גלעדי", "כפר דניאל", "כפר האורנים", "כפר החורש", "כפר המכבי", "כפר הנגיד", "כפר הנוער הדתי", "כפר הנשיא", "כפר הס", "כפר הרא\"ה", "כפר הרי\"ף", "כפר ויתקין", "כפר ורבורג", "כפר ורדים", "כפר זוהרים", "כפר זיתים", "כפר חב\"ד", "כפר חושן", "כפר חיטים", "כפר חיים", "כפר חנניה", "כפר חסידים א'", "כפר חסידים ב'", "כפר חרוב", "כפר טרומן", "כפר יאסיף", "כפר ידידיה", "כפר יהושע", "כפר יונה", "כפר יחזקאל", "כפר יעבץ", "כפר כמא", "כפר כנא", "כפר מונש", "כפר מימון", "כפר מל\"ל", "כפר מנדא", "כפר מנחם", "כפר מסריק", "כפר מצר", "כפר מרדכי", "כפר נטר", "כפר סאלד", "כפר סבא", "כפר סילבר", "כפר סירקין", "כפר עבודה", "כפר עזה", "כפר עציון", "כפר פינס", "כפר קאסם", "כפר קיש", "כפר קרע", "כפר ראש הנקרה", "כפר רוזנואלד (זרעית)", "כפר רופין", "כפר רות", "כפר שמאי", "כפר שמואל", "כפר שמריהו", "כפר תבור", "כפר תפוח", "כרי דשא", "כרכום", "כרם בן זמרה", "כרם בן שמן", "כרם יבנה (ישיבה)", "כרם מהר\"ל", "כרם שלום", "כרמי יוסף", "כרמי צור", "כרמי קטיף", "כרמיאל", "כרמיה", "כרמים", "כרמל", "לא רשום", "לבון", "לביא", "לבנים", "להב", "להבות הבשן", "להבות חביבה", "להבים", "לוד", "לוזית", "לוחמי הגיטאות", "לוטם", "לוטן", "לימן", "לכיש", "לפיד", "לפידות", "לקיה", "מאור", "מאיר שפיה", "מבוא ביתר", "מבוא דותן", "מבוא חורון", "מבוא חמה", "מבוא מודיעים", "מבואות ים", "מבואות יריחו", "מבועים", "מבטחים", "מבקיעים", "מבשרת ציון", "מג'ד אל-כרום", "מג'דל שמס", "מגאר", "מגדים", "מגדל", "מגדל העמק", "מגדל עוז", "מגדלים", "מגידו", "מגל", "מגן", "מגן שאול", "מגשימים", "מדרך עוז", "מדרשת בן גוריון", "מדרשת רופין", "מודיעין עילית", "מודיעין-מכבים-רעות", "מולדת", "מוצא עילית", "מוקייבלה", "מורן", "מורשת", "מזור", "מזכרת בתיה", "מזרע", "מזרעה", "מחולה", "מחנה הילה", "מחנה טלי", "מחנה יהודית", "מחנה יוכבד", "מחנה יפה", "מחנה יתיר", "מחנה מרים", "מחנה תל נוף", "מחניים", "מחסיה", "מטולה", "מטע", "מי עמי", "מיטב", "מייסר", "מיצר", "מירב", "מירון", "מישר", "מיתר", "מכורה", "מכחול", "מכמורת", "מכמנים", "מלאה", "מלילות", "מלכיה", "מלכישוע", "מנוחה", "מנוף", "מנות", "מנחמיה", "מנרה", "מנשית זבדה", "מסד", "מסדה", "מסילות", "מסילת ציון", "מסלול", "מסעדה", "מסעודין אל-עזאזמה", "מעברות", "מעגלים", "מעגן", "מעגן מיכאל", "מעוז חיים", "מעון", "מעונה", "מעיליא", "מעין ברוך", "מעין צבי", "מעלה אדומים", "מעלה אפרים", "מעלה גלבוע", "מעלה גמלא", "מעלה החמישה", "מעלה לבונה", "מעלה מכמש", "מעלה עירון", "מעלה עמוס", "מעלות-תרשיחא", "מענית", "מעש", "מפלסים", "מצדות יהודה", "מצובה", "מצליח", "מצפה", "מצפה אבי\"ב", "מצפה אילן", "מצפה יריחו", "מצפה נטופה", "מצפה רמון", "מצפה שלם", "מצר", "מקווה ישראל", "מרגליות", "מרום גולן", "מרחב עם", "מרחביה (מושב)", "מרחביה (קיבוץ)", "מרכז שפירא", "משאבי שדה", "משגב דב", "משגב עם", "משהד", "משואה", "משואות יצחק", "משכיות", "משמר איילון", "משמר דוד", "משמר הירדן", "משמר הנגב", "משמר העמק", "משמר השבעה", "משמר השרון", "משמרות", "משמרת", "משען", "מתן", "מתת", "מתתיהו", "נאות גולן", "נאות הכיכר", "נאות מרדכי", "נאות סמדר", "נאעורה", "נבטים", "נגבה", "נגוהות", "נהורה", "נהלל", "נהריה", "נוב", "נוגה", "נוה צוף", "נווה", "נווה אבות", "נווה אור", "נווה אטי\"ב", "נווה אילן", "נווה איתן", "נווה דניאל", "נווה זוהר", "נווה זיו", "נווה חריף", "נווה ים", "נווה ימין", "נווה ירק", "נווה מבטח", "נווה מיכאל", "נווה שלום", "נועם", "נוף איילון", "נוף הגליל", "נופים", "נופית", "נופך", "נוקדים", "נורדיה", "נורית", "נחושה", "נחל עוז", "נחלה", "נחליאל", "נחלים", "נחם", "נחף", "נחשולים", "נחשון", "נחשונים", "נטועה", "נטור", "נטע", "נטעים", "נטף", "ניין", "ניל\"י", "ניצן", "ניצן ב'", "ניצנה (קהילת חינוך)", "ניצני סיני", "ניצני עוז", "ניצנים", "ניר אליהו", "ניר בנים", "ניר גלים", "ניר דוד (תל עמל)", "ניר ח\"ן", "ניר יפה", "ניר יצחק", "ניר ישראל", "ניר משה", "ניר עוז", "ניר עם", "ניר עציון", "ניר עקיבא", "ניר צבי", "נירים", "נירית", "נמרוד", "נס הרים", "נס עמים", "נס ציונה", "נעורים", "נעלה", "נעמ\"ה", "נען", "נערן", "נצאצרה (שבט)", "נצר חזני", "נצר סרני", "נצרת", "נשר", "נתיב הגדוד", "נתיב הל\"ה", "נתיב העשרה", "נתיב השיירה", "נתיבות", "נתניה", "סאג'ור", "סאסא", "סביון", "סגולה", "סואעד (חמרייה)", "סואעד (כמאנה) (שבט)", "סולם", "סוסיה", "סופה", "סח'נין", "סייד (שבט)", "סלמה", "סלעית", "סמר", "סנסנה", "סעד", "סעוה", "סער", "ספיר", "סתריה", "ע'ג'ר", "עבדון", "עברון", "עגור", "עדי", "עדנים", "עוזה", "עוזייר", "עולש", "עומר", "עופר", "עופרה", "עוצם", "עוקבי (בנו עוקבה)", "עזוז", "עזר", "עזריאל", "עזריה", "עזריקם", "עטאוונה (שבט)", "עטרת", "עידן", "עיילבון", "עיינות", "עילוט", "עין איילה", "עין אל-אסד", "עין גב", "עין גדי", "עין דור", "עין הבשור", "עין הוד", "עין החורש", "עין המפרץ", "עין הנצי\"ב", "עין העמק", "עין השופט", "עין השלושה", "עין ורד", "עין זיוון", "עין חוד", "עין חצבה", "עין חרוד (איחוד)", "עין חרוד (מאוחד)", "עין יהב", "עין יעקב", "עין כרם-בי\"ס חקלאי", "עין כרמל", "עין מאהל", "עין נקובא", "עין עירון", "עין צורים", "עין קנייא", "עין ראפה", "עין שמר", "עין שריד", "עין תמר", "עינת", "עיר אובות", "עכו", "עלומים", "עלי", "עלי זהב", "עלמה", "עלמון", "עמוקה", "עמיחי", "עמינדב", "עמיעד", "עמיעוז", "עמיקם", "עמיר", "עמנואל", "עמקה", "ענב", "עספיא", "עפולה", "עץ אפרים", "עצמון שגב", "עראבה", "עראמשה", "ערב אל נעים", "ערד", "ערוגות", "ערערה", "ערערה-בנגב", "עשרת", "עתלית", "עתניאל", "פארן", "פדואל", "פדויים", "פדיה", "פוריה - כפר עבודה", "פוריה - נווה עובד", "פוריה עילית", "פוריידיס", "פורת", "פטיש", "פלך", "פלמחים", "פני חבר", "פסגות", "פסוטה", "פעמי תש\"ז", "פצאל", "פקיעין (בוקייעה)", "פקיעין חדשה", "פרדס חנה-כרכור", "פרדסיה", "פרוד", "פרזון", "פרי גן", "פתח תקווה", "פתחיה", "צאלים", "צביה", "צבעון", "צובה", "צוחר", "צופיה", "צופים", "צופית", "צופר", "צוקי ים", "צוקים", "צור הדסה", "צור יצחק", "צור משה", "צור נתן", "צוריאל", "צורית", "ציפורי", "צלפון", "צנדלה", "צפריה", "צפרירים", "צפת", "צרופה", "צרעה", "קבועה (שבט)", "קבוצת יבנה", "קדומים", "קדימה-צורן", "קדמה", "קדמת צבי", "קדר", "קדרון", "קדרים", "קודייראת א-צאנע(שבט)", "קוואעין (שבט)", "קוממיות", "קורנית", "קטורה", "קיסריה", "קלחים", "קליה", "קלנסווה", "קלע", "קציר", "קצר א-סר", "קצרין", "קרית אונו", "קרית ארבע", "קרית אתא", "קרית ביאליק", "קרית גת", "קרית טבעון", "קרית ים", "קרית יערים", "קרית יערים(מוסד)", "קרית מוצקין", "קרית מלאכי", "קרית נטפים", "קרית ענבים", "קרית עקרון", "קרית שלמה", "קרית שמונה", "קרני שומרון", "קשת", "ראמה", "ראס אל-עין", "ראס עלי", "ראש העין", "ראש פינה", "ראש צורים", "ראשון לציון", "רבבה", "רבדים", "רביבים", "רביד", "רגבה", "רגבים", "רהט", "רווחה", "רוויה", "רוח מדבר", "רוחמה", "רומאנה", "רומת הייב", "רועי", "רותם", "רחוב", "רחובות", "רחלים", "ריחאניה", "ריחן", "ריינה", "רימונים", "רינתיה", "רכסים", "רם-און", "רמות", "רמות השבים", "רמות מאיר", "רמות מנשה", "רמות נפתלי", "רמלה", "רמת גן", "רמת דוד", "רמת הכובש", "רמת השופט", "רמת השרון", "רמת יוחנן", "רמת ישי", "רמת מגשימים", "רמת צבי", "רמת רזיאל", "רמת רחל", "רנן", "רעים", "רעננה", "רקפת", "רשפון", "רשפים", "רתמים", "שאר ישוב", "שבי דרום", "שבי ציון", "שבי שומרון", "שבלי - אום אל-גנם", "שגב-שלום", "שדה אילן", "שדה אליהו", "שדה אליעזר", "שדה בוקר", "שדה דוד", "שדה ורבורג", "שדה יואב", "שדה יעקב", "שדה יצחק", "שדה משה", "שדה נחום", "שדה נחמיה", "שדה ניצן", "שדה עוזיהו", "שדה צבי", "שדות ים", "שדות מיכה", "שדי אברהם", "שדי חמד", "שדי תרומות", "שדמה", "שדמות דבורה", "שדמות מחולה", "שדרות", "שואבה", "שובה", "שובל", "שוהם", "שומרה", "שומריה", "שוקדה", "שורש", "שורשים", "שושנת העמקים", "שזור", "שחר", "שחרות", "שיבולים", "שיזף", "שיטים", "שייח' דנון", "שילה", "שילת", "שכניה", "שלווה", "שלווה במדבר", "שלוחות", "שלומי", "שלומית", "שמיר", "שמעה", "שמרת", "שמשית", "שני", "שניר", "שעב", "שעל", "שעלבים", "שער אפרים", "שער הגולן", "שער העמקים", "שער מנשה", "שערי תקווה", "שפיים", "שפיר", "שפר", "שפרעם", "שקד", "שקף", "שרונה", "שריגים (לי-און)", "שריד", "שרשרת", "שתולה", "שתולים", "תאשור", "תדהר", "תובל", "תומר", "תושיה", "תימורים", "תירוש", "תל אביב - יפו", "תל יוסף", "תל יצחק", "תל מונד", "תל עדשים", "תל קציר", "תל שבע", "תל תאומים", "תלם", "תלמי אליהו", "תלמי אלעזר", "תלמי ביל\"ו", "תלמי יוסף", "תלמי יחיאל", "תלמי יפה", "תלמים", "תמרת", "תנובות", "תעוז", "תפרח", "תקומה", "תקוע", "תראבין א-צאנע (שבט)", "תראבין א-צאנע(ישוב)", "תרום"];</script>
+<script>
+(function () {
+  var cities = window.T3_CITIES || [];
+  var form = document.getElementById('leadForm');
+  var input = document.getElementById('field5-search');
+  var hidden = document.getElementById('field5');
+  var list = document.getElementById('field5-list');
+  var fld = document.getElementById('cityField');
+  var err = document.getElementById('cityErr');
+  var chosen = '';
+  var matches = [];
+  var active = 0;
+
+  function filter(q) {
+    q = q.trim();
+    if (!q || q === chosen) return cities.slice(0, 60);
+    var a = [], b = [];
+    for (var i = 0; i < cities.length; i++) {
+      var c = cities[i];
+      if (c.indexOf(q) === 0) a.push(c); else if (c.indexOf(q) > 0) b.push(c);
+    }
+    return a.concat(b).slice(0, 60);
+  }
+  function render() {
+    list.innerHTML = '';
+    if (!matches.length) {
+      var e = document.createElement('li');
+      e.className = 'empty'; e.textContent = 'לא נמצא יישוב בשם הזה';
+      list.appendChild(e);
+    }
+    matches.forEach(function (name, i) {
+      var li = document.createElement('li');
+      li.id = 'city-opt-' + i;
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', name === chosen ? 'true' : 'false');
+      li.textContent = name;
+      if (i === active) li.className = 'active';
+      li.addEventListener('mousedown', function (ev) { ev.preventDefault(); pick(name); });
+      list.appendChild(li);
+    });
+    input.setAttribute('aria-activedescendant', matches.length ? 'city-opt-' + active : '');
+  }
+  function open() {
+    matches = filter(input.value); active = 0; list.hidden = false;
+    input.setAttribute('aria-expanded', 'true'); render();
+  }
+  function close() { list.hidden = true; input.setAttribute('aria-expanded', 'false'); }
+  function pick(name) {
+    chosen = name; input.value = name; hidden.value = name;
+    fld.classList.remove('invalid'); err.hidden = true; close();
+  }
+  input.addEventListener('focus', open);
+  input.addEventListener('input', function () { chosen = ''; hidden.value = '0'; open(); });
+  input.addEventListener('blur', function () {
+    setTimeout(function () {
+      var exact = cities.indexOf(input.value.trim()) >= 0 ? input.value.trim() : '';
+      if (exact) pick(exact); else { input.value = chosen; close(); }
+    }, 120);
+  });
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (list.hidden) open(); else { active = Math.min(active + 1, matches.length - 1); render(); scrollActive(); } }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(active - 1, 0); render(); scrollActive(); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (!list.hidden && matches[active]) pick(matches[active]); }
+    else if (e.key === 'Escape') { close(); }
+  });
+  function scrollActive() { var el = document.getElementById('city-opt-' + active); if (el) el.scrollIntoView({ block: 'nearest' }); }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var ok = form.reportValidity();
+    if (!chosen) { fld.classList.add('invalid'); err.hidden = false; ok = false; }
+    if (!ok) return;
+    try { document.getElementById('pageUrl').value = location.href; } catch (x) {}
+    document.getElementById('formBody').hidden = true;
+    document.getElementById('thanks').hidden = false;
+  });
+})();
+
+</script>
