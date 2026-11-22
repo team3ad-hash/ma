@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Team3 – Lighthouse Optimizer
  * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Install via Plugins → Add New → Upload (ZIP), or drop into wp-content/mu-plugins/.
- * Version:     1.2.1
+ * Version:     1.3.0
  * Author:      Team3
  *
  * Every feature can be switched off from wp-config.php, for example:
@@ -10,6 +10,8 @@
  *   define( 'T3LH_PAGE_CACHE', false );        // no full-page cache
  *   define( 'T3LH_DELAY_TRACKERS', true );     // OPTIONAL: load analytics/ads only on first interaction (faster, but visitors who never
  *                                              // scroll/touch are not counted). Default false = analytics load exactly as before.
+ *   define( 'T3LH_GTM_AFTER_LOAD', true );     // OPTIONAL: run GTM right after the page load event (every visitor who stays
+ *                                              // until the page has loaded is counted; protects LCP from tag contention)
  *   define( 'T3LH_DELAY_TIMEOUT', 8000 );      // with T3LH_DELAY_TRACKERS: also load after 8s without interaction
  *   define( 'T3LH_DELAY_VIDEO', false );       // let the hero video download immediately
  *   define( 'T3LH_SECURITY_HEADERS', false );  // no extra security headers
@@ -26,7 +28,7 @@ if ( defined( 'T3LH_DISABLE' ) && T3LH_DISABLE ) {
 
 final class T3_Lighthouse {
 
-	const VERSION   = '1.2.1';
+	const VERSION   = '1.3.0';
 	const OPT_DIR   = 't3-opt';
 
 	/**
@@ -267,6 +269,11 @@ final class T3_Lighthouse {
 				// 0. Analytics: untouched by default (counted exactly as before).
 				if ( self::matches_any( $probe, self::ANALYTICS_PATTERNS ) ) {
 					if ( ! self::delay_trackers() ) {
+						// Optional: start GTM right after the page "load" event, so its ~750 KB of tags
+						// (Facebook, TikTok, Hotjar…) no longer compete with the hero image (LCP).
+						if ( defined( 'T3LH_GTM_AFTER_LOAD' ) && T3LH_GTM_AFTER_LOAD && '' === $src && false !== strpos( $body, 'googletagmanager.com/gtm.js' ) ) {
+							return '<script type="t3lh/load" ' . $clean_attrs . '>' . $body . '</script>';
+						}
 						return $m[0];
 					}
 					$probe = 'b9bf5f99bd.js'; // force the "delay" branch below.
@@ -846,7 +853,7 @@ function videos(){[].forEach.call(d.querySelectorAll("video[data-t3lh-video]"),f
 var sy=w.scrollY||0;function real(e){if(e.type==="mousemove")return !!(e.movementX||e.movementY);if(e.type==="scroll")return Math.abs((w.scrollY||0)-sy)>2;return e.isTrusted!==false}
 function go(e){if(done||(e&&e.type&&!real(e)))return;done=1;E.forEach(function(e){w.removeEventListener(e,go,o)});var f=function(){videos();run("t3lh/delay")};d.readyState==="loading"?d.addEventListener("DOMContentLoaded",f):f()}
 E.forEach(function(e){w.addEventListener(e,go,o)});
-w.addEventListener("load",function(){setTimeout(function(){run("t3lh/idle")},1500);if({$timeout}>0)setTimeout(go,{$timeout})});
+w.addEventListener("load",function(){setTimeout(function(){run("t3lh/load")},0);setTimeout(function(){run("t3lh/idle")},1500);if({$timeout}>0)setTimeout(go,{$timeout})});
 w.t3lhRun=go;})(window,document);
 JS;
 		$css = '.item .txt ul li{color:#686c82}'
@@ -859,10 +866,6 @@ JS;
 			. 'input.txtbox,form select,form textarea,.select2-container .select2-selection__rendered{color:#5f6f8a!important}'
 			. 'input.txtbox::placeholder,form textarea::placeholder{color:#5f6f8a!important;opacity:1}';
 
-		if ( ! self::delay_trackers() && false !== strpos( $html, 'googletagmanager.com' ) ) {
-			// GTM loads immediately (as before) – open the connection early.
-			self::$head_inject[] = '<link rel="preconnect" href="https://www.googletagmanager.com">';
-		}
 		$inject = '<script data-t3lh>' . $loader . '</script>' . "\n"
 			. implode( "\n", array_unique( self::$head_inject ) ) . "\n";
 		$html   = preg_replace_callback(
