@@ -19,7 +19,7 @@
 | ביצועים | איחוד וכיווץ CSS, פירוק שרשרת ה־`@import`, אירוח עצמי של גופן Assistant + preload, `font-display:swap` |
 | ביצועים | וידאו ה־Hero (1.8MB) נטען באינטראקציה; תמונת ה־poster ב־preload עם עדיפות גבוהה |
 | ביצועים | תמונות רקע JPG ← WebP של Imagify; lazy-load; הסרת emoji ו־`<img src="">` ריקים |
-| ביצועים | Page cache ב־Redis (Object Cache Pro) לגולשים לא מחוברים – TTFB של ~1.1 שנ' יורד דרמטית |
+| ביצועים | מטמון עמודים על הדיסק (wp-content/cache/t3lh) לגולשים לא מחוברים; כותרת X-T3-Cache מציגה HIT / MISS / BYPASS |
 | נגישות | viewport עם זום; aria-label לקישורי אייקונים ול־select; ניגודיות; סדר כותרות; alt; track לווידאו; target-size; פוקוס בשקופיות מוסתרות |
 | שיטות מומלצות | תיקון שגיאת הסלקטור של Page scroll to id; stub ל־isotope; כותרות אבטחה (HSTS, XFO, COOP, nosniff) |
 | SEO | קישור "אישור" עוגיות ניתן לסריקה; alt לתמונות |

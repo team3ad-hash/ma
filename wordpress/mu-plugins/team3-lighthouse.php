@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Team3 – Lighthouse Optimizer
  * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Install via Plugins → Add New → Upload (ZIP), or drop into wp-content/mu-plugins/.
- * Version:     1.1.0
+ * Version:     1.2.0
  * Author:      Team3
  *
  * Every feature can be switched off from wp-config.php, for example:
@@ -26,8 +26,7 @@ if ( defined( 'T3LH_DISABLE' ) && T3LH_DISABLE ) {
 
 final class T3_Lighthouse {
 
-	const VERSION   = '1.1.0';
-	const CACHE_GRP = 't3lh_page';
+	const VERSION   = '1.2.0';
 	const OPT_DIR   = 't3-opt';
 
 	/**
@@ -79,6 +78,7 @@ final class T3_Lighthouse {
 
 		add_action( 'init', array( __CLASS__, 'remove_bloat' ) );
 		add_action( 'send_headers', array( __CLASS__, 'security_headers' ) );
+		add_action( 'send_headers', array( __CLASS__, 'cache_status_header' ) );
 		add_action( 'template_redirect', array( __CLASS__, 'start_buffer' ), PHP_INT_MAX );
 
 		foreach ( array( 'save_post', 'deleted_post', 'trashed_post', 'edit_term', 'delete_term', 'wp_update_nav_menu', 'customize_save_after', 'switch_theme', 'activated_plugin', 'deactivated_plugin', 'upgrader_process_complete', 'acf/save_post', 'update_option_sidebars_widgets', 'update_option_wp_page_for_privacy_policy' ) as $hook ) {
@@ -840,7 +840,10 @@ JS;
 			. 'video[data-t3lh-video]{background:#0d1530}'
 			// a11y target-size: icon-only header links ≥ 24×24px.
 			. '.mobphicon a{display:inline-flex;align-items:center;justify-content:center;min-width:24px;min-height:24px}'
-			. '.sub-menu a{display:inline-block;min-height:24px}';
+			. '.sub-menu a{display:inline-block;min-height:24px}'
+			// a11y color-contrast: form text/placeholder #8092AD (3.2:1) → #5F6F8A (5.1:1).
+			. 'input.txtbox,form select,form textarea,.select2-container .select2-selection__rendered{color:#5f6f8a!important}'
+			. 'input.txtbox::placeholder,form textarea::placeholder{color:#5f6f8a!important;opacity:1}';
 
 		if ( ! self::delay_trackers() && false !== strpos( $html, 'googletagmanager.com' ) ) {
 			// GTM loads immediately (as before) – open the connection early.
@@ -867,10 +870,10 @@ JS;
 		$js = 'if(window.jQuery&&!jQuery.fn.isotope){jQuery.fn.isotope=function(){return this}}'
 			. 'document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(\'a[role="button"][href="#"]\');if(a)e.preventDefault()});'
 			// a11y aria-hidden-focus: sliders (Flickity/Slick) hide off-screen slides with aria-hidden but leave their links focusable.
-			. '(function(){var F="a[href],button,input,select,textarea,[tabindex]",q=0;function fix(){q=0;'
+			. '(function(){var F="a[href],button,input,select,textarea,[tabindex]";function fix(){'
 			. 'document.querySelectorAll("[aria-hidden=true]").forEach(function(h){h.querySelectorAll(F).forEach(function(f){if(!f.hasAttribute("data-t3lh-ti")){f.setAttribute("data-t3lh-ti",f.getAttribute("tabindex")||"");f.setAttribute("tabindex","-1")}})});'
 			. 'document.querySelectorAll("[data-t3lh-ti]").forEach(function(f){if(!f.closest("[aria-hidden=true]")){var t=f.getAttribute("data-t3lh-ti");t?f.setAttribute("tabindex",t):f.removeAttribute("tabindex");f.removeAttribute("data-t3lh-ti")}})}'
-			. 'function later(){if(!q){q=1;requestAnimationFrame(fix)}}new MutationObserver(later).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:["aria-hidden"]});later()})();';
+			. 'new MutationObserver(fix).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:["aria-hidden"]});fix()})();';
 		$tag = '<script data-t3lh defer src="data:text/javascript;base64,' . base64_encode( $js ) . '"></script>';
 		$pos = strripos( $html, '</body>' );
 		if ( false === $pos ) {
@@ -1023,39 +1026,48 @@ JS;
 	/* ------------------------- Page cache ----------------------------- */
 
 	/**
-	 * Full-page cache for anonymous visitors, stored in the persistent object cache (Redis / Object Cache Pro).
-	 * Served before plugins and the theme load → TTFB drops from ~1.1s to the cost of a Redis lookup.
+	 * Full-page disk cache for anonymous visitors (wp-content/cache/t3lh/).
+	 * Served while plugins are still loading → TTFB drops from ~1.5s to a few ms of PHP.
+	 * Response header X-T3-Cache shows HIT / MISS / BYPASS (reason) for diagnosis.
 	 */
+	private static $why = '';
+
+	private static function cache_dir() {
+		return WP_CONTENT_DIR . '/cache/t3lh';
+	}
+
+	private static function bypass( $reason ) {
+		self::$why = $reason;
+		return null;
+	}
+
 	private static function page_cache_key() {
 		if ( defined( 'T3LH_PAGE_CACHE' ) && ! T3LH_PAGE_CACHE ) {
-			return null;
+			return self::bypass( 'disabled' );
 		}
-		if ( ! function_exists( 'wp_using_ext_object_cache' ) || ! wp_using_ext_object_cache() ) {
-			return null;
-		}
-		if ( ( defined( 'WP_CLI' ) && WP_CLI ) || ( defined( 'DOING_CRON' ) && DOING_CRON ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) ) {
-			return null;
+		if ( ( defined( 'WP_CLI' ) && WP_CLI ) || ( defined( 'DOING_CRON' ) && DOING_CRON ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			return self::bypass( 'context' );
 		}
 		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? strtoupper( $_SERVER['REQUEST_METHOD'] ) : 'GET';
 		if ( ! in_array( $method, array( 'GET', 'HEAD' ), true ) ) {
-			return null;
+			return self::bypass( 'method' );
 		}
 		foreach ( array_keys( $_COOKIE ) as $c ) {
 			if ( preg_match( '#^(wordpress_logged_in_|wordpress_sec_|wp-postpass_|comment_author_|woocommerce_|wp_woocommerce_session_)#', $c ) ) {
-				return null;
+				return self::bypass( 'logged-in' );
 			}
 		}
 		$uri  = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '/';
 		$path = (string) parse_url( $uri, PHP_URL_PATH );
 		if ( preg_match( '#^/(wp-admin|wp-login|wp-json|wp-cron|xmlrpc|wp-content|wp-includes)|\.(php|xml|txt|xsl)$|/feed/?$#i', $path ) ) {
-			return null;
+			return self::bypass( 'path' );
 		}
 		$query = (string) parse_url( $uri, PHP_URL_QUERY );
 		if ( '' !== $query ) {
 			parse_str( $query, $params );
 			foreach ( array_keys( $params ) as $p ) {
-				if ( ! preg_match( '#^(utm_[a-z_]+|gclid|gbraid|wbraid|fbclid|msclkid|ttclid|_gl|mc_cid|mc_eid)$#i', $p ) ) {
-					return null; // real query string (search, filters, ?t3lh=off …) → no cache.
+				if ( ! preg_match( '#^(utm_[a-z_]+|gclid|gbraid|wbraid|fbclid|msclkid|ttclid|_gl|mc_cid|mc_eid|srsltid)$#i', $p ) ) {
+					return self::bypass( 'query' ); // search, filters, ?t3lh=off …
 				}
 			}
 		}
@@ -1063,8 +1075,7 @@ JS;
 		$ua     = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
 		$mobile = preg_match( '#Mobile|Android|Silk/|Kindle|BlackBerry|Opera Mini|Opera Mobi#', $ua ) ? 'm' : 'd';
 		$https  = ( ! empty( $_SERVER['HTTPS'] ) && 'off' !== $_SERVER['HTTPS'] ) || ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO'] ) ? 's' : 'p';
-		$ver    = (int) wp_cache_get( 'version', self::CACHE_GRP );
-		return 'p_' . md5( $ver . '|' . $https . '|' . $host . '|' . $path . '|' . $mobile );
+		return md5( self::VERSION . '|' . $https . '|' . $host . '|' . $path . '|' . $mobile );
 	}
 
 	private static function maybe_serve_cached_page() {
@@ -1072,19 +1083,18 @@ JS;
 		if ( ! $key ) {
 			return;
 		}
-		$hit = wp_cache_get( $key, self::CACHE_GRP );
-		if ( ! is_array( $hit ) || empty( $hit['html'] ) ) {
+		$file = self::cache_dir() . '/' . $key . '.html';
+		if ( ! is_file( $file ) || ( time() - filemtime( $file ) ) > 6 * 3600 ) {
+			self::$why = 'MISS';
+			return;
+		}
+		$html = file_get_contents( $file );
+		if ( false === $html || '' === $html ) {
 			return;
 		}
 		header( 'Content-Type: text/html; charset=UTF-8' );
 		header( 'X-T3-Cache: HIT' );
 		header( 'Cache-Control: max-age=0, must-revalidate' );
-		header( 'Vary: Accept-Encoding' );
-		if ( ! empty( $hit['headers'] ) ) {
-			foreach ( $hit['headers'] as $h ) {
-				header( $h );
-			}
-		}
 		if ( ! ( defined( 'T3LH_SECURITY_HEADERS' ) && ! T3LH_SECURITY_HEADERS ) ) {
 			header( 'X-Content-Type-Options: nosniff' );
 			header( 'X-Frame-Options: SAMEORIGIN' );
@@ -1093,40 +1103,50 @@ JS;
 			header( 'Strict-Transport-Security: max-age=31536000' );
 		}
 		if ( 'HEAD' !== strtoupper( $_SERVER['REQUEST_METHOD'] ) ) {
-			echo $hit['html']; // phpcs:ignore
+			echo $html; // phpcs:ignore
 		}
 		exit;
 	}
 
+	/** Called on send_headers: tell the outside world why this page was (not) cached. */
+	public static function cache_status_header() {
+		if ( ! headers_sent() && '' !== self::$why ) {
+			header( 'X-T3-Cache: ' . ( 'MISS' === self::$why ? 'MISS' : 'BYPASS (' . self::$why . ')' ) );
+		}
+	}
+
 	private static function maybe_store_cached_page( $html ) {
 		$key = self::page_cache_key();
-		if ( ! $key || 200 !== http_response_code() || is_404() || is_search() || is_user_logged_in() || post_password_required() ) {
+		if ( ! $key ) {
 			return;
 		}
-		if ( defined( 'DONOTCACHEPAGE' ) && DONOTCACHEPAGE ) {
+		if ( 200 !== (int) http_response_code() || is_404() || is_search() || is_user_logged_in() || post_password_required() || ( defined( 'DONOTCACHEPAGE' ) && DONOTCACHEPAGE ) ) {
 			return;
 		}
 		foreach ( headers_list() as $h ) {
-			if ( preg_match( '#^(Set-Cookie|Location):#i', $h ) && ! preg_match( '#^Set-Cookie:\s*wp-wpml_current_language=#i', $h ) ) {
+			if ( preg_match( '#^Location:#i', $h ) || ( preg_match( '#^Set-Cookie:#i', $h ) && ! preg_match( '#^Set-Cookie:\s*(wp-wpml_current_language|_icl_)#i', $h ) ) ) {
 				return; // personalised response.
 			}
 			if ( preg_match( '#^Content-Type:#i', $h ) && false === stripos( $h, 'text/html' ) ) {
 				return;
 			}
 		}
-		$keep = array();
-		foreach ( headers_list() as $h ) {
-			if ( preg_match( '#^(Link):#i', $h ) ) {
-				$keep[] = $h;
-			}
+		$dir = self::cache_dir();
+		if ( ! is_dir( $dir ) && ! wp_mkdir_p( $dir ) ) {
+			return;
 		}
-		wp_cache_set( $key, array( 'html' => $html . "\n<!-- t3lh cached " . gmdate( 'c' ) . ' -->', 'headers' => $keep ), self::CACHE_GRP, 6 * HOUR_IN_SECONDS );
+		if ( ! file_exists( $dir . '/index.php' ) ) {
+			@file_put_contents( $dir . '/index.php', "<?php // Silence is golden.\n" ); // phpcs:ignore
+		}
+		$tmp = $dir . '/' . $key . '.' . uniqid( '', true ) . '.tmp';
+		if ( false !== @file_put_contents( $tmp, $html . "\n<!-- t3lh cached " . gmdate( 'c' ) . ' -->' ) ) { // phpcs:ignore
+			@rename( $tmp, $dir . '/' . $key . '.html' ); // phpcs:ignore
+		}
 	}
 
 	public static function purge_all() {
-		wp_cache_set( 'version', (int) wp_cache_get( 'version', self::CACHE_GRP ) + 1, self::CACHE_GRP );
-		if ( function_exists( 'wp_cache_flush_group' ) && function_exists( 'wp_cache_supports' ) && wp_cache_supports( 'flush_group' ) ) {
-			wp_cache_flush_group( self::CACHE_GRP );
+		foreach ( (array) glob( self::cache_dir() . '/*.{html,tmp}', GLOB_BRACE ) as $f ) {
+			@unlink( $f ); // phpcs:ignore
 		}
 	}
 
