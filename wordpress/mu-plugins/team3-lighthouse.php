@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Team3 – Lighthouse Optimizer
- * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Must-use plugin: drop into wp-content/mu-plugins/.
+ * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Install via Plugins → Add New → Upload (ZIP), or drop into wp-content/mu-plugins/.
  * Version:     1.1.0
  * Author:      Team3
  *
