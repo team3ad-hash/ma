@@ -376,7 +376,7 @@ final class T3_Lighthouse {
 			$preload_fonts = array_merge( $preload_fonts, $built['preload'] );
 			$first         = true;
 			foreach ( $group as $item ) {
-				$replacement = $first ? '<link rel="stylesheet" id="t3lh-css-' . substr( md5( $built['url'] ), 0, 6 ) . '" href="' . esc_url( $built['url'] ) . '" media="all" />' : '';
+				$replacement = $first ? self::css_tag( $built['url'] ) : '';
 				$head        = self::str_replace_once( $item['tag'], $replacement, $head );
 				$first       = false;
 			}
@@ -388,9 +388,24 @@ final class T3_Lighthouse {
 			$preload .= '<link rel="preload" href="' . esc_url( $font ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
 		}
 		if ( $preload ) {
-			$head = preg_replace( '#(<link rel="stylesheet" id="t3lh-css-)#', $preload . '$1', $head, 1 );
+			$head = preg_replace( '#(<(?:link rel="stylesheet"|style) id="t3lh-css-)#', $preload . '$1', $head, 1 );
 		}
 		return $head . $rest;
+	}
+
+	/**
+	 * Optional: define( 'T3LH_INLINE_CSS', true ) inlines the bundle. Measured: FCP 1.4→1.1s but LCP 2.5→3.3s
+	 * (bigger HTML delays the hero poster), so the default stays a normal <link>.
+	 */
+	private static function css_tag( $url ) {
+		if ( defined( 'T3LH_INLINE_CSS' ) && T3LH_INLINE_CSS ) {
+			$file = self::opt_dir() . substr( $url, strlen( self::opt_url() ) );
+			if ( is_file( $file ) && filesize( $file ) < 400 * 1024 ) {
+				$css = (string) file_get_contents( $file );
+				return '<style id="t3lh-css-' . substr( md5( $url ), 0, 6 ) . '">' . str_ireplace( '</style', '<\\/style', $css ) . '</style>';
+			}
+		}
+		return '<link rel="stylesheet" id="t3lh-css-' . substr( md5( $url ), 0, 6 ) . '" href="' . esc_url( $url ) . '" media="all" />';
 	}
 
 	/** Cheap availability check (memoised per request; remote files are fetched once and cached by fetch_text). */
