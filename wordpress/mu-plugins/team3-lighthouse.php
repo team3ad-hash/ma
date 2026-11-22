@@ -2,13 +2,15 @@
 /**
  * Plugin Name: Team3 – Lighthouse Optimizer
  * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Must-use plugin: drop into wp-content/mu-plugins/.
- * Version:     1.0.0
+ * Version:     1.1.0
  * Author:      Team3
  *
  * Every feature can be switched off from wp-config.php, for example:
  *   define( 'T3LH_DISABLE', true );            // turn the whole plugin off
  *   define( 'T3LH_PAGE_CACHE', false );        // no full-page cache
- *   define( 'T3LH_DELAY_TIMEOUT', 8000 );      // also load trackers after 8s with no interaction (0 = interaction only)
+ *   define( 'T3LH_DELAY_TRACKERS', true );     // OPTIONAL: load analytics/ads only on first interaction (faster, but visitors who never
+ *                                              // scroll/touch are not counted). Default false = analytics load exactly as before.
+ *   define( 'T3LH_DELAY_TIMEOUT', 8000 );      // with T3LH_DELAY_TRACKERS: also load after 8s without interaction
  *   define( 'T3LH_DELAY_VIDEO', false );       // let the hero video download immediately
  *   define( 'T3LH_SECURITY_HEADERS', false );  // no extra security headers
  *
@@ -24,12 +26,16 @@ if ( defined( 'T3LH_DISABLE' ) && T3LH_DISABLE ) {
 
 final class T3_Lighthouse {
 
-	const VERSION   = '1.0.0';
+	const VERSION   = '1.1.0';
 	const CACHE_GRP = 't3lh_page';
 	const OPT_DIR   = 't3-opt';
 
-	/** Third-party scripts that only run after the first user interaction. */
-	const DELAY_PATTERNS = array(
+	/**
+	 * Analytics / ads / call-tracking / monitoring. By default these are left EXACTLY as the theme prints them
+	 * (same position, same async loading) so every visitor is counted as before.
+	 * Only with T3LH_DELAY_TRACKERS = true are they moved to the first interaction.
+	 */
+	const ANALYTICS_PATTERNS = array(
 		'googletagmanager.com',
 		'google-analytics.com',
 		'gtag(',
@@ -45,7 +51,11 @@ final class T3_Lighthouse {
 		'tiktok',
 		'clarity.ms',
 		'doubleclick',
-		// Font Awesome kit (Pro/6 webfonts, used only by small footer-menu bullets).
+	);
+
+	/** Non-analytics scripts that always wait for the first interaction. */
+	const DELAY_PATTERNS = array(
+		// Font Awesome kit (FA 5/6 webfonts, used only by small footer-menu bullets).
 		'b9bf5f99bd.js',
 		'kit.fontawesome.com',
 	);
@@ -253,8 +263,17 @@ final class T3_Lighthouse {
 				}
 				$clean_attrs = trim( preg_replace( '#\s*(?<![\w-])(type|async|defer|data-wp-strategy)(=(["\'])[^"\']*\3)?#i', '', $attrs ) );
 
-				// 1. Interaction-delayed third parties.
 				$probe = '' !== $src ? $src : $body;
+
+				// 0. Analytics: untouched by default (counted exactly as before).
+				if ( self::matches_any( $probe, self::ANALYTICS_PATTERNS ) ) {
+					if ( ! self::delay_trackers() ) {
+						return $m[0];
+					}
+					$probe = 'b9bf5f99bd.js'; // force the "delay" branch below.
+				}
+
+				// 1. Interaction-delayed third parties.
 				if ( self::matches_any( $probe, self::DELAY_PATTERNS ) || self::matches_any( $probe, self::IDLE_PATTERNS ) ) {
 					$kind = self::matches_any( $probe, self::IDLE_PATTERNS ) ? 't3lh/idle' : 't3lh/delay';
 					if ( '' !== $src ) {
@@ -283,6 +302,10 @@ final class T3_Lighthouse {
 			},
 			$html
 		);
+	}
+
+	private static function delay_trackers() {
+		return defined( 'T3LH_DELAY_TRACKERS' ) && T3LH_DELAY_TRACKERS;
 	}
 
 	/* ---------------------------- CSS --------------------------------- */
@@ -819,6 +842,10 @@ JS;
 			. '.mobphicon a{display:inline-flex;align-items:center;justify-content:center;min-width:24px;min-height:24px}'
 			. '.sub-menu a{display:inline-block;min-height:24px}';
 
+		if ( ! self::delay_trackers() && false !== strpos( $html, 'googletagmanager.com' ) ) {
+			// GTM loads immediately (as before) – open the connection early.
+			self::$head_inject[] = '<link rel="preconnect" href="https://www.googletagmanager.com">';
+		}
 		$inject = '<script data-t3lh>' . $loader . '</script>' . "\n"
 			. implode( "\n", array_unique( self::$head_inject ) ) . "\n";
 		$html   = preg_replace_callback(
