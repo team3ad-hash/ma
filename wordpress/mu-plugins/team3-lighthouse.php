@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Team3 – Lighthouse Optimizer
  * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Install via Plugins → Add New → Upload (ZIP), or drop into wp-content/mu-plugins/.
- * Version:     1.2.0
+ * Version:     1.2.1
  * Author:      Team3
  *
  * Every feature can be switched off from wp-config.php, for example:
@@ -26,7 +26,7 @@ if ( defined( 'T3LH_DISABLE' ) && T3LH_DISABLE ) {
 
 final class T3_Lighthouse {
 
-	const VERSION   = '1.2.0';
+	const VERSION   = '1.2.1';
 	const OPT_DIR   = 't3-opt';
 
 	/**
@@ -110,7 +110,6 @@ final class T3_Lighthouse {
 		header( 'X-Content-Type-Options: nosniff' );
 		header( 'X-Frame-Options: SAMEORIGIN' );
 		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
-		header( 'Cross-Origin-Opener-Policy: same-origin-allow-popups' );
 		if ( is_ssl() ) {
 			header( 'Strict-Transport-Security: max-age=31536000' );
 		}
@@ -1114,7 +1113,6 @@ JS;
 			header( 'X-Content-Type-Options: nosniff' );
 			header( 'X-Frame-Options: SAMEORIGIN' );
 			header( 'Referrer-Policy: strict-origin-when-cross-origin' );
-			header( 'Cross-Origin-Opener-Policy: same-origin-allow-popups' );
 			header( 'Strict-Transport-Security: max-age=31536000' );
 		}
 		if ( 'HEAD' !== strtoupper( $_SERVER['REQUEST_METHOD'] ) ) {
