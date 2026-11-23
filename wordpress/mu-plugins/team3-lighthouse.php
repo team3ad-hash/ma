@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Team3 – Lighthouse Optimizer
  * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Install via Plugins → Add New → Upload (ZIP), or drop into wp-content/mu-plugins/.
- * Version:     1.5.0
+ * Version:     1.5.1
  * Author:      Team3
  *
  * Every feature can be switched off from wp-config.php, for example:
@@ -29,7 +29,7 @@ if ( defined( 'T3LH_DISABLE' ) && T3LH_DISABLE ) {
 
 final class T3_Lighthouse {
 
-	const VERSION   = '1.5.0';
+	const VERSION   = '1.5.1';
 	const OPT_DIR   = 't3-opt';
 
 	/**
@@ -273,6 +273,10 @@ final class T3_Lighthouse {
 						// Optional: start GTM right after the page "load" event, so its ~750 KB of tags
 						// (Facebook, TikTok, Hotjar…) no longer compete with the hero image (LCP).
 						if ( self::gtm_after_load() && '' === $src && false !== strpos( $body, 'googletagmanager.com/gtm.js' ) ) {
+							// Remember the exact gtm.js URL the snippet will request, so it can be prefetched after load.
+							if ( preg_match( "#['\"](GTM-[A-Z0-9]+)['\"]#", $body, $gid ) && ! preg_match( "#\(window,document,'script','(?!dataLayer')#", $body ) ) {
+								self::$gtm_prefetch = 'https://www.googletagmanager.com/gtm.js?id=' . $gid[1];
+							}
 							return '<script type="t3lh/load" ' . $clean_attrs . '>' . $body . '</script>';
 						}
 						return $m[0];
@@ -666,6 +670,7 @@ final class T3_Lighthouse {
 	/* --------------------------- Images ------------------------------- */
 
 	private static $head_inject = array();
+	private static $gtm_prefetch = '';
 
 	private static function process_images( $html ) {
 		// Empty <img src=""> placeholders (empty ACF fields) – invalid, no alt, extra request to the page itself.
@@ -908,15 +913,16 @@ final class T3_Lighthouse {
 		$timeout   = defined( 'T3LH_DELAY_TIMEOUT' ) ? (int) T3LH_DELAY_TIMEOUT : 0;
 		// GTM waits 3.5s after load (or the first interaction, whichever comes first). Thank-you pages: immediate.
 		$gtm_delay = defined( 'T3LH_GTM_DELAY' ) ? max( 0, (int) T3LH_GTM_DELAY ) : 3500;
-		$loader  = <<<JS
-(function(w,d){var done=0,E=["keydown","mousedown","mousemove","touchstart","touchmove","wheel","scroll","pointerdown","click"],o={passive:true,capture:true};
+		$prefetch = wp_json_encode( self::$gtm_prefetch, JSON_UNESCAPED_SLASHES );
+		$loader   = <<<JS
+(function(w,d){var P={$prefetch},done=0,E=["keydown","mousedown","mousemove","touchstart","touchmove","wheel","scroll","pointerdown","click"],o={passive:true,capture:true};
 function run(type){var list=[].slice.call(d.querySelectorAll('script[type="'+type+'"]'));(function next(){var x=list.shift();if(!x)return;var s=d.createElement("script"),src=x.getAttribute("data-src");for(var i=0;i<x.attributes.length;i++){var a=x.attributes[i];if(a.name!=="type"&&a.name!=="data-src")s.setAttribute(a.name,a.value)}if(src){s.src=src;s.async=false;s.onload=s.onerror=next;x.parentNode.replaceChild(s,x)}else{s.text=x.text;x.parentNode.replaceChild(s,x);next()}})()}
 function videos(){[].forEach.call(d.querySelectorAll("video[data-t3lh-video]"),function(v){[].forEach.call(v.querySelectorAll("source[data-t3lh-src]"),function(s){s.src=s.getAttribute("data-t3lh-src");s.removeAttribute("data-t3lh-src")});v.removeAttribute("data-t3lh-video");v.preload="auto";v.load();v.muted=true;var p=v.play();p&&p.catch&&p.catch(function(){})})}
 var sy=w.scrollY||0;function real(e){if(e.type==="mousemove")return !!(e.movementX||e.movementY);if(e.type==="scroll")return Math.abs((w.scrollY||0)-sy)>2;return e.isTrusted!==false}
 function go(e){if(done||(e&&e.type&&!real(e)))return;done=1;E.forEach(function(e){w.removeEventListener(e,go,o)});var f=function(){videos();run("t3lh/load");run("t3lh/delay")};d.readyState==="loading"?d.addEventListener("DOMContentLoaded",f):f()}
 E.forEach(function(e){w.addEventListener(e,go,o)});
 function afterHero(cb){var h=d.querySelector("img[data-t3lh-lcp]"),go2=function(){requestAnimationFrame(function(){requestAnimationFrame(function(){setTimeout(cb,0)})})};if(!h||h.complete){go2()}else{h.addEventListener("load",go2);h.addEventListener("error",go2)}}
-w.addEventListener("load",function(){afterHero(function(){setTimeout(function(){run("t3lh/load")},{$gtm_delay})});run("t3lh/idle");if({$timeout}>0)setTimeout(go,{$timeout})});
+w.addEventListener("load",function(){afterHero(function(){if(P&&!done){var l=d.createElement("link");l.rel="prefetch";l.as="script";l.href=P;d.head.appendChild(l)}setTimeout(function(){run("t3lh/load")},{$gtm_delay})});run("t3lh/idle");if({$timeout}>0)setTimeout(go,{$timeout})});
 w.t3lhRun=go;})(window,document);
 JS;
 		$css = '.item .txt ul li{color:#686c82}'
