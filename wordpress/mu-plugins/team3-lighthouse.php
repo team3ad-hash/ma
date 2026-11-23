@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Team3 – Lighthouse Optimizer
  * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Install via Plugins → Add New → Upload (ZIP), or drop into wp-content/mu-plugins/.
- * Version:     1.3.0
+ * Version:     1.3.1
  * Author:      Team3
  *
  * Every feature can be switched off from wp-config.php, for example:
@@ -28,7 +28,7 @@ if ( defined( 'T3LH_DISABLE' ) && T3LH_DISABLE ) {
 
 final class T3_Lighthouse {
 
-	const VERSION   = '1.3.0';
+	const VERSION   = '1.3.1';
 	const OPT_DIR   = 't3-opt';
 
 	/**
@@ -321,7 +321,27 @@ final class T3_Lighthouse {
 	 * (keeping cascade order: groups are split by inline <style> blocks), resolves @import chains,
 	 * self-hosts Google Fonts and forces font-display:swap.
 	 */
+	/** On a new plugin version: drop old bundles, CDN copies and cached pages once. */
+	private static function maybe_reset_assets() {
+		if ( get_option( 't3lh_assets_ver' ) === self::VERSION ) {
+			return;
+		}
+		update_option( 't3lh_assets_ver', self::VERSION, true );
+		foreach ( (array) glob( self::opt_dir() . '/css/*.css' ) as $f ) {
+			@unlink( $f ); // phpcs:ignore
+		}
+		$index = get_option( 't3lh_assets', array() );
+		foreach ( array_keys( $index ) as $k ) {
+			if ( 0 === strpos( $k, 'css_' ) ) {
+				unset( $index[ $k ] );
+			}
+		}
+		update_option( 't3lh_assets', $index, false );
+		self::purge_all();
+	}
+
 	private static function process_styles( $html ) {
+		self::maybe_reset_assets();
 		$head_end = stripos( $html, '</head>' );
 		$head     = substr( $html, 0, $head_end );
 		$rest     = substr( $html, $head_end );
@@ -381,8 +401,14 @@ final class T3_Lighthouse {
 			}
 			$preload_fonts = array_merge( $preload_fonts, $built['preload'] );
 			$first         = true;
+			$noncritical   = true;
+			foreach ( $hrefs as $h ) {
+				if ( ! preg_match( '#/(select2|flatpickr|font-awesome)[^/]*\.css#i', $h ) ) {
+					$noncritical = false;
+				}
+			}
 			foreach ( $group as $item ) {
-				$replacement = $first ? self::css_tag( $built['url'] ) : '';
+				$replacement = $first ? self::css_tag( $built['url'], $noncritical ) : '';
 				$head        = self::str_replace_once( $item['tag'], $replacement, $head );
 				$first       = false;
 			}
@@ -403,7 +429,11 @@ final class T3_Lighthouse {
 	 * Optional: define( 'T3LH_INLINE_CSS', true ) inlines the bundle. Measured: FCP 1.4→1.1s but LCP 2.5→3.3s
 	 * (bigger HTML delays the hero poster), so the default stays a normal <link>.
 	 */
-	private static function css_tag( $url ) {
+	private static function css_tag( $url, $async = false ) {
+		if ( $async ) {
+			$u = esc_url( $url );
+			return '<link rel="stylesheet" id="t3lh-css-' . substr( md5( $url ), 0, 6 ) . '" href="' . $u . '" media="print" onload="this.media=\'all\'" /><noscript><link rel="stylesheet" href="' . $u . '" /></noscript>';
+		}
 		if ( defined( 'T3LH_INLINE_CSS' ) && T3LH_INLINE_CSS ) {
 			$file = self::opt_dir() . substr( $url, strlen( self::opt_url() ) );
 			if ( is_file( $file ) && filesize( $file ) < 400 * 1024 ) {
@@ -426,8 +456,10 @@ final class T3_Lighthouse {
 	private static function build_css_bundle( array $hrefs ) {
 		$sig_parts = array( self::VERSION );
 		foreach ( $hrefs as $href ) {
-			$path        = self::local_path( $href );
-			$sig_parts[] = $href . '|' . ( $path && file_exists( $path ) ? filemtime( $path ) : 'r' );
+			$path = self::local_path( $href );
+			// Local files: key on path + mtime only. The theme prints style9.css?<time()>, which would
+			// otherwise create a brand-new bundle (and a cold CSS download) on every page generation.
+			$sig_parts[] = $path ? $path . '|' . ( file_exists( $path ) ? filemtime( $path ) : 0 ) : $href;
 		}
 		$sig   = md5( implode( "\n", $sig_parts ) );
 		$index = get_option( 't3lh_assets', array() );
@@ -454,7 +486,16 @@ final class T3_Lighthouse {
 		if ( ! self::write_opt_file( $file, $css ) ) {
 			return null;
 		}
-		$index[ 'css_' . $sig ] = array( 'file' => $file, 'preload' => $preload );
+		$index[ 'css_' . $sig ] = array( 'file' => $file, 'preload' => $preload, 't' => time() );
+		// Keep at most 40 bundles (old signatures after theme edits).
+		$css_keys = array_filter( array_keys( $index ), static function ( $k ) { return 0 === strpos( $k, 'css_' ); } );
+		if ( count( $css_keys ) > 40 ) {
+			usort( $css_keys, static function ( $a, $b ) use ( $index ) { return ( $index[ $a ]['t'] ?? 0 ) <=> ( $index[ $b ]['t'] ?? 0 ); } );
+			foreach ( array_slice( $css_keys, 0, count( $css_keys ) - 40 ) as $old ) {
+				@unlink( self::opt_dir() . '/' . $index[ $old ]['file'] ); // phpcs:ignore
+				unset( $index[ $old ] );
+			}
+		}
 		update_option( 't3lh_assets', $index, false );
 		return array( 'url' => self::opt_url() . '/' . $file, 'preload' => $preload );
 	}
