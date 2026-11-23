@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Team3 – Lighthouse Optimizer
  * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Install via Plugins → Add New → Upload (ZIP), or drop into wp-content/mu-plugins/.
- * Version:     1.4.0
+ * Version:     1.4.1
  * Author:      Team3
  *
  * Every feature can be switched off from wp-config.php, for example:
@@ -28,7 +28,7 @@ if ( defined( 'T3LH_DISABLE' ) && T3LH_DISABLE ) {
 
 final class T3_Lighthouse {
 
-	const VERSION   = '1.4.0';
+	const VERSION   = '1.4.1';
 	const OPT_DIR   = 't3-opt';
 
 	/**
@@ -646,11 +646,17 @@ final class T3_Lighthouse {
 					$label  = 'he' === self::$lang ? 'וידאו רקע ללא דיבור' : 'Background video, no speech';
 					$inner .= '<track kind="captions" srclang="' . esc_attr( self::$lang ) . '" label="' . esc_attr( $label ) . '" src="data:text/vtt;charset=utf-8,WEBVTT%0A">';
 				}
+				$hero = '';
 				if ( $first && preg_match( '#\bposter=["\']([^"\']+)["\']#i', $attrs, $p ) ) {
-					self::$head_inject[] = '<link rel="preload" as="image" href="' . esc_url( html_entity_decode( $p[1] ) ) . '" fetchpriority="high">';
+					$poster              = esc_url( html_entity_decode( $p[1] ) );
+					self::$head_inject[] = '<link rel="preload" as="image" href="' . $poster . '" fetchpriority="high">';
+					// A plain <img> of the poster under the video: painted in the first frame (a video poster waits for
+					// video layout + busy main thread → long "element render delay"). It is the LCP element.
+					$class = preg_match( '#\bclass=["\']([^"\']*)["\']#i', $attrs, $c ) ? $c[1] : '';
+					$hero  = '<img class="' . esc_attr( trim( $class . ' t3lh-hero' ) ) . '" src="' . $poster . '" alt="" aria-hidden="true" fetchpriority="high" loading="eager" decoding="sync" data-t3lh-lcp>';
 				}
 				$first = false;
-				return '<video' . $attrs . '>' . $inner . '</video>';
+				return $hero . '<video' . $attrs . '>' . $inner . '</video>';
 			},
 			$html
 		);
@@ -906,12 +912,14 @@ function videos(){[].forEach.call(d.querySelectorAll("video[data-t3lh-video]"),f
 var sy=w.scrollY||0;function real(e){if(e.type==="mousemove")return !!(e.movementX||e.movementY);if(e.type==="scroll")return Math.abs((w.scrollY||0)-sy)>2;return e.isTrusted!==false}
 function go(e){if(done||(e&&e.type&&!real(e)))return;done=1;E.forEach(function(e){w.removeEventListener(e,go,o)});var f=function(){videos();run("t3lh/load");run("t3lh/delay")};d.readyState==="loading"?d.addEventListener("DOMContentLoaded",f):f()}
 E.forEach(function(e){w.addEventListener(e,go,o)});
-w.addEventListener("load",function(){setTimeout(function(){run("t3lh/load")},0);setTimeout(function(){run("t3lh/idle")},1500);if({$timeout}>0)setTimeout(go,{$timeout})});
+function afterHero(cb){var h=d.querySelector("img[data-t3lh-lcp]"),go2=function(){requestAnimationFrame(function(){requestAnimationFrame(function(){setTimeout(cb,0)})})};if(!h||h.complete){go2()}else{h.addEventListener("load",go2);h.addEventListener("error",go2)}}
+w.addEventListener("load",function(){afterHero(function(){run("t3lh/load")});setTimeout(function(){run("t3lh/idle")},1500);if({$timeout}>0)setTimeout(go,{$timeout})});
 w.t3lhRun=go;})(window,document);
 JS;
 		$css = '.item .txt ul li{color:#686c82}'
 			. '.disclaimer{background-color:#007a9c!important}'
-			. 'video[data-t3lh-video]{background:#0d1530}'
+			. 'video[data-t3lh-video]{background:transparent}'
+			. 'img.t3lh-hero{object-fit:cover;pointer-events:none}'
 			// a11y target-size: icon-only header links ≥ 24×24px.
 			. '.mobphicon a{display:inline-flex;align-items:center;justify-content:center;min-width:24px;min-height:24px}'
 			. '.sub-menu a{display:inline-block;min-height:24px}'
