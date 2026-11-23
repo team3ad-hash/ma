@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Team3 – Lighthouse Optimizer
  * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Install via Plugins → Add New → Upload (ZIP), or drop into wp-content/mu-plugins/.
- * Version:     1.4.1
+ * Version:     1.5.0
  * Author:      Team3
  *
  * Every feature can be switched off from wp-config.php, for example:
@@ -10,8 +10,9 @@
  *   define( 'T3LH_PAGE_CACHE', false );        // no full-page cache
  *   define( 'T3LH_DELAY_TRACKERS', true );     // OPTIONAL: load analytics/ads only on first interaction (faster, but visitors who never
  *                                              // scroll/touch are not counted). Default false = analytics load exactly as before.
- *   define( 'T3LH_GTM_AFTER_LOAD', false );    // GTM runs right after the page load event by default (thank-you pages:
- *                                              // immediately). false = GTM exactly as the theme prints it.
+ *   define( 'T3LH_GTM_AFTER_LOAD', false );    // GTM starts 3.5s after the load event or at the first interaction
+ *                                              // (thank-you pages: immediately). false = GTM exactly as the theme prints it.
+ *   define( 'T3LH_GTM_DELAY', 0 );             // ms after load before GTM starts (default 3500).
  *   define( 'T3LH_DELAY_TIMEOUT', 8000 );      // with T3LH_DELAY_TRACKERS: also load after 8s without interaction
  *   define( 'T3LH_DELAY_VIDEO', false );       // let the hero video download immediately
  *   define( 'T3LH_SECURITY_HEADERS', false );  // no extra security headers
@@ -28,7 +29,7 @@ if ( defined( 'T3LH_DISABLE' ) && T3LH_DISABLE ) {
 
 final class T3_Lighthouse {
 
-	const VERSION   = '1.4.1';
+	const VERSION   = '1.5.0';
 	const OPT_DIR   = 't3-opt';
 
 	/**
@@ -653,7 +654,7 @@ final class T3_Lighthouse {
 					// A plain <img> of the poster under the video: painted in the first frame (a video poster waits for
 					// video layout + busy main thread → long "element render delay"). It is the LCP element.
 					$class = preg_match( '#\bclass=["\']([^"\']*)["\']#i', $attrs, $c ) ? $c[1] : '';
-					$hero  = '<img class="' . esc_attr( trim( $class . ' t3lh-hero' ) ) . '" src="' . $poster . '" alt="" aria-hidden="true" fetchpriority="high" loading="eager" decoding="sync" data-t3lh-lcp>';
+					$hero  = '<img class="' . esc_attr( trim( $class . ' t3lh-hero' ) ) . '" src="' . $poster . '" alt="" aria-hidden="true" fetchpriority="high" loading="eager" decoding="async" data-t3lh-lcp>';
 				}
 				$first = false;
 				return $hero . '<video' . $attrs . '>' . $inner . '</video>';
@@ -904,7 +905,9 @@ final class T3_Lighthouse {
 	/* ------------------------ Injections ------------------------------ */
 
 	private static function inject_head( $html ) {
-		$timeout = defined( 'T3LH_DELAY_TIMEOUT' ) ? (int) T3LH_DELAY_TIMEOUT : 0;
+		$timeout   = defined( 'T3LH_DELAY_TIMEOUT' ) ? (int) T3LH_DELAY_TIMEOUT : 0;
+		// GTM waits 3.5s after load (or the first interaction, whichever comes first). Thank-you pages: immediate.
+		$gtm_delay = defined( 'T3LH_GTM_DELAY' ) ? max( 0, (int) T3LH_GTM_DELAY ) : 3500;
 		$loader  = <<<JS
 (function(w,d){var done=0,E=["keydown","mousedown","mousemove","touchstart","touchmove","wheel","scroll","pointerdown","click"],o={passive:true,capture:true};
 function run(type){var list=[].slice.call(d.querySelectorAll('script[type="'+type+'"]'));(function next(){var x=list.shift();if(!x)return;var s=d.createElement("script"),src=x.getAttribute("data-src");for(var i=0;i<x.attributes.length;i++){var a=x.attributes[i];if(a.name!=="type"&&a.name!=="data-src")s.setAttribute(a.name,a.value)}if(src){s.src=src;s.async=false;s.onload=s.onerror=next;x.parentNode.replaceChild(s,x)}else{s.text=x.text;x.parentNode.replaceChild(s,x);next()}})()}
@@ -913,7 +916,7 @@ var sy=w.scrollY||0;function real(e){if(e.type==="mousemove")return !!(e.movemen
 function go(e){if(done||(e&&e.type&&!real(e)))return;done=1;E.forEach(function(e){w.removeEventListener(e,go,o)});var f=function(){videos();run("t3lh/load");run("t3lh/delay")};d.readyState==="loading"?d.addEventListener("DOMContentLoaded",f):f()}
 E.forEach(function(e){w.addEventListener(e,go,o)});
 function afterHero(cb){var h=d.querySelector("img[data-t3lh-lcp]"),go2=function(){requestAnimationFrame(function(){requestAnimationFrame(function(){setTimeout(cb,0)})})};if(!h||h.complete){go2()}else{h.addEventListener("load",go2);h.addEventListener("error",go2)}}
-w.addEventListener("load",function(){afterHero(function(){run("t3lh/load")});setTimeout(function(){run("t3lh/idle")},1500);if({$timeout}>0)setTimeout(go,{$timeout})});
+w.addEventListener("load",function(){afterHero(function(){setTimeout(function(){run("t3lh/load")},{$gtm_delay})});run("t3lh/idle");if({$timeout}>0)setTimeout(go,{$timeout})});
 w.t3lhRun=go;})(window,document);
 JS;
 		$css = '.item .txt ul li{color:#686c82}'
@@ -947,11 +950,12 @@ JS;
 		// - "#" role=button links must not jump to top / change the URL.
 		$js = 'if(window.jQuery&&!jQuery.fn.isotope){jQuery.fn.isotope=function(){return this}}'
 			. 'document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(\'a[role="button"][href="#"]\');if(a)e.preventDefault()});'
-			// a11y aria-hidden-focus: sliders (Flickity/Slick) hide off-screen slides with aria-hidden but leave their links focusable.
-			. '(function(){var F="a[href],button,input,select,textarea,[tabindex]";function fix(){'
-			. 'document.querySelectorAll("[aria-hidden=true]").forEach(function(h){h.querySelectorAll(F).forEach(function(f){if(!f.hasAttribute("data-t3lh-ti")){f.setAttribute("data-t3lh-ti",f.getAttribute("tabindex")||"");f.setAttribute("tabindex","-1")}})});'
-			. 'document.querySelectorAll("[data-t3lh-ti]").forEach(function(f){if(!f.closest("[aria-hidden=true]")){var t=f.getAttribute("data-t3lh-ti");t?f.setAttribute("tabindex",t):f.removeAttribute("tabindex");f.removeAttribute("data-t3lh-ti")}})}'
-			. 'new MutationObserver(fix).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:["aria-hidden"]});fix()})();';
+			// a11y aria-hidden-focus: sliders (Flickity/Slick) hide off-screen slides with aria-hidden but leave their links
+			// focusable. Only the elements whose aria-hidden actually changes are touched (cheap, no full-page scans).
+			. '(function(){var F="a[href],button,input,select,textarea,[tabindex]";'
+			. 'function set(h){var hid=h.getAttribute("aria-hidden")==="true";h.querySelectorAll(F).forEach(function(f){if(hid){if(!f.hasAttribute("data-t3lh-ti")){f.setAttribute("data-t3lh-ti",f.getAttribute("tabindex")||"");f.setAttribute("tabindex","-1")}}else if(f.hasAttribute("data-t3lh-ti")){var t=f.getAttribute("data-t3lh-ti");t?f.setAttribute("tabindex",t):f.removeAttribute("tabindex");f.removeAttribute("data-t3lh-ti")}})}'
+			. 'new MutationObserver(function(rs){for(var i=0;i<rs.length;i++){var t=rs[i].target;if(t.nodeType===1&&t.getAttribute("aria-hidden")!==null&&!t.matches("select,option,.select2-hidden-accessible"))set(t)}}).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:["aria-hidden"]});'
+			. 'document.querySelectorAll("[aria-hidden=true]:not(select):not(i)").forEach(set)})();';
 		$tag = '<script data-t3lh defer src="data:text/javascript;base64,' . base64_encode( $js ) . '"></script>';
 		$pos = strripos( $html, '</body>' );
 		if ( false === $pos ) {
