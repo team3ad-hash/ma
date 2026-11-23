@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Team3 – Lighthouse Optimizer
  * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Install via Plugins → Add New → Upload (ZIP), or drop into wp-content/mu-plugins/.
- * Version:     1.3.1
+ * Version:     1.4.0
  * Author:      Team3
  *
  * Every feature can be switched off from wp-config.php, for example:
@@ -10,8 +10,8 @@
  *   define( 'T3LH_PAGE_CACHE', false );        // no full-page cache
  *   define( 'T3LH_DELAY_TRACKERS', true );     // OPTIONAL: load analytics/ads only on first interaction (faster, but visitors who never
  *                                              // scroll/touch are not counted). Default false = analytics load exactly as before.
- *   define( 'T3LH_GTM_AFTER_LOAD', true );     // OPTIONAL: run GTM right after the page load event (every visitor who stays
- *                                              // until the page has loaded is counted; protects LCP from tag contention)
+ *   define( 'T3LH_GTM_AFTER_LOAD', false );    // GTM runs right after the page load event by default (thank-you pages:
+ *                                              // immediately). false = GTM exactly as the theme prints it.
  *   define( 'T3LH_DELAY_TIMEOUT', 8000 );      // with T3LH_DELAY_TRACKERS: also load after 8s without interaction
  *   define( 'T3LH_DELAY_VIDEO', false );       // let the hero video download immediately
  *   define( 'T3LH_SECURITY_HEADERS', false );  // no extra security headers
@@ -28,7 +28,7 @@ if ( defined( 'T3LH_DISABLE' ) && T3LH_DISABLE ) {
 
 final class T3_Lighthouse {
 
-	const VERSION   = '1.3.1';
+	const VERSION   = '1.4.0';
 	const OPT_DIR   = 't3-opt';
 
 	/**
@@ -271,7 +271,7 @@ final class T3_Lighthouse {
 					if ( ! self::delay_trackers() ) {
 						// Optional: start GTM right after the page "load" event, so its ~750 KB of tags
 						// (Facebook, TikTok, Hotjar…) no longer compete with the hero image (LCP).
-						if ( defined( 'T3LH_GTM_AFTER_LOAD' ) && T3LH_GTM_AFTER_LOAD && '' === $src && false !== strpos( $body, 'googletagmanager.com/gtm.js' ) ) {
+						if ( self::gtm_after_load() && '' === $src && false !== strpos( $body, 'googletagmanager.com/gtm.js' ) ) {
 							return '<script type="t3lh/load" ' . $clean_attrs . '>' . $body . '</script>';
 						}
 						return $m[0];
@@ -308,6 +308,18 @@ final class T3_Lighthouse {
 			},
 			$html
 		);
+	}
+
+	/**
+	 * GTM starts right after the page "load" event (default on; define T3LH_GTM_AFTER_LOAD false to disable).
+	 * Thank-you pages keep the original immediate GTM so no conversion can be lost.
+	 */
+	private static function gtm_after_load() {
+		if ( defined( 'T3LH_GTM_AFTER_LOAD' ) && ! T3LH_GTM_AFTER_LOAD ) {
+			return false;
+		}
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? rawurldecode( (string) $_SERVER['REQUEST_URI'] ) : '';
+		return false === stripos( $uri, 'thank' ) && false === strpos( $uri, 'תודה' );
 	}
 
 	private static function delay_trackers() {
@@ -892,7 +904,7 @@ final class T3_Lighthouse {
 function run(type){var list=[].slice.call(d.querySelectorAll('script[type="'+type+'"]'));(function next(){var x=list.shift();if(!x)return;var s=d.createElement("script"),src=x.getAttribute("data-src");for(var i=0;i<x.attributes.length;i++){var a=x.attributes[i];if(a.name!=="type"&&a.name!=="data-src")s.setAttribute(a.name,a.value)}if(src){s.src=src;s.async=false;s.onload=s.onerror=next;x.parentNode.replaceChild(s,x)}else{s.text=x.text;x.parentNode.replaceChild(s,x);next()}})()}
 function videos(){[].forEach.call(d.querySelectorAll("video[data-t3lh-video]"),function(v){[].forEach.call(v.querySelectorAll("source[data-t3lh-src]"),function(s){s.src=s.getAttribute("data-t3lh-src");s.removeAttribute("data-t3lh-src")});v.removeAttribute("data-t3lh-video");v.preload="auto";v.load();v.muted=true;var p=v.play();p&&p.catch&&p.catch(function(){})})}
 var sy=w.scrollY||0;function real(e){if(e.type==="mousemove")return !!(e.movementX||e.movementY);if(e.type==="scroll")return Math.abs((w.scrollY||0)-sy)>2;return e.isTrusted!==false}
-function go(e){if(done||(e&&e.type&&!real(e)))return;done=1;E.forEach(function(e){w.removeEventListener(e,go,o)});var f=function(){videos();run("t3lh/delay")};d.readyState==="loading"?d.addEventListener("DOMContentLoaded",f):f()}
+function go(e){if(done||(e&&e.type&&!real(e)))return;done=1;E.forEach(function(e){w.removeEventListener(e,go,o)});var f=function(){videos();run("t3lh/load");run("t3lh/delay")};d.readyState==="loading"?d.addEventListener("DOMContentLoaded",f):f()}
 E.forEach(function(e){w.addEventListener(e,go,o)});
 w.addEventListener("load",function(){setTimeout(function(){run("t3lh/load")},0);setTimeout(function(){run("t3lh/idle")},1500);if({$timeout}>0)setTimeout(go,{$timeout})});
 w.t3lhRun=go;})(window,document);

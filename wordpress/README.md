@@ -14,7 +14,7 @@
 ## מה הוא עושה
 | תחום | תיקון |
 |---|---|
-| אנליטיקס | GTM (ודרכו Facebook, Google Ads, Hotjar, TikTok, maskyoo), New Relic ו־lead.im נשארים **בדיוק כמו קודם** – כל גולש נספר. רק ערכת Font Awesome נטענת באינטראקציה ראשונה |
+| אנליטיקס | GTM מופעל מיד בסיום טעינת הדף (או באינטראקציה הראשונה, המוקדם מביניהם); בדפי תודה – מיד כמו קודם. New Relic ו־lead.im ללא שינוי |
 | ביצועים | כל ה־JS ב־`defer`; קבצי unpkg / jsdelivr / cdnjs מוגשים מהשרת שלכם |
 | ביצועים | איחוד וכיווץ CSS, פירוק שרשרת ה־`@import`, אירוח עצמי של גופן Assistant + preload, `font-display:swap` |
 | ביצועים | וידאו ה־Hero (1.8MB) נטען באינטראקציה; תמונת ה־poster ב־preload עם עדיפות גבוהה |
@@ -27,6 +27,7 @@
 ## הגדרות (wp-config.php)
 ```php
 define( 'T3LH_PAGE_CACHE', false );       // ביטול מטמון עמודים
+define( 'T3LH_GTM_AFTER_LOAD', false );   // GTM בדיוק כפי שהתבנית מדפיסה (ללא המתנה ל־load)
 define( 'T3LH_DELAY_TRACKERS', true );    // אופציונלי: תגיות אנליטיקס רק באינטראקציה (מהיר יותר, אך גולש שלא גולל/נגע לא נספר)
 define( 'T3LH_DELAY_TIMEOUT', 8000 );     // יחד עם הקודם: טעינה גם אחרי 8 שנ' ללא אינטראקציה
 define( 'T3LH_DELAY_VIDEO', false );      // וידאו Hero נטען מיד
