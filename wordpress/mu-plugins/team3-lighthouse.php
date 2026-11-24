@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Team3 – Lighthouse Optimizer
  * Description: Performance, accessibility, best-practices and SEO fixes for team3.co.il (Lighthouse report 2026-11-22). Install via Plugins → Add New → Upload (ZIP), or drop into wp-content/mu-plugins/.
- * Version:     1.5.1
+ * Version:     1.6.0
  * Author:      Team3
  *
  * Every feature can be switched off from wp-config.php, for example:
@@ -16,6 +16,9 @@
  *   define( 'T3LH_DELAY_TIMEOUT', 8000 );      // with T3LH_DELAY_TRACKERS: also load after 8s without interaction
  *   define( 'T3LH_DELAY_VIDEO', false );       // let the hero video download immediately
  *   define( 'T3LH_SECURITY_HEADERS', false );  // no extra security headers
+ *   define( 'T3LH_EXCLUDE', '#^/(manage-job|my-area)#' ); // regex of extra paths never touched (default: manage-job*)
+ *
+ * Logged-in users and back-office pages (manage-job…) get the theme's original HTML, untouched.
  *
  * Add ?t3lh=off to any URL (as a logged-in admin) to see the page without the optimizer.
  */
@@ -29,7 +32,7 @@ if ( defined( 'T3LH_DISABLE' ) && T3LH_DISABLE ) {
 
 final class T3_Lighthouse {
 
-	const VERSION   = '1.5.1';
+	const VERSION   = '1.6.0';
 	const OPT_DIR   = 't3-opt';
 
 	/**
@@ -90,6 +93,39 @@ final class T3_Lighthouse {
 		add_action( 'updated_option', array( __CLASS__, 'maybe_purge_on_option' ), 10, 1 );
 		add_action( 'admin_bar_menu', array( __CLASS__, 'admin_bar' ), 100 );
 		add_action( 'admin_post_t3lh_purge', array( __CLASS__, 'handle_purge_request' ) );
+
+		// Back-office actions (e.g. "bump selected jobs" in /manage-job) may write posts/meta directly:
+		// purge the page cache whenever a logged-in user changes content, so the public lists update at once.
+		foreach ( array( 'clean_post_cache', 'added_post_meta', 'updated_post_meta', 'deleted_post_meta', 'edited_terms' ) as $hook ) {
+			add_action( $hook, array( __CLASS__, 'flag_write' ) );
+		}
+		add_action( 'shutdown', array( __CLASS__, 'purge_after_write' ) );
+	}
+
+	private static $wrote = false;
+
+	public static function flag_write() {
+		self::$wrote = true;
+	}
+
+	public static function purge_after_write() {
+		if ( ! function_exists( 'is_user_logged_in' ) || ! is_user_logged_in() ) {
+			return;
+		}
+		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? strtoupper( $_SERVER['REQUEST_METHOD'] ) : 'GET';
+		if ( self::$wrote || ! in_array( $method, array( 'GET', 'HEAD' ), true ) ) {
+			self::purge_all();
+		}
+	}
+
+	/** Paths that are never optimized or cached (recruiter back office etc.). */
+	private static function is_excluded_path() {
+		$uri  = isset( $_SERVER['REQUEST_URI'] ) ? rawurldecode( (string) $_SERVER['REQUEST_URI'] ) : '/';
+		$path = (string) parse_url( $uri, PHP_URL_PATH );
+		if ( preg_match( '#^/(manage-job|manage|edit-job|add-job|new-job|my-account|login|dashboard)#i', $path ) ) {
+			return true;
+		}
+		return defined( 'T3LH_EXCLUDE' ) && T3LH_EXCLUDE && @preg_match( T3LH_EXCLUDE, $path ); // phpcs:ignore
 	}
 
 	public static function remove_bloat() {
@@ -126,6 +162,10 @@ final class T3_Lighthouse {
 			return false;
 		}
 		if ( isset( $_GET['t3lh'] ) && 'off' === $_GET['t3lh'] && current_user_can( 'manage_options' ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return false;
+		}
+		// Logged-in users (recruiters, editors) and back-office pages get the original HTML: no risk to admin tools.
+		if ( is_user_logged_in() || self::is_excluded_path() ) {
 			return false;
 		}
 		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? strtoupper( $_SERVER['REQUEST_METHOD'] ) : 'GET';
@@ -1149,6 +1189,9 @@ JS;
 		$path = (string) parse_url( $uri, PHP_URL_PATH );
 		if ( preg_match( '#^/(wp-admin|wp-login|wp-json|wp-cron|xmlrpc|wp-content|wp-includes)|\.(php|xml|txt|xsl)$|/feed/?$#i', $path ) ) {
 			return self::bypass( 'path' );
+		}
+		if ( self::is_excluded_path() ) {
+			return self::bypass( 'excluded' );
 		}
 		$query = (string) parse_url( $uri, PHP_URL_QUERY );
 		if ( '' !== $query ) {
